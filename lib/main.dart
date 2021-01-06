@@ -1,8 +1,13 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:homework_management_fellow/screens/setting_screen.dart';
+import 'screens/setting_screen.dart';
 import 'screens/task_screen.dart';
+import 'screens/welcome_screen.dart';
+import 'screens/registration_screen.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(MyApp());
 }
 
@@ -11,8 +16,10 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      initialRoute: TaskScreen.id,
+      initialRoute: WelcomeScreen.id,
       routes: {
+        RegistrationScreen.id: (context) => RegistrationScreen(),
+        WelcomeScreen.id: (context) => WelcomeScreen(),
         TaskScreen.id: (context) => TaskScreen(),
         SettingScreen.id: (context) => SettingScreen(),
       },

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>270748540447-3is4l9p1er5sa1l2t5ekls1mkujc3rlk.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.270748540447-3is4l9p1er5sa1l2t5ekls1mkujc3rlk</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>270748540447-6d6eq2s2b7p9h8u5t2sfg8sn7favcmqq.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyD8cFi129_QfYUfVttvt9vcoV27Y_o3dhE</string>
+	<key>GCM_SENDER_ID</key>
+	<string>270748540447</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.yuayng.homeworkManagementFellow</string>
+	<key>PROJECT_ID</key>
+	<string>homework-management-fell-91b54</string>
+	<key>STORAGE_BUCKET</key>
+	<string>homework-management-fell-91b54.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:270748540447:ios:56f83947c5f23f21aeff2a</string>
+</dict>
+</plist>

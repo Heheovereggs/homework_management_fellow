@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "270748540447",
+    "project_id": "homework-management-fell-91b54",
+    "storage_bucket": "homework-management-fell-91b54.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:270748540447:android:54ba2dae4874d4bfaeff2a",
+        "android_client_info": {
+          "package_name": "com.yuayng.homework_management_fellow"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "270748540447-6d6eq2s2b7p9h8u5t2sfg8sn7favcmqq.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.yuayng.homework_management_fellow",
+            "certificate_hash": "2011de736c81c653c69bcaf4f16ee65ad3f980fd"
+          }
+        },
+        {
+          "client_id": "270748540447-2hh2diil2lkda75muagtic2u0op7sa2k.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBqz113xI7Rw0-kw73aBL37V1GyhJQGhjU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "270748540447-2hh2diil2lkda75muagtic2u0op7sa2k.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
