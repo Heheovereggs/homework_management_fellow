@@ -21,12 +21,12 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     Gradient gradient = LinearGradient(colors: [Colors.blueAccent, Colors.greenAccent]);
     Shader shader = gradient.createShader(Rect.fromLTWH(0, 0, size.width, size.height));
     return Scaffold(
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          registeredCheck("xxx@xx.com");
-        },
-        child: Icon(Icons.download_rounded),
-      ),
+      // floatingActionButton: FloatingActionButton(
+      //   onPressed: () {
+      //     registeredCheck("xxx@xx.com");
+      //   },
+      //   child: Icon(Icons.download_rounded),
+      // ),
       body: ModalProgressHUD(
         inAsyncCall: showSpinner,
         child: SafeArea(
@@ -93,14 +93,14 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     });
     signInWithGoogle().then(
       (result) async {
-        email = result;
+        email = result[0];
         isRegistered = await registeredCheck(email);
         setState(() {
           showSpinner = false;
         });
         if (email != null) {
           if (isRegistered == false) {
-            Navigator.pushNamed(context, RegistrationScreen.id);
+            Navigator.pushNamed(context, RegistrationScreen.id, arguments: result);
           } else {
             Navigator.pushNamed(context, TaskScreen.id);
           }
@@ -126,12 +126,14 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   }
 
   Future<bool> registeredCheck(String email) async {
-    final userInfo = await _firestore.collection("user").get();
-    for (var userInf in userInfo.docs) {
-      print("info");
-      print(userInf.data);
+    QuerySnapshot userInfo = await _firestore.collection("user").get();
+    for (DocumentSnapshot userInf in userInfo.docs) {
+      if (userInf.data()["email"] == email) {
+        print("true");
+        return true;
+      }
     }
-    // TODO: check if email in data lists
+    print("false");
     return false;
   }
 }

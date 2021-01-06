@@ -14,7 +14,7 @@
       },
       "oauth_client": [
         {
-          "client_id": "270748540447-6d6eq2s2b7p9h8u5t2sfg8sn7favcmqq.apps.googleusercontent.com",
+          "client_id": "270748540447-1ht32tpsqvfgppm9ns3jn74dlsi32duc.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.yuayng.homework_management_fellow",
@@ -37,6 +37,13 @@
             {
               "client_id": "270748540447-2hh2diil2lkda75muagtic2u0op7sa2k.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "270748540447-3is4l9p1er5sa1l2t5ekls1mkujc3rlk.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.yuayng.homeworkManagementFellow"
+              }
             }
           ]
         }

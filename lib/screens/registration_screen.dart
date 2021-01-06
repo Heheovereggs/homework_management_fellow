@@ -17,6 +17,10 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final List result = ModalRoute.of(context).settings.arguments as List;
+    final email = result[0];
+    final uid = result[1];
+
     return Scaffold(
       appBar: AppBar(
         title: Text("Registration"),

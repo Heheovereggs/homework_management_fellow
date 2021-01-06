@@ -1,6 +1,5 @@
 import 'package:homework_management_fellow/widgets/homework_card.dart';
 import 'package:flutter/material.dart';
-
 import '../widgets/homework_card.dart';
 
 class TaskScreen extends StatefulWidget {
@@ -15,25 +14,27 @@ class _TaskScreenState extends State<TaskScreen> {
 
   @override
   void initState() {
-    if (isActivated == false) {
-      showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (_) => AlertDialog(
-          title: Text("Registration pending"),
-          content: Text("Your account need admin approve"),
-          actions: [
-            FlatButton(
-              child: Text("Refresh"),
-              onPressed: () {
-                // TODO: get new account stat from server and rebuild page
-              },
-            ),
-          ],
-        ),
-      );
-    }
     super.initState();
+    Future.delayed(Duration.zero, () {
+      if (isActivated == false) {
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (_) => AlertDialog(
+            title: Text("Activation pending"),
+            content: Text("Your account is waiting to be activated by admin"),
+            actions: [
+              FlatButton(
+                child: Text("Refresh"),
+                onPressed: () {
+                  // TODO: get new account stat from server and rebuild page
+                },
+              ),
+            ],
+          ),
+        );
+      }
+    });
   }
 
   @override
