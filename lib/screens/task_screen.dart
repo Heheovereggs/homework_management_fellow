@@ -15,8 +15,8 @@ class TaskScreen extends StatelessWidget {
 
   void initState(BuildContext context) {
     Future.delayed(Duration(milliseconds: 200), () {
-      LocalStorage(name: uid, value: "uid").getLoginInfo();
-      LocalStorage(name: email, value: "email").getLoginInfo();
+      /*LocalStorage(name: uid, value: "uid").getLoginInfo();
+      LocalStorage(name: email, value: "email").getLoginInfo();*/
       // activateCheck(uid);
       if (isActivated == false) {
         showDialog(
@@ -28,7 +28,8 @@ class TaskScreen extends StatelessWidget {
                 },
                 child: AlertDialog(
                   title: Text("Activation pending"),
-                  content: Text("Your account is waiting to be activate by admin, please check later"),
+                  content:
+                      Text("Your account is waiting to be activate by admin, please check later"),
                   actions: [
                     FlatButton(
                       child: Text("Refresh"),

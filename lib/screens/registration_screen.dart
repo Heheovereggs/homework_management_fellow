@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'task_screen.dart';
 import 'welcome_screen.dart';
 
@@ -21,9 +22,22 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
   @override
   void initState() {
-    LocalStorage(name: uid, value: "uid").getLoginInfo();
-    LocalStorage(name: email, value: "email").getLoginInfo();
+    getLoginInfo();
     super.initState();
+  }
+
+  void getLoginInfo() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      email = prefs.getString('email') ?? '';
+      uid = prefs.getString('uid') ?? '';
+    });
+  }
+
+  void saveLoginInfo() async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setString('email', email);
+    prefs.setString('uid', uid);
   }
 
   @override
@@ -118,8 +132,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                       ),
                     ),
                     onPressed: () {
-                      LocalStorage(name: 'email', value: email).saveLoginInfo();
-                      LocalStorage(name: 'uid', value: uid).saveLoginInfo();
+                      saveLoginInfo();
                       _firestore.collection('user').doc('$uid').set({
                         'uid': uid,
                         'email': email,

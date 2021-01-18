@@ -22,10 +22,10 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   @override
   void initState() {
     Future.delayed(Duration.zero, () {
-      LocalStorage(name: uid, value: "uid").getLoginInfo();
-      LocalStorage(name: email, value: "email").getLoginInfo();
-      // getLoginInfo(uid, "uid");
-      // getLoginInfo(email, "email");
+      // LocalStorage(name: uid, value: "uid").getLoginInfo();
+      // LocalStorage(name: email, value: "email").getLoginInfo();
+      getLoginInfo();
+
       if (uid != null || email != null) {
         Navigator.pushNamed(context, TaskScreen.id);
       }
@@ -33,10 +33,12 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     super.initState();
   }
 
-  void getLoginInfo(String name, String value) async {
+  void getLoginInfo() async {
     final prefs = await SharedPreferences.getInstance();
-    name = prefs.getString(value);
-    print("chcvhgmvjhfjvfyvfjyjfjhfjhhjfhjhjfhfhgg$name");
+    setState(() {
+      email = prefs.getString('email') ?? '';
+      uid = prefs.getString('uid') ?? '';
+    });
   }
 
   @override
@@ -161,20 +163,20 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   }
 }
 
-class LocalStorage {
-  String name;
-  String value;
-
-  LocalStorage({this.name, this.value});
-
-  void saveLoginInfo() async {
-    final prefs = await SharedPreferences.getInstance();
-    prefs.setString(name, value);
-  }
-
-  void getLoginInfo() async {
-    final prefs = await SharedPreferences.getInstance();
-    name = prefs.getString(value);
-    print("{$value}chcvhgmvjhfjvfyvfjyjfjhfjhhjfhjhjfhfhgg$name");
-  }
-}
+// class LocalStorage {
+//   String name;
+//   String value;
+//
+//   LocalStorage({this.name, this.value});
+//
+//   void saveLoginInfo() async {
+//     final prefs = await SharedPreferences.getInstance();
+//     prefs.setString(name, value);
+//   }
+//
+//   void getLoginInfo() async {
+//     final prefs = await SharedPreferences.getInstance();
+//     name = prefs.getString(value);
+//     print("{$value}chcvhgmvjhfjvfyvfjyjfjhfjhhjfhjhjfhfhgg$name");
+//   }
+// }
