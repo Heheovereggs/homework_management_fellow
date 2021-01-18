@@ -1,88 +1,63 @@
-import 'package:homework_management_fellow/widgets/homework_card.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import '../widgets/homework_card.dart';
+import '../widgets/task_layout.dart';
+import 'welcome_screen.dart';
 
-class TaskScreen extends StatefulWidget {
+class TaskScreen extends StatelessWidget {
   static const String id = 'TaskScreen';
 
-  @override
-  _TaskScreenState createState() => _TaskScreenState();
-}
+  final _firestore = FirebaseFirestore.instance;
+  final String uid;
+  final String email;
+  final bool isActivated = false;
 
-class _TaskScreenState extends State<TaskScreen> {
-  bool isActivated = false; //TODO: create a function below to check if account activated yet
+  TaskScreen({Key key, this.uid, this.email}) : super(key: key);
 
-  @override
-  void initState() {
-    super.initState();
-    Future.delayed(Duration.zero, () {
+  void initState(BuildContext context) {
+    Future.delayed(Duration(milliseconds: 200), () {
+      LocalStorage(name: uid, value: "uid").getLoginInfo();
+      LocalStorage(name: email, value: "email").getLoginInfo();
+      // activateCheck(uid);
       if (isActivated == false) {
         showDialog(
-          context: context,
-          barrierDismissible: false,
-          builder: (_) => AlertDialog(
-            title: Text("Activation pending"),
-            content: Text("Your account is waiting to be activated by admin"),
-            actions: [
-              FlatButton(
-                child: Text("Refresh"),
-                onPressed: () {
-                  // TODO: get new account stat from server and rebuild page
+            context: context,
+            builder: (BuildContext context) {
+              return WillPopScope(
+                onWillPop: () async {
+                  return isActivated;
                 },
-              ),
-            ],
-          ),
-        );
+                child: AlertDialog(
+                  title: Text("Activation pending"),
+                  content: Text("Your account is waiting to be activate by admin, please check later"),
+                  actions: [
+                    FlatButton(
+                      child: Text("Refresh"),
+                      onPressed: () {
+                        activateCheck(uid);
+                      },
+                    ),
+                  ],
+                ),
+              );
+            });
       }
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        leading: GestureDetector(
-          onTap: () {
-            // TODO: pop up card
-          },
-          child: Icon(Icons.settings),
-        ),
-        title: Text("HMF"),
-        actions: <Widget>[
-          IconButton(
-            icon: const Icon(Icons.filter_alt),
-            onPressed: () {
-              // TODO: pop up card
-            },
-          ),
-          SizedBox(width: 8)
-        ],
-      ),
-      backgroundColor: Colors.white,
-      body: SafeArea(
-        child: ListView(
-          children: stackGenerator(),
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        child: Icon(
-          Icons.add,
-          size: 40,
-        ),
-        onPressed: () {
-          // TODO: add pop up panel
-        },
-      ),
-    );
+    return TaskScreenLayout(context: context, email: email).taskLayoutGenerator();
   }
-}
 
-List<HomeworkCard> stackGenerator() {
-  return [
-    HomeworkCard(name: "101", dueDate: "1212", subject: "123"),
-    HomeworkCard(name: "102", dueDate: "1212", subject: "123"),
-    HomeworkCard(name: "247", dueDate: "1212", subject: "123"),
-    HomeworkCard(name: "206", dueDate: "1212", subject: "123"),
-    HomeworkCard(name: "207", dueDate: "1212", subject: "123"),
-  ];
+  Future<bool> activateCheck(String uid) async {
+    var userInfo = await _firestore.collection("user/$uid/activate").get();
+    for (var userInf in userInfo.docs) {
+      print(userInf);
+      // if (userInf == true) {
+      //   return true;
+      // } else {
+      //   return false;
+      // }
+    }
+  }
 }

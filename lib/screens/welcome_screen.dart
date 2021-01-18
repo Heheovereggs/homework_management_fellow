@@ -4,6 +4,7 @@ import 'package:homework_management_fellow/screens/task_screen.dart';
 import 'package:homework_management_fellow/widgets/sign_in.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class WelcomeScreen extends StatefulWidget {
   static const String id = 'WelcomeScreen';
@@ -15,6 +16,29 @@ class WelcomeScreen extends StatefulWidget {
 class _WelcomeScreenState extends State<WelcomeScreen> {
   final _firestore = FirebaseFirestore.instance;
   bool showSpinner = false;
+  String uid;
+  String email;
+
+  @override
+  void initState() {
+    Future.delayed(Duration.zero, () {
+      LocalStorage(name: uid, value: "uid").getLoginInfo();
+      LocalStorage(name: email, value: "email").getLoginInfo();
+      // getLoginInfo(uid, "uid");
+      // getLoginInfo(email, "email");
+      if (uid != null || email != null) {
+        Navigator.pushNamed(context, TaskScreen.id);
+      }
+    });
+    super.initState();
+  }
+
+  void getLoginInfo(String name, String value) async {
+    final prefs = await SharedPreferences.getInstance();
+    name = prefs.getString(value);
+    print("chcvhgmvjhfjvfyvfjyjfjhfjhhjfhjhjfhfhgg$name");
+  }
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -52,7 +76,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                 ),
                 OutlineButton(
                   splashColor: Colors.grey,
-                  onPressed: () => authentication(showSpinner),
+                  onPressed: () => buttonOnPressed(showSpinner),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40)),
                   highlightElevation: 0,
                   borderSide: BorderSide(color: Colors.grey),
@@ -85,8 +109,9 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     );
   }
 
-  Future<void> authentication(bool showSpinner) async {
+  Future<void> buttonOnPressed(bool showSpinner) async {
     String email;
+    String uid;
     bool isRegistered;
     setState(() {
       showSpinner = true;
@@ -100,7 +125,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
         });
         if (email != null) {
           if (isRegistered == false) {
-            Navigator.pushNamed(context, RegistrationScreen.id, arguments: result);
+            Navigator.pushNamed(context, RegistrationScreen.id);
           } else {
             Navigator.pushNamed(context, TaskScreen.id);
           }
@@ -126,14 +151,30 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   }
 
   Future<bool> registeredCheck(String email) async {
-    QuerySnapshot userInfo = await _firestore.collection("user").get();
-    for (DocumentSnapshot userInf in userInfo.docs) {
+    var userInfo = await _firestore.collection("user").get();
+    for (var userInf in userInfo.docs) {
       if (userInf.data()["email"] == email) {
-        print("true");
         return true;
       }
     }
-    print("false");
     return false;
+  }
+}
+
+class LocalStorage {
+  String name;
+  String value;
+
+  LocalStorage({this.name, this.value});
+
+  void saveLoginInfo() async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setString(name, value);
+  }
+
+  void getLoginInfo() async {
+    final prefs = await SharedPreferences.getInstance();
+    name = prefs.getString(value);
+    print("{$value}chcvhgmvjhfjvfyvfjyjfjhfjhhjfhjhjfhfhgg$name");
   }
 }

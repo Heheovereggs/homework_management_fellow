@@ -15,9 +15,21 @@ class TaskCreatePage extends StatelessWidget {
             topLeft: Radius.circular(20.0),
           ),
         ),
-        child: Padding(
-          padding: EdgeInsets.all(35.0),
-          child: Text("lol"),
+        child: Column(
+          children: [
+            Padding(
+              padding: EdgeInsets.all(35.0),
+              child: Text("cast"),
+            ),
+            Padding(
+              padding: EdgeInsets.all(35.0),
+              child: Text("apply for cast"),
+            ),
+            Padding(
+              padding: EdgeInsets.all(35.0),
+              child: Text("private"),
+            ),
+          ],
         ),
       ),
     );
