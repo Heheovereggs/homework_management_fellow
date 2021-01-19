@@ -1,22 +1,26 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import '../widgets/task_layout.dart';
-import 'welcome_screen.dart';
+import 'package:provider/provider.dart';
 
-class TaskScreen extends StatelessWidget {
+class TaskScreen extends StatefulWidget {
   static const String id = 'TaskScreen';
 
+  @override
+  _TaskScreenState createState() => _TaskScreenState();
+}
+
+class _TaskScreenState extends State<TaskScreen> {
   final _firestore = FirebaseFirestore.instance;
-  final String uid;
-  final String email;
-  final bool isActivated = false;
+  String uid;
+  String email;
+  bool isActivated = false;
 
-  TaskScreen({Key key, this.uid, this.email}) : super(key: key);
-
-  void initState(BuildContext context) {
-    Future.delayed(Duration(milliseconds: 200), () {
-      /*LocalStorage(name: uid, value: "uid").getLoginInfo();
-      LocalStorage(name: email, value: "email").getLoginInfo();*/
+  void initState() {
+    Future.delayed(Duration.zero, () {
+      List userIdentity = Provider.of<List>(context);
+      email = userIdentity[0];
+      uid = userIdentity[1];
       // activateCheck(uid);
       if (isActivated == false) {
         showDialog(
@@ -28,8 +32,7 @@ class TaskScreen extends StatelessWidget {
                 },
                 child: AlertDialog(
                   title: Text("Activation pending"),
-                  content:
-                      Text("Your account is waiting to be activate by admin, please check later"),
+                  content: Text("Your account is waiting to be activate by admin, please check later"),
                   actions: [
                     FlatButton(
                       child: Text("Refresh"),
@@ -43,6 +46,7 @@ class TaskScreen extends StatelessWidget {
             });
       }
     });
+    super.initState();
   }
 
   @override

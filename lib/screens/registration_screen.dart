@@ -1,9 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'task_screen.dart';
-import 'welcome_screen.dart';
 
 class RegistrationScreen extends StatefulWidget {
   static const String id = 'RegistrationScreen';
@@ -20,20 +20,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   String uid;
   String email;
 
-  @override
-  void initState() {
-    getLoginInfo();
-    super.initState();
-  }
-
-  void getLoginInfo() async {
-    final prefs = await SharedPreferences.getInstance();
-    setState(() {
-      email = prefs.getString('email') ?? '';
-      uid = prefs.getString('uid') ?? '';
-    });
-  }
-
   void saveLoginInfo() async {
     final prefs = await SharedPreferences.getInstance();
     prefs.setString('email', email);
@@ -42,6 +28,9 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
   @override
   Widget build(BuildContext context) {
+    List userIdentity = Provider.of<List>(context);
+    email = userIdentity[0];
+    uid = userIdentity[1];
     return Scaffold(
       appBar: AppBar(
         title: Text("Registration"),
