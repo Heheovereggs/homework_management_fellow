@@ -131,7 +131,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
         });
         if (email != null) {
           if (isRegistered == false) {
-            Navigator.pushNamed(context, RegistrationScreen.id);
+            Navigator.pushNamed(context, RegistrationScreen.id, arguments: {'email': email, 'uid': uid});
           } else {
             Navigator.pushNamed(context, TaskScreen.id);
           }
