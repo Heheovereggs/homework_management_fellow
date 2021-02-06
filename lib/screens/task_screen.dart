@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import '../widgets/task_layout.dart';
-import 'package:provider/provider.dart';
 
 class TaskScreen extends StatefulWidget {
   static const String id = 'TaskScreen';
@@ -18,9 +17,6 @@ class _TaskScreenState extends State<TaskScreen> {
 
   void initState() {
     Future.delayed(Duration.zero, () {
-      List userIdentity = Provider.of<List>(context);
-      email = userIdentity[0];
-      uid = userIdentity[1];
       // activateCheck(uid);
       if (isActivated == false) {
         showDialog(
@@ -32,7 +28,8 @@ class _TaskScreenState extends State<TaskScreen> {
                 },
                 child: AlertDialog(
                   title: Text("Activation pending"),
-                  content: Text("Your account is waiting to be activate by admin, please check later"),
+                  content:
+                      Text("Your account is waiting to be activate by admin, please check later"),
                   actions: [
                     FlatButton(
                       child: Text("Refresh"),

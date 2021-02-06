@@ -1,9 +1,8 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:homework_management_fellow/services/firebaseService.dart';
 import 'package:homework_management_fellow/services/stateService.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'task_screen.dart';
 
 class RegistrationScreen extends StatefulWidget {
@@ -14,18 +13,12 @@ class RegistrationScreen extends StatefulWidget {
 }
 
 class _RegistrationScreenState extends State<RegistrationScreen> {
-  final _firestore = FirebaseFirestore.instance;
   String firstName;
   String lastName;
   bool isDiscord = false;
   String uid;
   String email;
-
-  void saveLoginInfo() async {
-    final prefs = await SharedPreferences.getInstance();
-    prefs.setString('email', email);
-    prefs.setString('uid', uid);
-  }
+  FirebaseService firebaseService = FirebaseService();
 
   @override
   Widget build(BuildContext context) {
@@ -124,22 +117,12 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                       ),
                     ),
                     onPressed: () {
-                      saveLoginInfo();
-                      _firestore.collection('user').doc('$uid').set({
-                        'uid': uid,
-                        'email': email,
-                        'FirstName': firstName,
-                        'LastName': lastName,
-                        'activate': false,
-                        'admin': false,
-                        'ban': false,
-                        'theme': null,
-                      });
-                      //To be move to admin screen:
-                      // _firestore.collection('user').doc('$uid').set({
-                      //   'dateofJoin': Timestamp.now(),
-                      //   'activate': true,
-                      // });
+                      firebaseService.saveLoginInfo(
+                          uid: uid,
+                          email: email,
+                          firstName: firstName,
+                          lastName: lastName,
+                          isDiscord: isDiscord);
                       Navigator.pushNamed(context, TaskScreen.id);
                     },
                   ),

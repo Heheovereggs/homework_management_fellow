@@ -8,6 +8,7 @@ class User {
   bool ban;
   DateTime dateOfJoin;
   String theme;
+  bool isDiscord;
 
   User({this.email, this.uid, this.firstName, this.lastName});
 }
