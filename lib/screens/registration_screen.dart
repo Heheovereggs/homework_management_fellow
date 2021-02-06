@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:homework_management_fellow/services/firebaseService.dart';
 import 'package:homework_management_fellow/services/stateService.dart';
-import 'package:provider/provider.dart';
 import 'task_screen.dart';
 
 class RegistrationScreen extends StatefulWidget {
@@ -13,12 +12,13 @@ class RegistrationScreen extends StatefulWidget {
 }
 
 class _RegistrationScreenState extends State<RegistrationScreen> {
-  String firstName;
-  String lastName;
   bool isDiscord = false;
   String uid;
   String email;
   FirebaseService firebaseService = FirebaseService();
+  final _formKey = GlobalKey<FormState>();
+  final _firstcontroller = TextEditingController();
+  final _lastcontroller = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -32,123 +32,133 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(8.0),
-          child: ListView(
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(9.0),
-                child: Consumer<StateService>(builder: (context, stateService, child) {
-                  return Text(
+          child: Form(
+            key: _formKey,
+            child: ListView(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(9.0),
+                  child: Text(
                     "Your email: $email",
                     style: TextStyle(fontSize: 24, height: 1.3),
-                  );
-                }),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: registrationTextField(firstName, "First name"),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: registrationTextField(lastName, "Last name"),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(9),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      "Are you in CET Discord server?",
-                      style: TextStyle(fontSize: 19),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 15),
-                      child: Container(
-                        padding: EdgeInsets.symmetric(horizontal: 15),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          border: Border.all(),
-                        ),
-                        child: DropdownButtonHideUnderline(
-                          child: DropdownButton(
-                              value: isDiscord,
-                              items: [
-                                DropdownMenuItem(child: Text("Yes"), value: true),
-                                DropdownMenuItem(child: Text("No"), value: false),
-                              ],
-                              onChanged: (value) {
-                                setState(() {
-                                  isDiscord = value;
-                                  print(isDiscord);
-                                });
-                              }),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: registrationTextFormField("First name", _firstcontroller),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: registrationTextFormField("Last name", _lastcontroller),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(9),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        "Are you in CET Discord server?",
+                        style: TextStyle(fontSize: 19),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 15),
+                        child: Container(
+                          padding: EdgeInsets.symmetric(horizontal: 15),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            border: Border.all(),
+                          ),
+                          child: DropdownButtonHideUnderline(
+                            child: DropdownButton(
+                                value: isDiscord,
+                                items: [
+                                  DropdownMenuItem(child: Text("Yes"), value: true),
+                                  DropdownMenuItem(child: Text("No"), value: false),
+                                ],
+                                onChanged: (value) {
+                                  setState(() {
+                                    isDiscord = value;
+                                    print(isDiscord);
+                                  });
+                                }),
+                          ),
                         ),
                       ),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(9),
+                  child: Container(
+                    height: 60,
+                    padding: EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(),
                     ),
-                  ],
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(9),
-                child: Container(
-                  height: 60,
-                  padding: EdgeInsets.all(10),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    border: Border.all(),
-                  ),
-                  child: Text(
-                    "No password required since Gooooooooooooooogle will do the verification",
-                    style: TextStyle(fontSize: 16),
-                  ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(19),
-                child: SizedBox(
-                  width: 350,
-                  child: CupertinoButton(
-                    borderRadius: BorderRadius.circular(10.0),
-                    color: Color(0xFF2196f3),
                     child: Text(
-                      'Submit',
-                      style: TextStyle(
-                        fontSize: 17,
-                        color: Colors.white,
-                      ),
+                      "No password required since Gooooooooooooooogle will do the verification",
+                      style: TextStyle(fontSize: 16),
                     ),
-                    onPressed: () {
-                      firebaseService.saveLoginInfo(
-                          uid: uid,
-                          email: email,
-                          firstName: firstName,
-                          lastName: lastName,
-                          isDiscord: isDiscord);
-                      Navigator.pushNamed(context, TaskScreen.id);
-                    },
                   ),
                 ),
-              ),
-            ],
+                Padding(
+                  padding: const EdgeInsets.all(19),
+                  child: SizedBox(
+                    width: 350,
+                    child: CupertinoButton(
+                      borderRadius: BorderRadius.circular(10.0),
+                      color: Color(0xFF2196f3),
+                      child: Text(
+                        'Submit',
+                        style: TextStyle(
+                          fontSize: 17,
+                          color: Colors.white,
+                        ),
+                      ),
+                      onPressed: _saveInfoForm,
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
     );
   }
 
-  TextField registrationTextField(String value, final String hint) {
-    return TextField(
+  TextFormField registrationTextFormField(final String hint, TextEditingController textEditingController) {
+    return TextFormField(
+      controller: textEditingController,
       autocorrect: false,
       autofocus: true,
       decoration: InputDecoration(
         border: OutlineInputBorder(),
         hintText: hint,
       ),
-      onChanged: (text) {
-        value = text;
-        print(value);
+      validator: (String value) {
+        if (value.isEmpty) {
+          return '$hint is required';
+        }
+        final validCharacters = RegExp(r'^[a-z\-àâçéèêëîïôûùüÿñæœ ]+$', caseSensitive: false);
+        return validCharacters.hasMatch(value) ? null : 'Please only enter letter and "-"';
       },
       textInputAction: TextInputAction.next,
       textCapitalization: TextCapitalization.words,
     );
+  }
+
+  void _saveInfoForm() {
+    if (!_formKey.currentState.validate()) {
+      return null;
+    }
+    firebaseService.saveLoginInfo(
+        uid: uid,
+        email: email,
+        firstName: _firstcontroller.text.trim(),
+        lastName: _lastcontroller.text.trim(),
+        isDiscord: isDiscord);
+    Navigator.pushNamed(context, TaskScreen.id);
   }
 }

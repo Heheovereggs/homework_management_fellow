@@ -19,7 +19,6 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   bool showSpinner = false;
   String uid;
   String email;
-  List identity = [null, null];
 
   @override
   void initState() {
@@ -37,8 +36,6 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     setState(() {
       email = prefs.getString('email') ?? '';
       uid = prefs.getString('uid') ?? '';
-      identity[0] = email;
-      identity[1] = uid;
     });
   }
 
@@ -47,67 +44,64 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     Size size = MediaQuery.of(context).size;
     Gradient gradient = LinearGradient(colors: [Colors.blueAccent, Colors.greenAccent]);
     Shader shader = gradient.createShader(Rect.fromLTWH(0, 0, size.width, size.height));
-    return Provider<List>(
-      create: (context) => identity,
-      child: Scaffold(
-        // floatingActionButton: FloatingActionButton(
-        //   onPressed: () {
-        //     registeredCheck("xxx@xx.com");
-        //   },
-        //   child: Icon(Icons.download_rounded),
-        // ),
-        body: ModalProgressHUD(
-          inAsyncCall: showSpinner,
-          child: SafeArea(
-            child: Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.max,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Text("Homework management fellow", style: TextStyle(fontSize: 25)),
-                  SizedBox(
-                    height: 50,
+    return Scaffold(
+      // floatingActionButton: FloatingActionButton(
+      //   onPressed: () {
+      //     registeredCheck("xxx@xx.com");
+      //   },
+      //   child: Icon(Icons.download_rounded),
+      // ),
+      body: ModalProgressHUD(
+        inAsyncCall: showSpinner,
+        child: SafeArea(
+          child: Center(
+            child: Column(
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Text("Homework management fellow", style: TextStyle(fontSize: 25)),
+                SizedBox(
+                  height: 50,
+                ),
+                Text(
+                  "No icon was designed",
+                  style: TextStyle(
+                    fontSize: 40,
+                    fontWeight: FontWeight.bold,
+                    foreground: Paint()..shader = shader,
                   ),
-                  Text(
-                    "No icon was designed",
-                    style: TextStyle(
-                      fontSize: 40,
-                      fontWeight: FontWeight.bold,
-                      foreground: Paint()..shader = shader,
-                    ),
-                  ),
-                  SizedBox(
-                    height: 40,
-                  ),
-                  OutlineButton(
-                    splashColor: Colors.grey,
-                    onPressed: () => buttonOnPressed(showSpinner),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40)),
-                    highlightElevation: 0,
-                    borderSide: BorderSide(color: Colors.grey),
-                    child: Padding(
-                      padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Image(image: AssetImage("images/google_logo.png"), height: 35.0),
-                          Padding(
-                            padding: const EdgeInsets.only(left: 10),
-                            child: Text(
-                              'Sign/Log in with Google',
-                              style: TextStyle(
-                                fontSize: 20,
-                                color: Colors.grey,
-                              ),
+                ),
+                SizedBox(
+                  height: 40,
+                ),
+                OutlineButton(
+                  splashColor: Colors.grey,
+                  onPressed: () => buttonOnPressed(showSpinner),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40)),
+                  highlightElevation: 0,
+                  borderSide: BorderSide(color: Colors.grey),
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Image(image: AssetImage("images/google_logo.png"), height: 35.0),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 10),
+                          child: Text(
+                            'Sign/Log in with Google',
+                            style: TextStyle(
+                              fontSize: 20,
+                              color: Colors.grey,
                             ),
-                          )
-                        ],
-                      ),
+                          ),
+                        )
+                      ],
                     ),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ),
@@ -125,6 +119,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     signInWithGoogle().then(
       (result) async {
         email = result[0];
+        uid = result[1];
         isRegistered = await registeredCheck(email);
         setState(() {
           showSpinner = false;

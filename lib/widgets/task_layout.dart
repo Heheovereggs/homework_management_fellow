@@ -1,9 +1,7 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'homework_card.dart';
 
 class TaskScreenLayout {
-  final _firestore = FirebaseFirestore.instance;
   final String email;
   final context;
 
@@ -22,7 +20,7 @@ class TaskScreenLayout {
         title: Text("HMF"),
         actions: <Widget>[
           IconButton(
-            icon: const Icon(Icons.filter_alt),
+            icon: const Icon(Icons.filter_list), //filter_alt
             onPressed: () {
               // TODO: pop up card
             },
