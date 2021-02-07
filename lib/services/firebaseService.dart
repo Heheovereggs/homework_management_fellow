@@ -25,11 +25,11 @@ class FirebaseService {
   }
 
   Future<Student> checkUser({String email, String uid}) async {
-    Student user;
-    var userInfo = await _firestore.collection("user").where('email', isEqualTo: email).limit(1).get();
+    Student student;
+    var userInfo = await _firestore.collection("student").where('email', isEqualTo: email).limit(1).get();
     for (var userInf in userInfo.docs) {
       if (userInf.data()["email"] == email) {
-        user = Student(
+        student = Student(
             uid: userInf.data()["uid"],
             email: userInf.data()["email"],
             firstName: userInf.data()["firstName"],
@@ -41,7 +41,6 @@ class FirebaseService {
             isDiscord: userInf.data()["isDiscord"]);
       }
     }
-
-    return user;
+    return student;
   }
 }

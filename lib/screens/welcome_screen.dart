@@ -20,7 +20,7 @@ class WelcomeScreen extends StatefulWidget {
 
 class _WelcomeScreenState extends State<WelcomeScreen> {
   bool showSpinner = false;
-  Student user;
+  Student student;
 
   @override
   void initState() {
@@ -33,11 +33,11 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     String email = prefs.getString('email');
     String uid = prefs.getString('uid');
     if (email != null && uid != null) {
-      Student _user =
+      Student _student =
           await Provider.of<FirebaseService>(context, listen: false).checkUser(email: email, uid: uid);
-      Provider.of<StateService>(context, listen: false).setStudent(user);
+      Provider.of<StateService>(context, listen: false).setStudent(_student);
       setState(() {
-        user = _user;
+        student = _student;
       });
     }
   }
@@ -48,7 +48,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     Gradient gradient = LinearGradient(colors: [Colors.blueAccent, Colors.greenAccent]);
     Shader shader = gradient.createShader(Rect.fromLTWH(0, 0, size.width, size.height));
 
-    if (user == null) {
+    if (student == null) {
       return Scaffold(
         // floatingActionButton: FloatingActionButton(
         //   onPressed: () {
@@ -114,14 +114,12 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
       );
     }
 
-    if (user.ban) {
+    if (student.ban) {
       // TODO: create ban info screen
-      return Container(
-        child: Text('TODO: create ban info screen'),
-      );
+      //Navigator.pushNamed(context, BannedScreen.id);
     }
 
-    if (!user.activate) {
+    if (!student.activate) {
       Navigator.pushNamed(context, ActivationPendingScreen.id);
     }
 
