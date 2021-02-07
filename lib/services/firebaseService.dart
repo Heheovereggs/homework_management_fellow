@@ -1,14 +1,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:homework_management_fellow/model/user.dart';
-// import 'package:shared_preferences/shared_preferences.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class FirebaseService {
   final _firestore = FirebaseFirestore.instance;
 
   void saveLoginInfo(User user) async {
-    // final prefs = await SharedPreferences.getInstance();
-    // prefs.setString('email', email);
-    // prefs.setString('uid', uid);
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setString('email', user.email);
+    prefs.setString('uid', user.uid);
+    prefs.setBool('activate', user.activate);
 
     _firestore.collection('user').doc('${user.uid}').set({
       'uid': user.uid,

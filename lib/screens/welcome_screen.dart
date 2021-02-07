@@ -19,12 +19,13 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   bool showSpinner = false;
   String uid;
   String email;
+  bool activate;
 
   @override
   void initState() {
     Future.delayed(Duration.zero, () {
       getLoginInfo();
-      if (uid != null || email != null) {
+      if (uid != null || email != null || activate) {
         Navigator.pushNamed(context, TaskScreen.id);
       }
     });
@@ -36,6 +37,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     setState(() {
       email = prefs.getString('email') ?? '';
       uid = prefs.getString('uid') ?? '';
+      activate = prefs.getBool('activate') ?? false;
     });
   }
 
@@ -126,7 +128,8 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
         });
         if (email != null) {
           if (isRegistered == false) {
-            Navigator.pushNamed(context, RegistrationScreen.id, arguments: {'email': email, 'uid': uid});
+            Navigator.pushNamed(context, RegistrationScreen.id,
+                arguments: {'email': email, 'uid': uid});
           } else {
             Navigator.pushNamed(context, TaskScreen.id);
           }
@@ -152,7 +155,8 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   }
 
   Future<bool> registeredCheck(String email) async {
-    var userInfo = await _firestore.collection("user").get();
+    var userInfo =
+        await _firestore.collection("user").where('email', isEqualTo: email).limit(1).get();
     for (var userInf in userInfo.docs) {
       if (userInf.data()["email"] == email) {
         return true;
