@@ -14,12 +14,17 @@ class TaskList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var _controller = CupertinoTabController();
+
     return CupertinoTabScaffold(
       tabBar: CupertinoTabBar(
         items: [
           BottomNavigationBarItem(icon: Icon(Icons.format_list_numbered_rounded), label: "Public task"),
           BottomNavigationBarItem(icon: Icon(Icons.format_list_numbered_rtl_rounded), label: "Private task"),
         ],
+        onTap: (int index) {
+          _controller.index = index;
+          print(_controller.index);
+        },
       ),
       backgroundColor: Colors.white,
       tabBuilder: (context, index) {
