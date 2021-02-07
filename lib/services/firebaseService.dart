@@ -26,11 +26,12 @@ class FirebaseService {
 
   Future<Student> checkStudent({String email, String uid}) async {
     Student student;
-    var studentInfo = await _firestore.collection("student").doc(uid).get();
+    var studentInfo = await _firestore.collection("student").doc("$uid").get();
+    print(studentInfo);
     print(email);
     print(studentInfo["uid"]);
 
-    if (studentInfo["email"] == email) {
+    if (studentInfo.data()["email"] == email) {
       student = Student(
           uid: studentInfo["uid"],
           email: studentInfo["email"],
@@ -42,7 +43,6 @@ class FirebaseService {
           theme: studentInfo["theme"],
           isDiscord: studentInfo["isDiscord"]);
     }
-
     return student;
   }
 }

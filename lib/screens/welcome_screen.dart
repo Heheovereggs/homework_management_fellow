@@ -10,6 +10,8 @@ import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:provider/provider.dart';
 
+import 'banned_screen.dart';
+
 class WelcomeScreen extends StatefulWidget {
   static const String id = 'WelcomeScreen';
 
@@ -18,7 +20,7 @@ class WelcomeScreen extends StatefulWidget {
 }
 
 class _WelcomeScreenState extends State<WelcomeScreen> {
-  bool showSpinner = false;
+  bool _showSpinner = false;
   Student student;
 
   @override
@@ -34,13 +36,12 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     print(email);
     print(uid);
     if (email != null && uid != null) {
-      Student _student = await Provider.of<FirebaseService>(context, listen: false)
-          .checkStudent(email: email, uid: uid);
+      Student _student =
+          await Provider.of<FirebaseService>(context, listen: false).checkStudent(email: email, uid: uid);
       Provider.of<StateService>(context, listen: false).setStudent(_student);
       if (_student != null) {
         if (_student.ban) {
-          // TODO: create ban info screen
-          //Navigator.pushNamed(context, BannedScreen.id);
+          Navigator.pushNamed(context, BannedScreen.id);
         } else if (!_student.activate) {
           Navigator.pushNamed(context, ActivationPendingScreen.id);
         } else {
@@ -64,7 +65,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
       //   child: Icon(Icons.download_rounded),
       // ),
       body: ModalProgressHUD(
-        inAsyncCall: showSpinner,
+        inAsyncCall: _showSpinner,
         child: SafeArea(
           child: Center(
             child: Column(
@@ -88,7 +89,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                 ),
                 OutlineButton(
                   splashColor: Colors.grey,
-                  onPressed: () => buttonOnPressed(showSpinner),
+                  onPressed: buttonOnPressed,
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40)),
                   highlightElevation: 0,
                   borderSide: BorderSide(color: Colors.grey),
@@ -121,27 +122,26 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     );
   }
 
-  Future<void> buttonOnPressed(bool showSpinner) async {
+  Future<void> buttonOnPressed() async {
     String email;
     String uid;
     Student student;
     setState(() {
-      showSpinner = true;
+      _showSpinner = true;
     });
     signInWithGoogle().then(
       (result) async {
         email = result[0];
         uid = result[1];
-        student = await Provider.of<FirebaseService>(context, listen: false)
-            .checkStudent(email: email, uid: uid);
+        student =
+            await Provider.of<FirebaseService>(context, listen: false).checkStudent(email: email, uid: uid);
         Provider.of<StateService>(context, listen: false).setStudent(student);
         setState(() {
-          showSpinner = false;
+          _showSpinner = false;
         });
         if (email != null) {
           if (student == null) {
-            Navigator.pushNamed(context, RegistrationScreen.id,
-                arguments: {'email': email, 'uid': uid});
+            Navigator.pushNamed(context, RegistrationScreen.id, arguments: {'email': email, 'uid': uid});
           } else if (student.ban) {
             // TODO: create ban info screen
           } else if (!student.activate) {
