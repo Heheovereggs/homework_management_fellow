@@ -25,16 +25,18 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   @override
   void initState() {
     super.initState();
-    loadUser();
+    loadStudent();
   }
 
-  void loadUser() async {
+  void loadStudent() async {
     final prefs = await SharedPreferences.getInstance();
     String email = prefs.getString('email');
     String uid = prefs.getString('uid');
+    print(email);
+    print(uid);
     if (email != null && uid != null) {
-      Student _student =
-          await Provider.of<FirebaseService>(context, listen: false).checkUser(email: email, uid: uid);
+      Student _student = await Provider.of<FirebaseService>(context, listen: false)
+          .checkStudent(email: email, uid: uid);
       Provider.of<StateService>(context, listen: false).setStudent(_student);
       setState(() {
         student = _student;
@@ -47,7 +49,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     Size size = MediaQuery.of(context).size;
     Gradient gradient = LinearGradient(colors: [Colors.blueAccent, Colors.greenAccent]);
     Shader shader = gradient.createShader(Rect.fromLTWH(0, 0, size.width, size.height));
-
+    print(student);
     if (student == null) {
       return Scaffold(
         // floatingActionButton: FloatingActionButton(
@@ -137,15 +139,16 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
       (result) async {
         email = result[0];
         uid = result[1];
-        student =
-            await Provider.of<FirebaseService>(context, listen: false).checkUser(email: email, uid: uid);
+        student = await Provider.of<FirebaseService>(context, listen: false)
+            .checkStudent(email: email, uid: uid);
         Provider.of<StateService>(context, listen: false).setStudent(student);
         setState(() {
           showSpinner = false;
         });
         if (email != null) {
           if (student == null) {
-            Navigator.pushNamed(context, RegistrationScreen.id, arguments: {'email': email, 'uid': uid});
+            Navigator.pushNamed(context, RegistrationScreen.id,
+                arguments: {'email': email, 'uid': uid});
           } else if (student.ban) {
             // TODO: create ban info screen
           } else if (!student.activate) {

@@ -4,5 +4,5 @@ class Homework {
   String subject;
   String note;
   String where;
-  String userID;
+  String studentID;
 }
