@@ -10,5 +10,5 @@ class User {
   String theme;
   bool isDiscord;
 
-  User({this.email, this.uid, this.firstName, this.lastName});
+  User({this.email, this.uid, this.firstName, this.lastName, this.isDiscord});
 }
