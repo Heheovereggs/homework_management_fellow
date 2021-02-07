@@ -12,8 +12,8 @@ class FirebaseService {
     _firestore.collection('user').doc('$uid').set({
       'uid': uid,
       'email': email,
-      'FirstName': firstName,
-      'LastName': lastName,
+      'firstName': firstName,
+      'lastName': lastName,
       'activate': false,
       'admin': false,
       'ban': false,
