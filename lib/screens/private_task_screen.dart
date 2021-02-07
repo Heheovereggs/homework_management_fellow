@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:homework_management_fellow/widgets/task_layout.dart';
+import 'package:homework_management_fellow/model/task_layout.dart';
 
 class PrivateTaskScreen extends StatefulWidget {
   @override
