@@ -4,6 +4,7 @@ import 'package:homework_management_fellow/services/firebaseService.dart';
 import 'package:homework_management_fellow/services/stateService.dart';
 import 'package:homework_management_fellow/widgets/task_list.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class TaskScreen extends StatefulWidget {
   static const String id = 'TaskScreen';
@@ -20,7 +21,8 @@ class _TaskScreenState extends State<TaskScreen> {
   }
 
   void loadHomeworkList() async {
-    String uid = Provider.of<StateService>(context, listen: false).student.uid;
+    final prefs = await SharedPreferences.getInstance();
+    String uid = prefs.getString('uid');
     List<Homework> _homeworkList =
         await Provider.of<FirebaseService>(context, listen: false).getPublicHomeWorkList(uid);
     // Provider.of<StateService>(context, listen: false).setPublicHomeworkList(homeworkList);
