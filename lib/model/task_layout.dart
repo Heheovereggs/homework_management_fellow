@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'homework_card.dart';
+import '../widgets/homework_card.dart';
 
 class TaskScreenLayout {
   final String email;

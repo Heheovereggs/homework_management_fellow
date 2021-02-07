@@ -141,7 +141,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         if (value.isEmpty) {
           return '$hint is required';
         }
-        final validCharacters = RegExp(r'^[a-z\-àâçéèêëîïôûùüÿñæœ ]+$', caseSensitive: false);
+        final validCharacters = RegExp(r'^[a-z\-àâçéèêëîïôûùüÿñæœ\s]+$', caseSensitive: false);
         return validCharacters.hasMatch(value) ? null : 'Please only enter letter and "-"';
       },
       textInputAction: TextInputAction.next,

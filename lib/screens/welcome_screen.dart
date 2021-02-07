@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:homework_management_fellow/screens/registration_screen.dart';
 import 'package:homework_management_fellow/screens/task_screen.dart';
-import 'package:homework_management_fellow/widgets/sign_in.dart';
+import 'package:homework_management_fellow/services/sign_in.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:shared_preferences/shared_preferences.dart';
