@@ -26,24 +26,23 @@ class FirebaseService {
 
   Future<Student> checkStudent({String email, String uid}) async {
     Student student;
-    var studentInfo =
-        await _firestore.collection("student").where('email', isEqualTo: email).limit(1).get();
+    var studentInfo = await _firestore.collection("student").doc(uid).get();
     print(email);
-    print(studentInfo.docs);
-    for (var studentInf in studentInfo.docs) {
-      if (studentInf.data()["email"] == email) {
-        student = Student(
-            uid: studentInf.data()["uid"],
-            email: studentInf.data()["email"],
-            firstName: studentInf.data()["firstName"],
-            lastName: studentInf.data()["lastName"],
-            activate: studentInf.data()["activate"],
-            admin: studentInf.data()["admin"],
-            ban: studentInf.data()["ban"],
-            theme: studentInf.data()["theme"],
-            isDiscord: studentInf.data()["isDiscord"]);
-      }
+    print(studentInfo["uid"]);
+
+    if (studentInfo["email"] == email) {
+      student = Student(
+          uid: studentInfo["uid"],
+          email: studentInfo["email"],
+          firstName: studentInfo["firstName"],
+          lastName: studentInfo["lastName"],
+          activate: studentInfo["activate"],
+          admin: studentInfo["admin"],
+          ban: studentInfo["ban"],
+          theme: studentInfo["theme"],
+          isDiscord: studentInfo["isDiscord"]);
     }
+
     return student;
   }
 }
