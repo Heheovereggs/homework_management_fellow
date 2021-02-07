@@ -30,7 +30,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      initialRoute: TaskScreen.id,
+      initialRoute: WelcomeScreen.id,
       routes: {
         ActivationPendingScreen.id: (context) => ActivationPendingScreen(),
         RegistrationScreen.id: (context) => RegistrationScreen(),

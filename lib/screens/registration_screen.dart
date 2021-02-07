@@ -18,7 +18,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   bool isDiscord = false;
   String uid;
   String email;
-  FirebaseService firebaseService = FirebaseService();
   final _formKey = GlobalKey<FormState>();
   final _firstcontroller = TextEditingController();
   final _lastcontroller = TextEditingController();
@@ -168,7 +167,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     Provider.of<StateService>(context, listen: false).setStudent(student);
 
     // save to firebase
-    firebaseService.saveLoginInfo(student);
+    Provider.of<FirebaseService>(context, listen: false).saveLoginInfo(student);
     Navigator.pushNamed(context, ActivationPendingScreen.id);
   }
 }

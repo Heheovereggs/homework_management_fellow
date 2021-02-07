@@ -4,5 +4,7 @@ class Homework {
   String subject;
   String note;
   String where;
-  String studentID;
+  String studentId;
+
+  Homework({this.name, this.dueDate, this.subject, this.note, this.where, this.studentId});
 }
