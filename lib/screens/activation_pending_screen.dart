@@ -36,12 +36,12 @@ class _ActivationPendingScreenState extends State<ActivationPendingScreen>
     Shader shader1 = gradient1.createShader(Rect.fromLTWH(0, 0, size.width, size.height));
     Shader shader2 = gradient2.createShader(Rect.fromLTWH(0, 0, size.width, size.height));
 
-    Future<bool> checkUserStatus() async {
+    Future<bool> checkStudentStatus() async {
       final prefs = await SharedPreferences.getInstance();
       String email = prefs.getString('email');
       String uid = prefs.getString('uid');
       Student student =
-          await Provider.of<FirebaseService>(context, listen: false).checkUser(email: email, uid: uid);
+          await Provider.of<FirebaseService>(context, listen: false).checkStudent(email: email, uid: uid);
       return student.activate;
     }
 
