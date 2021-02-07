@@ -23,4 +23,26 @@ class FirebaseService {
       'isDiscord': user.isDiscord
     });
   }
+
+  Future<User> checkUser({String email, String uid}) async {
+    User user;
+    var userInfo =
+        await _firestore.collection("user").where('email', isEqualTo: email).limit(1).get();
+    for (var userInf in userInfo.docs) {
+      if (userInf.data()["email"] == email) {
+        user = User(
+            uid: userInf.data()["uid"],
+            email: userInf.data()["email"],
+            firstName: userInf.data()["firstName"],
+            lastName: userInf.data()["lastName"],
+            activate: userInf.data()["activate"],
+            admin: userInf.data()["admin"],
+            ban: userInf.data()["ban"],
+            theme: userInf.data()["theme"],
+            isDiscord: userInf.data()["isDiscord"]);
+      }
+    }
+
+    return user;
+  }
 }

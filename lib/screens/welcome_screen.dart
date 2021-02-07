@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:homework_management_fellow/model/user.dart';
+import 'package:homework_management_fellow/screens/activation_pending_screen.dart';
 import 'package:homework_management_fellow/screens/registration_screen.dart';
 import 'package:homework_management_fellow/screens/task_screen.dart';
+import 'package:homework_management_fellow/services/firebaseService.dart';
 import 'package:homework_management_fellow/services/sign_in.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -15,31 +18,28 @@ class WelcomeScreen extends StatefulWidget {
 }
 
 class _WelcomeScreenState extends State<WelcomeScreen> {
-  final _firestore = FirebaseFirestore.instance;
   bool showSpinner = false;
   String uid;
   String email;
-  bool activate;
+  User user;
 
   @override
   void initState() {
-    Future.delayed(Duration.zero, () {
-      getLoginInfo();
-      if (uid != null || email != null || activate) {
-        Navigator.pushNamed(context, TaskScreen.id);
-        //TODO: also need check activate status from cloud.
-      }
-    });
     super.initState();
+    loadUser();
   }
 
-  void getLoginInfo() async {
+  void loadUser() async {
     final prefs = await SharedPreferences.getInstance();
-    setState(() {
-      email = prefs.getString('email') ?? '';
-      uid = prefs.getString('uid') ?? '';
-      activate = prefs.getBool('activate') ?? false;
-    });
+    email = prefs.getString('email') ?? '';
+    uid = prefs.getString('uid') ?? '';
+    if (email != null && uid != null) {
+      User _user = await Provider.of<FirebaseService>(context, listen: false)
+          .checkUser(email: email, uid: uid);
+      setState(() {
+        user = _user;
+      });
+    }
   }
 
   @override
@@ -47,75 +47,91 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     Size size = MediaQuery.of(context).size;
     Gradient gradient = LinearGradient(colors: [Colors.blueAccent, Colors.greenAccent]);
     Shader shader = gradient.createShader(Rect.fromLTWH(0, 0, size.width, size.height));
-    return Scaffold(
-      // floatingActionButton: FloatingActionButton(
-      //   onPressed: () {
-      //     registeredCheck("xxx@xx.com");
-      //   },
-      //   child: Icon(Icons.download_rounded),
-      // ),
-      body: ModalProgressHUD(
-        inAsyncCall: showSpinner,
-        child: SafeArea(
-          child: Center(
-            child: Column(
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Text("Homework management fellow", style: TextStyle(fontSize: 25)),
-                SizedBox(
-                  height: 50,
-                ),
-                Text(
-                  "No icon was designed",
-                  style: TextStyle(
-                    fontSize: 40,
-                    fontWeight: FontWeight.bold,
-                    foreground: Paint()..shader = shader,
+
+    if (user == null) {
+      return Scaffold(
+        // floatingActionButton: FloatingActionButton(
+        //   onPressed: () {
+        //     registeredCheck("xxx@xx.com");
+        //   },
+        //   child: Icon(Icons.download_rounded),
+        // ),
+        body: ModalProgressHUD(
+          inAsyncCall: showSpinner,
+          child: SafeArea(
+            child: Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Text("Homework management fellow", style: TextStyle(fontSize: 25)),
+                  SizedBox(
+                    height: 50,
                   ),
-                ),
-                SizedBox(
-                  height: 40,
-                ),
-                OutlineButton(
-                  splashColor: Colors.grey,
-                  onPressed: () => buttonOnPressed(showSpinner),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40)),
-                  highlightElevation: 0,
-                  borderSide: BorderSide(color: Colors.grey),
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Image(image: AssetImage("images/google_logo.png"), height: 35.0),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 10),
-                          child: Text(
-                            'Sign/Log in with Google',
-                            style: TextStyle(
-                              fontSize: 20,
-                              color: Colors.grey,
-                            ),
-                          ),
-                        )
-                      ],
+                  Text(
+                    "No icon was designed",
+                    style: TextStyle(
+                      fontSize: 40,
+                      fontWeight: FontWeight.bold,
+                      foreground: Paint()..shader = shader,
                     ),
                   ),
-                ),
-              ],
+                  SizedBox(
+                    height: 40,
+                  ),
+                  OutlineButton(
+                    splashColor: Colors.grey,
+                    onPressed: () => buttonOnPressed(showSpinner),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40)),
+                    highlightElevation: 0,
+                    borderSide: BorderSide(color: Colors.grey),
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Image(image: AssetImage("images/google_logo.png"), height: 35.0),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 10),
+                            child: Text(
+                              'Sign/Log in with Google',
+                              style: TextStyle(
+                                fontSize: 20,
+                                color: Colors.grey,
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
-      ),
-    );
+      );
+    }
+
+    if (user.ban) {
+      // TODO: create ban info screen
+      return Container(
+        child: Text('TODO: create ban info screen'),
+      );
+    }
+
+    if (!user.activate) {
+      Navigator.pushNamed(context, ActivationPendingScreen.id);
+    }
+
+    Navigator.pushNamed(context, TaskScreen.id);
   }
 
   Future<void> buttonOnPressed(bool showSpinner) async {
     String email;
     String uid;
-    bool isRegistered;
+    User user;
     setState(() {
       showSpinner = true;
     });
@@ -123,14 +139,19 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
       (result) async {
         email = result[0];
         uid = result[1];
-        isRegistered = await registeredCheck(email);
+        user = await Provider.of<FirebaseService>(context, listen: false)
+            .checkUser(email: email, uid: uid);
         setState(() {
           showSpinner = false;
         });
         if (email != null) {
-          if (isRegistered == false) {
+          if (user == null) {
             Navigator.pushNamed(context, RegistrationScreen.id,
                 arguments: {'email': email, 'uid': uid});
+          } else if (user.ban) {
+            // TODO: create ban info screen
+          } else if (!user.activate) {
+            Navigator.pushNamed(context, ActivationPendingScreen.id);
           } else {
             Navigator.pushNamed(context, TaskScreen.id);
           }
@@ -153,16 +174,5 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
         }
       },
     );
-  }
-
-  Future<bool> registeredCheck(String email) async {
-    var userInfo =
-        await _firestore.collection("user").where('email', isEqualTo: email).limit(1).get();
-    for (var userInf in userInfo.docs) {
-      if (userInf.data()["email"] == email) {
-        return true;
-      }
-    }
-    return false;
   }
 }
