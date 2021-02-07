@@ -48,65 +48,66 @@ class _ActivationPendingScreenState extends State<ActivationPendingScreen>
     return Scaffold(
       body: Stack(
         children: [
-          Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                "Activation pending",
-                style: TextStyle(
-                  fontSize: 30,
-                  fontWeight: FontWeight.bold,
-                  foreground: Paint()..shader = shader2,
+          Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  "Activation pending",
+                  style: TextStyle(
+                    fontSize: 30,
+                    fontWeight: FontWeight.bold,
+                    foreground: Paint()..shader = shader2,
+                  ),
                 ),
-              ),
-              SizedBox(
-                height: 50,
-              ),
-              Text(
-                "PLease check later or press the button to refresh status",
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  foreground: Paint()..shader = shader1,
+                SizedBox(
+                  height: 50,
                 ),
-              ),
-              SizedBox(
-                height: 35,
-              ),
-              Padding(
-                padding: const EdgeInsets.all(19),
-                child: SizedBox(
-                  width: 180,
-                  child: FlatButton(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30.0),
-                      ),
-                      color: Color(0xFF2196f3),
-                      textColor: Colors.white,
-                      child: Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Text(
-                          'Refresh',
-                          style: TextStyle(
-                            fontSize: 18,
+                Text(
+                  "PLease check later or press the button to refresh status",
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    foreground: Paint()..shader = shader1,
+                  ),
+                ),
+                SizedBox(
+                  height: 35,
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(19),
+                  child: SizedBox(
+                    width: 180,
+                    child: FlatButton(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30.0),
+                        ),
+                        color: Color(0xFF2196f3),
+                        textColor: Colors.white,
+                        child: Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Text(
+                            'Refresh',
+                            style: TextStyle(
+                              fontSize: 18,
+                            ),
                           ),
                         ),
-                      ),
-                      onPressed: () async {
+                        onPressed: () async {
 //                    isActivate = await checkUserStatus();
-                        if (isActivate == false) {
-                          controller.reverse();
-                          Future.delayed(Duration(seconds: 2), () {
-                            controller.forward();
-                          });
-                        } else {
-                          Navigator.pushNamed(context, TaskScreen.id);
-                        }
-                      }),
+                          if (isActivate == false) {
+                            controller.reverse();
+                            Future.delayed(Duration(seconds: 2), () {
+                              controller.forward();
+                            });
+                          } else {
+                            Navigator.pushNamed(context, TaskScreen.id);
+                          }
+                        }),
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
           Align(
             alignment: Alignment.bottomCenter,
@@ -123,7 +124,7 @@ class _ActivationPendingScreenState extends State<ActivationPendingScreen>
                     padding: const EdgeInsets.all(8.0),
                     child: Center(
                         child: Text(
-                      "Didn't activated yet...",
+                      "Hasn't activated yet...",
                       style: TextStyle(color: Colors.white),
                     )),
                   ),

@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:homework_management_fellow/screens/activation_pending_screen.dart';
+import 'screens/activation_pending_screen.dart';
+import 'screens/banned_screen.dart';
 import 'package:homework_management_fellow/services/firebaseService.dart';
 import 'package:homework_management_fellow/services/stateService.dart';
 import 'package:provider/provider.dart';
@@ -28,13 +29,14 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      initialRoute: WelcomeScreen.id,
+      initialRoute: BannedScreen.id,
       routes: {
         ActivationPendingScreen.id: (context) => ActivationPendingScreen(),
         RegistrationScreen.id: (context) => RegistrationScreen(),
         WelcomeScreen.id: (context) => WelcomeScreen(),
         TaskScreen.id: (context) => TaskScreen(),
         SettingScreen.id: (context) => SettingScreen(),
+        BannedScreen.id: (context) => BannedScreen(),
       },
     );
   }
