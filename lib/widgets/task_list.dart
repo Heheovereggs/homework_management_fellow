@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:homework_management_fellow/screens/setting_screen.dart';
 import 'package:homework_management_fellow/widgets/homework_card.dart';
+import 'package:homework_management_fellow/main.dart';
+import 'package:homework_management_fellow/widgets/task_create_page.dart';
 
 class TaskList extends StatelessWidget {
   List<HomeworkCard> _stackGenerator() {
@@ -18,16 +21,16 @@ class TaskList extends StatelessWidget {
       appBar: AppBar(
         leading: InkWell(
           onTap: () {
-            // TODO: pop up card
+            Navigator.pushNamed(context, SettingScreen.id);
           },
           child: Icon(Icons.settings),
         ),
         title: Text("HMF"),
         actions: <Widget>[
           IconButton(
-            icon: const Icon(Icons.filter_list), //filter_alt
+            icon: const Icon(Icons.filter_alt),
             onPressed: () {
-              // TODO: pop up card
+              //TODO: add task filter page
             },
           ),
           SizedBox(width: 8)
@@ -46,19 +49,28 @@ class TaskList extends StatelessWidget {
           size: 40,
         ),
         onPressed: () {
-          // TODO: add pop up panel
+          Navigator.pushNamed(context, TaskCreatePage.id);
         },
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       bottomNavigationBar: BottomAppBar(
+        shape: CircularNotchedRectangle(),
         child: Container(
           height: 75,
           child: Row(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               IconButton(
                 iconSize: 30.0,
-                padding: EdgeInsets.only(right: 28.0),
-                icon: Icon(Icons.list),
+                icon: Icon(Icons.format_list_numbered_rounded),
+                onPressed: () {
+                  // switch to next screen
+                },
+              ),
+              IconButton(
+                iconSize: 30.0,
+                icon: Icon(Icons.format_list_numbered_rtl_rounded),
                 onPressed: () {
                   // switch to next screen
                 },

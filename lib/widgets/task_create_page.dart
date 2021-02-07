@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 
 class TaskCreatePage extends StatelessWidget {
+  static const String id = 'TaskCreatePage';
+
   @override
   Widget build(BuildContext context) {
     return Container(
