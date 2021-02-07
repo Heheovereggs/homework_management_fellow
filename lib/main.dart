@@ -29,7 +29,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      initialRoute: BannedScreen.id,
+      initialRoute: ActivationPendingScreen.id,
       routes: {
         ActivationPendingScreen.id: (context) => ActivationPendingScreen(),
         RegistrationScreen.id: (context) => RegistrationScreen(),

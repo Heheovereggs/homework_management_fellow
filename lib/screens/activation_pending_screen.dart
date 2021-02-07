@@ -15,17 +15,12 @@ class ActivationPendingScreen extends StatefulWidget {
 
 class _ActivationPendingScreenState extends State<ActivationPendingScreen>
     with SingleTickerProviderStateMixin {
-  AnimationController controller;
-  Animation<Offset> offset;
   bool isActivate = false;
+  bool _visible = false;
 
   @override
   void initState() {
     super.initState();
-
-    controller = AnimationController(vsync: this, duration: Duration(milliseconds: 500));
-
-    offset = Tween<Offset>(begin: Offset.zero, end: Offset(0.0, 1.0)).animate(controller);
   }
 
   @override
@@ -48,71 +43,75 @@ class _ActivationPendingScreenState extends State<ActivationPendingScreen>
     return Scaffold(
       body: Stack(
         children: [
-          Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  "Activation pending",
-                  style: TextStyle(
-                    fontSize: 30,
-                    fontWeight: FontWeight.bold,
-                    foreground: Paint()..shader = shader2,
-                  ),
+          Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                "Activation pending",
+                style: TextStyle(
+                  fontSize: 30,
+                  fontWeight: FontWeight.bold,
+                  foreground: Paint()..shader = shader2,
                 ),
-                SizedBox(
-                  height: 50,
+              ),
+              SizedBox(
+                height: 50,
+              ),
+              Text(
+                "PLease check later or press the button to refresh status",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  foreground: Paint()..shader = shader1,
                 ),
-                Text(
-                  "PLease check later or press the button to refresh status",
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    foreground: Paint()..shader = shader1,
-                  ),
-                ),
-                SizedBox(
-                  height: 35,
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(19),
-                  child: SizedBox(
-                    width: 180,
-                    child: FlatButton(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30.0),
-                        ),
-                        color: Color(0xFF2196f3),
-                        textColor: Colors.white,
-                        child: Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Text(
-                            'Refresh',
-                            style: TextStyle(
-                              fontSize: 18,
-                            ),
+              ),
+              SizedBox(
+                height: 35,
+              ),
+              Padding(
+                padding: const EdgeInsets.all(19),
+                child: SizedBox(
+                  width: 180,
+                  child: FlatButton(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30.0),
+                      ),
+                      color: Color(0xFF2196f3),
+                      textColor: Colors.white,
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Text(
+                          'Refresh',
+                          style: TextStyle(
+                            fontSize: 18,
                           ),
                         ),
-                        onPressed: () async {
+                      ),
+                      onPressed: () async {
 //                    isActivate = await checkUserStatus();
-                          if (isActivate == false) {
-                            controller.reverse();
-                            Future.delayed(Duration(seconds: 2), () {
-                              controller.forward();
+                        if (isActivate == false) {
+                          setState(() {
+                            _visible = true;
+                          });
+                          Future.delayed(Duration(milliseconds: 1500), () {
+                            setState(() {
+                              _visible = false;
                             });
-                          } else {
-                            Navigator.pushNamed(context, TaskScreen.id);
-                          }
-                        }),
-                  ),
+                          });
+                        } else {
+                          Navigator.pushNamed(context, TaskScreen.id);
+                        }
+                      }),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
           Align(
             alignment: Alignment.bottomCenter,
-            child: SlideTransition(
-              position: offset,
+            child: AnimatedOpacity(
+              opacity: _visible ? 1.0 : 0.0,
+              duration: Duration(milliseconds: 300),
               child: Padding(
                 padding: EdgeInsets.only(bottom: 80.0),
                 child: Container(
