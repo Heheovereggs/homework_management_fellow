@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:homework_management_fellow/screens/setting_screen.dart';
 import 'package:homework_management_fellow/widgets/homework_card.dart';
@@ -17,6 +18,7 @@ class TaskList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var _controller = CupertinoTabController();
     return Scaffold(
       appBar: AppBar(
         leading: InkWell(
