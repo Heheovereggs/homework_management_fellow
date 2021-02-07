@@ -44,11 +44,30 @@ class FirebaseService {
     return student;
   }
 
-  Future<List<Homework>> getHomeWorkList(String uid) async {
+  Future<List<Homework>> getPublicHomeWorkList(String uid) async {
     List<Homework> homeworkList = [];
     QuerySnapshot qn = await _firestore
         .collection('homework')
         .where('studentId', isEqualTo: '')
+        .orderBy('dueDate')
+        .get();
+    for (DocumentSnapshot doc in qn.docs) {
+      homeworkList.add(Homework(
+          dueDate: doc['dueDate'].toDate(),
+          name: doc['name'],
+          note: doc['note'],
+          subject: doc['subject'],
+          studentId: doc['studentId'],
+          where: doc['where']));
+    }
+    return homeworkList;
+  }
+
+  Future<List<Homework>> getPrivateHomeWorkList(String uid) async {
+    List<Homework> homeworkList = [];
+    QuerySnapshot qn = await _firestore
+        .collection('homework')
+        .where('studentId', isEqualTo: uid)
         .orderBy('dueDate')
         .get();
     for (DocumentSnapshot doc in qn.docs) {

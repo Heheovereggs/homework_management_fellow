@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:homework_management_fellow/model/homework.dart';
 
 class HomeworkCard extends StatelessWidget {
-  HomeworkCard({@required this.name, @required this.dueDate, @required this.subject, this.note});
-  final String name;
-  final String dueDate;
-  final String subject;
-  final String note;
+  HomeworkCard(this.homework);
+  final Homework homework;
 
   @override
   Widget build(BuildContext context) {
@@ -18,9 +16,29 @@ class HomeworkCard extends StatelessWidget {
           color: Colors.lightBlueAccent,
           child: Padding(
             padding: EdgeInsets.all(10.0),
-            child: Text(
-              '$name',
-              style: TextStyle(fontSize: 16),
+            child: Column(
+              children: [
+                Text(
+                  'Name: ${homework.name}',
+                  style: TextStyle(fontSize: 16),
+                ),
+                Text(
+                  'Due date ${homework.dueDate}',
+                  style: TextStyle(fontSize: 16),
+                ),
+                Text(
+                  'Subject: ${homework.subject}',
+                  style: TextStyle(fontSize: 16),
+                ),
+                Text(
+                  'Where: ${homework.where}',
+                  style: TextStyle(fontSize: 16),
+                ),
+                Text(
+                  'Note: ${homework.note}',
+                  style: TextStyle(fontSize: 16),
+                ),
+              ],
             ),
           ),
         ),

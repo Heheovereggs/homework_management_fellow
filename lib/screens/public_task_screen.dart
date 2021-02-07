@@ -13,6 +13,7 @@ class TaskScreen extends StatefulWidget {
 }
 
 class _TaskScreenState extends State<TaskScreen> {
+  List<Homework> homeworkList = [];
   void initState() {
     super.initState();
     loadHomeworkList();
@@ -20,13 +21,16 @@ class _TaskScreenState extends State<TaskScreen> {
 
   void loadHomeworkList() async {
     String uid = Provider.of<StateService>(context, listen: false).student.uid;
-    List<Homework> homeworkList =
-        await Provider.of<FirebaseService>(context, listen: false).getHomeWorkList(uid);
-    Provider.of<StateService>(context, listen: false).setPublicHomeworkList(homeworkList);
+    List<Homework> _homeworkList =
+        await Provider.of<FirebaseService>(context, listen: false).getPublicHomeWorkList(uid);
+    // Provider.of<StateService>(context, listen: false).setPublicHomeworkList(homeworkList);
+    setState(() {
+      homeworkList = _homeworkList;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    return TaskList();
+    return TaskList(homeworkList);
   }
 }

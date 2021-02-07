@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:homework_management_fellow/model/homework.dart';
+import 'package:homework_management_fellow/services/firebaseService.dart';
+import 'package:homework_management_fellow/services/stateService.dart';
 import 'package:homework_management_fellow/widgets/task_list.dart';
+import 'package:provider/provider.dart';
 
 class PrivateTaskScreen extends StatefulWidget {
   @override
@@ -7,8 +11,20 @@ class PrivateTaskScreen extends StatefulWidget {
 }
 
 class _PrivateTaskScreenState extends State<PrivateTaskScreen> {
+  List<Homework> homeworkList = [];
+
+  void loadHomeworkList() async {
+    String uid = Provider.of<StateService>(context, listen: false).student.uid;
+    List<Homework> _homeworkList =
+        await Provider.of<FirebaseService>(context, listen: false).getPrivateHomeWorkList(uid);
+    // Provider.of<StateService>(context, listen: false).setPublicHomeworkList(homeworkList);
+    setState(() {
+      homeworkList = _homeworkList;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    return TaskList();
+    return TaskList(homeworkList);
   }
 }
