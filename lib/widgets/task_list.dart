@@ -1,14 +1,19 @@
 import 'package:flutter/material.dart';
-import '../widgets/homework_card.dart';
+import 'package:homework_management_fellow/widgets/homework_card.dart';
 
-class TaskScreenLayout {
-  final String email;
-  final context;
+class TaskList extends StatelessWidget {
+  List<HomeworkCard> _stackGenerator() {
+    return [
+      HomeworkCard(name: "101", dueDate: "1212", subject: "123"),
+      HomeworkCard(name: "102", dueDate: "1212", subject: "123"),
+      HomeworkCard(name: "247", dueDate: "1212", subject: "123"),
+      HomeworkCard(name: "206", dueDate: "1212", subject: "123"),
+      HomeworkCard(name: "207", dueDate: "1212", subject: "123"),
+    ];
+  }
 
-  TaskScreenLayout({this.email, this.context});
-
-  Scaffold taskLayoutGenerator() {
-    print("tasktask" + email);
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         leading: InkWell(
@@ -58,21 +63,10 @@ class TaskScreenLayout {
                   // switch to next screen
                 },
               ),
-              Text(email),
             ],
           ),
         ),
       ),
     );
-  }
-
-  List<HomeworkCard> _stackGenerator() {
-    return [
-      HomeworkCard(name: "101", dueDate: "1212", subject: "123"),
-      HomeworkCard(name: "102", dueDate: "1212", subject: "123"),
-      HomeworkCard(name: "247", dueDate: "1212", subject: "123"),
-      HomeworkCard(name: "206", dueDate: "1212", subject: "123"),
-      HomeworkCard(name: "207", dueDate: "1212", subject: "123"),
-    ];
   }
 }

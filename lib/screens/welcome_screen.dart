@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:homework_management_fellow/model/student.dart';
 import 'package:homework_management_fellow/screens/activation_pending_screen.dart';
 import 'package:homework_management_fellow/screens/registration_screen.dart';
-import 'package:homework_management_fellow/screens/task_screen.dart';
+import 'package:homework_management_fellow/screens/public_task_screen.dart';
 import 'package:homework_management_fellow/services/firebaseService.dart';
 import 'package:homework_management_fellow/services/sign_in.dart';
 import 'package:homework_management_fellow/services/stateService.dart';
@@ -36,8 +36,8 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     print(email);
     print(uid);
     if (email != null && uid != null) {
-      Student _student =
-          await Provider.of<FirebaseService>(context, listen: false).checkStudent(email: email, uid: uid);
+      Student _student = await Provider.of<FirebaseService>(context, listen: false)
+          .checkStudent(email: email, uid: uid);
       Provider.of<StateService>(context, listen: false).setStudent(_student);
       if (_student != null) {
         if (_student.ban) {
@@ -133,15 +133,16 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
       (result) async {
         email = result[0];
         uid = result[1];
-        student =
-            await Provider.of<FirebaseService>(context, listen: false).checkStudent(email: email, uid: uid);
+        student = await Provider.of<FirebaseService>(context, listen: false)
+            .checkStudent(email: email, uid: uid);
         Provider.of<StateService>(context, listen: false).setStudent(student);
         setState(() {
           _showSpinner = false;
         });
         if (email != null) {
           if (student == null) {
-            Navigator.pushNamed(context, RegistrationScreen.id, arguments: {'email': email, 'uid': uid});
+            Navigator.pushNamed(context, RegistrationScreen.id,
+                arguments: {'email': email, 'uid': uid});
           } else if (student.ban) {
             // TODO: create ban info screen
           } else if (!student.activate) {

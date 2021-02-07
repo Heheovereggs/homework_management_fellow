@@ -6,7 +6,7 @@ import 'package:homework_management_fellow/services/firebaseService.dart';
 import 'package:homework_management_fellow/services/stateService.dart';
 import 'package:provider/provider.dart';
 import 'screens/setting_screen.dart';
-import 'screens/task_screen.dart';
+import 'screens/public_task_screen.dart';
 import 'screens/welcome_screen.dart';
 import 'screens/registration_screen.dart';
 

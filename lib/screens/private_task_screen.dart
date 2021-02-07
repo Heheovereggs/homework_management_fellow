@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:homework_management_fellow/model/task_layout.dart';
+import 'package:homework_management_fellow/widgets/task_list.dart';
 
 class PrivateTaskScreen extends StatefulWidget {
   @override
@@ -9,6 +9,6 @@ class PrivateTaskScreen extends StatefulWidget {
 class _PrivateTaskScreenState extends State<PrivateTaskScreen> {
   @override
   Widget build(BuildContext context) {
-    return TaskScreenLayout(context: context).taskLayoutGenerator();
+    return TaskList();
   }
 }

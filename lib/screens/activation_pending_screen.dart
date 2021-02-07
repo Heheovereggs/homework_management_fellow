@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:homework_management_fellow/screens/task_screen.dart';
+import 'package:homework_management_fellow/screens/public_task_screen.dart';
 import 'package:homework_management_fellow/services/firebaseService.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:provider/provider.dart';
