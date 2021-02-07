@@ -26,6 +26,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
       getLoginInfo();
       if (uid != null || email != null) {
         Navigator.pushNamed(context, TaskScreen.id);
+        //TODO: also need check activate status from cloud.
       }
     });
     super.initState();
