@@ -1,19 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:homework_management_fellow/model/homework.dart';
 import 'package:homework_management_fellow/screens/setting_screen.dart';
 import 'package:homework_management_fellow/widgets/homework_card.dart';
 import 'package:homework_management_fellow/main.dart';
 import 'package:homework_management_fellow/widgets/task_create_page.dart';
+import 'package:provider/provider.dart';
 
 class TaskList extends StatelessWidget {
-  List<HomeworkCard> _stackGenerator() {
-    return [
-      HomeworkCard(name: "101", dueDate: "1212", subject: "123"),
-      HomeworkCard(name: "102", dueDate: "1212", subject: "123"),
-      HomeworkCard(name: "247", dueDate: "1212", subject: "123"),
-      HomeworkCard(name: "206", dueDate: "1212", subject: "123"),
-      HomeworkCard(name: "207", dueDate: "1212", subject: "123"),
-    ];
-  }
+  TaskList(this.homeworkList);
+  final List<Homework> homeworkList;
 
   @override
   Widget build(BuildContext context) {
@@ -38,9 +33,11 @@ class TaskList extends StatelessWidget {
       ),
       backgroundColor: Colors.white,
       body: SafeArea(
-        child: ListView(
-          // TODO: make ListView builder
-          children: _stackGenerator(),
+        child: ListView.builder(
+          itemCount: homeworkList.length,
+          itemBuilder: (BuildContext context, int index) {
+            return HomeworkCard(homeworkList[index]);
+          },
         ),
       ),
       floatingActionButton: FloatingActionButton(
