@@ -1,11 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:homework_management_fellow/model/user.dart';
+import 'package:homework_management_fellow/model/student.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class FirebaseService {
   final _firestore = FirebaseFirestore.instance;
 
-  void saveLoginInfo(User user) async {
+  void saveLoginInfo(Student user) async {
     final prefs = await SharedPreferences.getInstance();
     prefs.setString('email', user.email);
     prefs.setString('uid', user.uid);
@@ -24,13 +24,12 @@ class FirebaseService {
     });
   }
 
-  Future<User> checkUser({String email, String uid}) async {
-    User user;
-    var userInfo =
-        await _firestore.collection("user").where('email', isEqualTo: email).limit(1).get();
+  Future<Student> checkUser({String email, String uid}) async {
+    Student user;
+    var userInfo = await _firestore.collection("user").where('email', isEqualTo: email).limit(1).get();
     for (var userInf in userInfo.docs) {
       if (userInf.data()["email"] == email) {
-        user = User(
+        user = Student(
             uid: userInf.data()["uid"],
             email: userInf.data()["email"],
             firstName: userInf.data()["firstName"],

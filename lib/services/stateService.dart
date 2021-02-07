@@ -1,10 +1,10 @@
 import 'package:flutter/cupertino.dart';
-import 'package:homework_management_fellow/model/user.dart';
+import 'package:homework_management_fellow/model/student.dart';
 
 class StateService extends ChangeNotifier {
-  User user;
+  Student student;
 
-  void setUser(User user) {
-    this.user = user;
+  void setStudent(Student student) {
+    this.student = student;
   }
 }

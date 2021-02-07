@@ -1,4 +1,4 @@
-class User {
+class Student {
   String uid;
   String email;
   String firstName;
@@ -10,7 +10,7 @@ class User {
   String theme;
   bool isDiscord;
 
-  User(
+  Student(
       {this.email,
       this.uid,
       this.firstName,

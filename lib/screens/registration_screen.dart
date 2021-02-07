@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:homework_management_fellow/model/user.dart';
+import 'package:homework_management_fellow/model/student.dart';
 import 'package:homework_management_fellow/services/firebaseService.dart';
 import 'package:homework_management_fellow/services/stateService.dart';
 import 'package:provider/provider.dart';
@@ -130,8 +130,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     );
   }
 
-  TextFormField registrationTextFormField(
-      final String hint, TextEditingController textEditingController) {
+  TextFormField registrationTextFormField(final String hint, TextEditingController textEditingController) {
     return TextFormField(
       controller: textEditingController,
       autocorrect: false,
@@ -156,7 +155,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     if (!_formKey.currentState.validate()) {
       return null;
     }
-    User user = User(
+    Student user = Student(
         uid: uid,
         email: email,
         firstName: _firstcontroller.text.trim(),
@@ -164,7 +163,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         isDiscord: isDiscord);
 
     // save to provider StateService
-    Provider.of<StateService>(context, listen: false).setUser(user);
+    Provider.of<StateService>(context, listen: false).setStudent(user);
 
     // save to firebase
     firebaseService.saveLoginInfo(user);

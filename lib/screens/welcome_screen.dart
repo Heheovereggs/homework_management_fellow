@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:homework_management_fellow/model/user.dart';
+import 'package:homework_management_fellow/model/student.dart';
 import 'package:homework_management_fellow/screens/activation_pending_screen.dart';
 import 'package:homework_management_fellow/screens/registration_screen.dart';
 import 'package:homework_management_fellow/screens/task_screen.dart';
 import 'package:homework_management_fellow/services/firebaseService.dart';
 import 'package:homework_management_fellow/services/sign_in.dart';
+import 'package:homework_management_fellow/services/stateService.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -19,9 +20,7 @@ class WelcomeScreen extends StatefulWidget {
 
 class _WelcomeScreenState extends State<WelcomeScreen> {
   bool showSpinner = false;
-  String uid;
-  String email;
-  User user;
+  Student user;
 
   @override
   void initState() {
@@ -31,11 +30,12 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
 
   void loadUser() async {
     final prefs = await SharedPreferences.getInstance();
-    email = prefs.getString('email') ?? '';
-    uid = prefs.getString('uid') ?? '';
+    String email = prefs.getString('email');
+    String uid = prefs.getString('uid');
     if (email != null && uid != null) {
-      User _user = await Provider.of<FirebaseService>(context, listen: false)
-          .checkUser(email: email, uid: uid);
+      Student _user =
+          await Provider.of<FirebaseService>(context, listen: false).checkUser(email: email, uid: uid);
+      Provider.of<StateService>(context, listen: false).setStudent(user);
       setState(() {
         user = _user;
       });
@@ -131,7 +131,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   Future<void> buttonOnPressed(bool showSpinner) async {
     String email;
     String uid;
-    User user;
+    Student student;
     setState(() {
       showSpinner = true;
     });
@@ -139,18 +139,18 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
       (result) async {
         email = result[0];
         uid = result[1];
-        user = await Provider.of<FirebaseService>(context, listen: false)
-            .checkUser(email: email, uid: uid);
+        student =
+            await Provider.of<FirebaseService>(context, listen: false).checkUser(email: email, uid: uid);
+        Provider.of<StateService>(context, listen: false).setStudent(student);
         setState(() {
           showSpinner = false;
         });
         if (email != null) {
-          if (user == null) {
-            Navigator.pushNamed(context, RegistrationScreen.id,
-                arguments: {'email': email, 'uid': uid});
-          } else if (user.ban) {
+          if (student == null) {
+            Navigator.pushNamed(context, RegistrationScreen.id, arguments: {'email': email, 'uid': uid});
+          } else if (student.ban) {
             // TODO: create ban info screen
-          } else if (!user.activate) {
+          } else if (!student.activate) {
             Navigator.pushNamed(context, ActivationPendingScreen.id);
           } else {
             Navigator.pushNamed(context, TaskScreen.id);
