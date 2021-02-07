@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:homework_management_fellow/screens/activation_pending_screen.dart';
 import 'package:homework_management_fellow/services/stateService.dart';
 import 'package:provider/provider.dart';
 import 'screens/setting_screen.dart';
@@ -27,6 +28,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       initialRoute: WelcomeScreen.id,
       routes: {
+        ActivationPendingScreen.id: (context) => ActivationPendingScreen(),
         RegistrationScreen.id: (context) => RegistrationScreen(),
         WelcomeScreen.id: (context) => WelcomeScreen(),
         TaskScreen.id: (context) => TaskScreen(),

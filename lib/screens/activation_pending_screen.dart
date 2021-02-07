@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class ActivationPendingScreen extends StatelessWidget {
+  static const String id = 'ActivationPendingScreen';
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
