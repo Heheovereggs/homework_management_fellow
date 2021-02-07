@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:homework_management_fellow/model/homework.dart';
 import 'package:homework_management_fellow/model/student.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -41,5 +42,24 @@ class FirebaseService {
           isDiscord: studentInfo["isDiscord"]);
     }
     return student;
+  }
+
+  Future<List<Homework>> getHomeWorkList(String uid) async {
+    List<Homework> homeworkList = [];
+    QuerySnapshot qn = await _firestore
+        .collection('homework')
+        .where('studentId', isEqualTo: '')
+        .orderBy('dueDate')
+        .get();
+    for (DocumentSnapshot doc in qn.docs) {
+      homeworkList.add(Homework(
+          dueDate: doc['dueDate'].toDate(),
+          name: doc['name'],
+          note: doc['note'],
+          subject: doc['subject'],
+          studentId: doc['studentId'],
+          where: doc['where']));
+    }
+    return homeworkList;
   }
 }
