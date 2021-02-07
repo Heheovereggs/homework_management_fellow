@@ -36,12 +36,12 @@ class _ActivationPendingScreenState extends State<ActivationPendingScreen>
     Shader shader1 = gradient1.createShader(Rect.fromLTWH(0, 0, size.width, size.height));
     Shader shader2 = gradient2.createShader(Rect.fromLTWH(0, 0, size.width, size.height));
 
-    Future<bool> checkUserStatus() async {
+    Future<bool> checkStudentStatus() async {
       final prefs = await SharedPreferences.getInstance();
       String email = prefs.getString('email');
       String uid = prefs.getString('uid');
-      Student student =
-          await Provider.of<FirebaseService>(context, listen: false).checkUser(email: email, uid: uid);
+      Student student = await Provider.of<FirebaseService>(context, listen: false)
+          .checkStudent(email: email, uid: uid);
       return student.activate;
     }
 
@@ -94,7 +94,7 @@ class _ActivationPendingScreenState extends State<ActivationPendingScreen>
                         ),
                       ),
                       onPressed: () async {
-//                    isActivate = await checkUserStatus();
+//                    isActivate = await checkStudentStatus();
                         if (isActivate == false) {
                           controller.reverse();
                           Future.delayed(Duration(seconds: 2), () {
@@ -117,8 +117,8 @@ class _ActivationPendingScreenState extends State<ActivationPendingScreen>
                 child: Container(
                   width: 175,
                   height: 45,
-                  decoration:
-                      BoxDecoration(color: Color(0xCC000000), borderRadius: BorderRadius.circular(10.0)),
+                  decoration: BoxDecoration(
+                      color: Color(0xCC000000), borderRadius: BorderRadius.circular(10.0)),
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Center(

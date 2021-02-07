@@ -28,13 +28,12 @@ class _TaskScreenState extends State<TaskScreen> {
                 },
                 child: AlertDialog(
                   title: Text("Activation pending"),
-                  content: Text("Your account is waiting to be activate by admin, please check later"),
+                  content:
+                      Text("Your account is waiting to be activate by admin, please check later"),
                   actions: [
                     FlatButton(
                       child: Text("Refresh"),
-                      onPressed: () {
-                        activateCheck(uid);
-                      },
+                      onPressed: () {},
                     ),
                   ],
                 ),
@@ -48,17 +47,5 @@ class _TaskScreenState extends State<TaskScreen> {
   @override
   Widget build(BuildContext context) {
     return TaskScreenLayout(context: context, email: email).taskLayoutGenerator();
-  }
-
-  Future<bool> activateCheck(String uid) async {
-    var userInfo = await _firestore.collection("user/$uid/activate").get();
-    for (var userInf in userInfo.docs) {
-      print(userInf);
-      // if (userInf == true) {
-      //   return true;
-      // } else {
-      //   return false;
-      // }
-    }
   }
 }
