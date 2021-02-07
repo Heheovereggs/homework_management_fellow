@@ -40,13 +40,9 @@ class _ActivationPendingScreenState extends State<ActivationPendingScreen>
       final prefs = await SharedPreferences.getInstance();
       String email = prefs.getString('email');
       String uid = prefs.getString('uid');
-      Student student =
-          await Provider.of<FirebaseService>(context, listen: false).checkUser(email: email, uid: uid);
-      if (student.activate == true) {
-        return true;
-      } else {
-        return false;
-      }
+      Student student = await Provider.of<FirebaseService>(context, listen: false)
+          .checkUser(email: email, uid: uid);
+      return student.activate;
     }
 
     return Scaffold(
@@ -95,8 +91,8 @@ class _ActivationPendingScreenState extends State<ActivationPendingScreen>
                       ),
                     ),
                   ),
-                  onPressed: () {
-                    isActivate = checkUserStatus();
+                  onPressed: () async {
+                    isActivate = await checkUserStatus();
                     if (isActivate == false) {
                       controller.reverse();
                       Future.delayed(Duration(seconds: 3), () {
