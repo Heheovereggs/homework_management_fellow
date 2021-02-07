@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:homework_management_fellow/model/user.dart';
 import 'package:homework_management_fellow/services/firebaseService.dart';
 import 'package:homework_management_fellow/services/stateService.dart';
+import 'package:provider/provider.dart';
 import 'task_screen.dart';
 
 class RegistrationScreen extends StatefulWidget {
@@ -128,7 +130,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     );
   }
 
-  TextFormField registrationTextFormField(final String hint, TextEditingController textEditingController) {
+  TextFormField registrationTextFormField(
+      final String hint, TextEditingController textEditingController) {
     return TextFormField(
       controller: textEditingController,
       autocorrect: false,
@@ -153,12 +156,18 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     if (!_formKey.currentState.validate()) {
       return null;
     }
-    firebaseService.saveLoginInfo(
+    User user = User(
         uid: uid,
         email: email,
         firstName: _firstcontroller.text.trim(),
         lastName: _lastcontroller.text.trim(),
         isDiscord: isDiscord);
+
+    // save to provider StateService
+    Provider.of<StateService>(context, listen: false).setUser(user);
+
+    // save to firebase
+    firebaseService.saveLoginInfo(user);
     Navigator.pushNamed(context, TaskScreen.id);
   }
 }
