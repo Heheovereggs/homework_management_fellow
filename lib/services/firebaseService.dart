@@ -31,9 +31,8 @@ class FirebaseService {
     print(uid);
 
     var studentInfo = await _firestore.collection("student").doc("$uid").get();
-    print(studentInfo["email"]);
 
-    if (studentInfo["email"] == email) {
+    if (studentInfo.exists && studentInfo["email"] == email) {
       student = Student(
           uid: studentInfo["uid"],
           email: studentInfo["email"],

@@ -38,10 +38,7 @@ class _ActivationPendingScreenState extends State<ActivationPendingScreen> {
       print(email);
       String uid = prefs.getString('uid');
       print(uid);
-      print("oooooooooooooooooooooooooooooo");
-      Student student =
-          await Provider.of<FirebaseService>(context, listen: false).checkStudent(email: email, uid: uid);
-      print("wwwwwwwwwwwwwwwwwwwwwwwwwwwwww");
+      Student student = await Provider.of<FirebaseService>(context, listen: false).checkStudent(email: email, uid: uid);
       return student.activate;
     }
 
@@ -100,7 +97,6 @@ class _ActivationPendingScreenState extends State<ActivationPendingScreen> {
                             _showSpinner = true;
                           });
                           isActivate = await checkStudentStatus();
-                          print("setsetsetsetsetset");
                           setState(() {
                             _showSpinner = false;
                           });
@@ -131,8 +127,7 @@ class _ActivationPendingScreenState extends State<ActivationPendingScreen> {
                   child: Container(
                     width: 175,
                     height: 45,
-                    decoration:
-                        BoxDecoration(color: Color(0xCC000000), borderRadius: BorderRadius.circular(10.0)),
+                    decoration: BoxDecoration(color: Color(0xCC000000), borderRadius: BorderRadius.circular(10.0)),
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Center(

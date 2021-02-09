@@ -16,7 +16,10 @@ void main() async {
   await Firebase.initializeApp();
   runApp(
     MultiProvider(
-      providers: [ChangeNotifierProvider(create: (_) => StateService()), Provider(create: (_) => FirebaseService())],
+      providers: [
+        ChangeNotifierProvider(create: (_) => StateService()),
+        Provider(create: (_) => FirebaseService()),
+      ],
       child: MyApp(),
     ),
   );

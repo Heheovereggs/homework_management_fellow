@@ -23,9 +23,7 @@ class _TaskScreenState extends State<TaskScreen> {
   void loadHomeworkList() async {
     final prefs = await SharedPreferences.getInstance();
     String uid = prefs.getString('uid');
-    List<Homework> _homeworkList =
-        await Provider.of<FirebaseService>(context, listen: false).getPublicHomeWorkList(uid);
-    // Provider.of<StateService>(context, listen: false).setPublicHomeworkList(homeworkList);
+    List<Homework> _homeworkList = await Provider.of<FirebaseService>(context, listen: false).getPublicHomeWorkList(uid);
     setState(() {
       homeworkList = _homeworkList;
     });

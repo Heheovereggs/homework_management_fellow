@@ -34,13 +34,22 @@ class TaskList extends StatelessWidget {
             middle: Text("HMF"),
             trailing: Icon(Icons.add_rounded),
           ),
-          child: ListView.builder(
-            itemCount: homeworkList.length,
-            itemBuilder: (BuildContext context, int index) {
-              return HomeworkCard(homeworkList[index]);
-            },
-          ),
+          child: homeworkList != null
+              ? taskListBuilder()
+              : Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Text("No task been added atm"),
+                ),
         );
+      },
+    );
+  }
+
+  ListView taskListBuilder() {
+    return ListView.builder(
+      itemCount: homeworkList.length,
+      itemBuilder: (BuildContext context, int index) {
+        return HomeworkCard(homeworkList[index]);
       },
     );
   }
