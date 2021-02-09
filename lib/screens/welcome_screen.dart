@@ -33,11 +33,10 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     final prefs = await SharedPreferences.getInstance();
     String email = prefs.getString('email');
     String uid = prefs.getString('uid');
-    print(email);
-    print(uid);
+    print("read $email from local SSD");
+    print("read $uid from local SSD");
     if (email != null && uid != null) {
-      Student _student = await Provider.of<FirebaseService>(context, listen: false)
-          .checkStudent(email: email, uid: uid);
+      Student _student = await Provider.of<FirebaseService>(context, listen: false).checkStudent(email: email, uid: uid);
       Provider.of<StateService>(context, listen: false).setStudent(_student);
       if (_student != null) {
         if (_student.ban) {
@@ -78,6 +77,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                 ),
                 Text(
                   "No icon was designed",
+                  textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 40,
                     fontWeight: FontWeight.bold,
@@ -133,16 +133,14 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
       (result) async {
         email = result[0];
         uid = result[1];
-        student = await Provider.of<FirebaseService>(context, listen: false)
-            .checkStudent(email: email, uid: uid);
+        student = await Provider.of<FirebaseService>(context, listen: false).checkStudent(email: email, uid: uid);
         Provider.of<StateService>(context, listen: false).setStudent(student);
         setState(() {
           _showSpinner = false;
         });
         if (email != null) {
           if (student == null) {
-            Navigator.pushNamed(context, RegistrationScreen.id,
-                arguments: {'email': email, 'uid': uid});
+            Navigator.pushNamed(context, RegistrationScreen.id, arguments: {'email': email, 'uid': uid});
           } else if (student.ban) {
             // TODO: create ban info screen
           } else if (!student.activate) {

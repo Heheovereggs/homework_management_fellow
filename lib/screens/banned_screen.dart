@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class BannedScreen extends StatelessWidget {
   static const String id = 'BannedScreen';
@@ -9,13 +10,22 @@ class BannedScreen extends StatelessWidget {
     Gradient gradient = LinearGradient(colors: [Colors.orangeAccent, Colors.pinkAccent]);
     Shader shader = gradient.createShader(Rect.fromLTWH(0, 0, size.width, size.height));
 
+    _launchURL() async {
+      const url = 'https://discord.com/channels/747561660193046582/786369055987990558/808446122334879765';
+      if (await canLaunch(url)) {
+        await launch(url);
+      } else {
+        throw 'Could not launch $url';
+      }
+    }
+
     return Scaffold(
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              "Account banned",
+              "You has be banned",
               style: TextStyle(
                 fontSize: 30,
                 fontWeight: FontWeight.bold,
@@ -48,11 +58,7 @@ class BannedScreen extends StatelessWidget {
               height: 19,
             ),
             Icon(Icons.arrow_downward, color: Color(0xFFff7660), size: 50),
-            GestureDetector(
-                onTap: () {
-                  //Discord message link
-                },
-                child: Image(image: AssetImage("images/discord_blender.png"), height: 100.0)),
+            GestureDetector(onTap: _launchURL, child: Image(image: AssetImage("images/discord_blender.png"), height: 100.0)),
           ],
         ),
       ),

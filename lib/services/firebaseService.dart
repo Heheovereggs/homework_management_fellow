@@ -27,7 +27,11 @@ class FirebaseService {
 
   Future<Student> checkStudent({String email, String uid}) async {
     Student student;
+    print(email);
+    print(uid);
+
     var studentInfo = await _firestore.collection("student").doc("$uid").get();
+    print(studentInfo["email"]);
 
     if (studentInfo["email"] == email) {
       student = Student(
@@ -46,11 +50,7 @@ class FirebaseService {
 
   Future<List<Homework>> getPublicHomeWorkList(String uid) async {
     List<Homework> homeworkList = [];
-    QuerySnapshot qn = await _firestore
-        .collection('homework')
-        .where('studentId', isEqualTo: '')
-        .orderBy('dueDate')
-        .get();
+    QuerySnapshot qn = await _firestore.collection('homework').where('studentId', isEqualTo: '').orderBy('dueDate').get();
     for (DocumentSnapshot doc in qn.docs) {
       homeworkList.add(Homework(
           dueDate: doc['dueDate'].toDate(),
@@ -65,11 +65,7 @@ class FirebaseService {
 
   Future<List<Homework>> getPrivateHomeWorkList(String uid) async {
     List<Homework> homeworkList = [];
-    QuerySnapshot qn = await _firestore
-        .collection('homework')
-        .where('studentId', isEqualTo: uid)
-        .orderBy('dueDate')
-        .get();
+    QuerySnapshot qn = await _firestore.collection('homework').where('studentId', isEqualTo: uid).orderBy('dueDate').get();
     for (DocumentSnapshot doc in qn.docs) {
       homeworkList.add(Homework(
           dueDate: doc['dueDate'].toDate(),
