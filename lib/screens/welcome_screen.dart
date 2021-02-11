@@ -1,8 +1,9 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:homework_management_fellow/model/student.dart';
 import 'package:homework_management_fellow/screens/activation_pending_screen.dart';
 import 'package:homework_management_fellow/screens/registration_screen.dart';
-import 'package:homework_management_fellow/screens/public_task_screen.dart';
+import 'package:homework_management_fellow/screens/main_task_screen.dart';
 import 'package:homework_management_fellow/services/firebaseService.dart';
 import 'package:homework_management_fellow/services/sign_in.dart';
 import 'package:homework_management_fellow/services/stateService.dart';
@@ -13,8 +14,6 @@ import 'package:provider/provider.dart';
 import 'banned_screen.dart';
 
 class WelcomeScreen extends StatefulWidget {
-  static const String id = 'WelcomeScreen';
-
   @override
   _WelcomeScreenState createState() => _WelcomeScreenState();
 }
@@ -40,11 +39,11 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
       Provider.of<StateService>(context, listen: false).setStudent(_student);
       if (_student != null) {
         if (_student.ban) {
-          Navigator.pushNamed(context, BannedScreen.id);
+          Navigator.pushNamed(context, '/BannedScreen');
         } else if (!_student.activate) {
-          Navigator.pushNamed(context, ActivationPendingScreen.id);
+          Navigator.pushNamed(context, '/ActivationPendingScreen');
         } else {
-          Navigator.pushNamed(context, TaskScreen.id);
+          Navigator.pushNamed(context, '/TaskScreen');
         }
       }
     }
@@ -64,6 +63,9 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
       //   child: Icon(Icons.download_rounded),
       // ),
       body: ModalProgressHUD(
+        progressIndicator: CupertinoActivityIndicator(
+          radius: 50,
+        ),
         inAsyncCall: _showSpinner,
         child: SafeArea(
           child: Center(
@@ -140,13 +142,13 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
         });
         if (email != null) {
           if (student == null) {
-            Navigator.pushNamed(context, RegistrationScreen.id, arguments: {'email': email, 'uid': uid});
+            Navigator.pushNamed(context, '/RegistrationScreen', arguments: {'email': email, 'uid': uid});
           } else if (student.ban) {
             // TODO: create ban info screen
           } else if (!student.activate) {
-            Navigator.pushNamed(context, ActivationPendingScreen.id);
+            Navigator.pushNamed(context, '/ActivationPendingScreen');
           } else {
-            Navigator.pushNamed(context, TaskScreen.id);
+            Navigator.pushNamed(context, '/TaskScreen');
           }
         } else {
           showDialog(

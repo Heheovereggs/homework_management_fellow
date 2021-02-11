@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:homework_management_fellow/screens/public_task_screen.dart';
+import 'package:homework_management_fellow/screens/main_task_screen.dart';
 import 'package:homework_management_fellow/services/firebaseService.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:provider/provider.dart';
@@ -8,8 +8,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:homework_management_fellow/model/student.dart';
 
 class ActivationPendingScreen extends StatefulWidget {
-  static const String id = 'ActivationPendingScreen';
-
   @override
   _ActivationPendingScreenState createState() => _ActivationPendingScreenState();
 }
@@ -44,6 +42,9 @@ class _ActivationPendingScreenState extends State<ActivationPendingScreen> {
 
     return Scaffold(
       body: ModalProgressHUD(
+        progressIndicator: CupertinoActivityIndicator(
+          radius: 50,
+        ),
         inAsyncCall: _showSpinner,
         child: Stack(
           children: [
@@ -110,7 +111,7 @@ class _ActivationPendingScreenState extends State<ActivationPendingScreen> {
                               });
                             });
                           } else {
-                            Navigator.pushNamed(context, TaskScreen.id);
+                            Navigator.pushNamed(context, '/TaskScreen');
                           }
                         }),
                   ),
