@@ -57,7 +57,8 @@ class FirebaseService {
           note: doc['note'],
           subject: doc['subject'],
           studentId: doc['studentId'],
-          where: doc['where']));
+          where: doc['where'],
+          isWaiting: doc['isWaiting']));
     }
     return homeworkList;
   }
@@ -72,7 +73,8 @@ class FirebaseService {
           note: doc['note'],
           subject: doc['subject'],
           studentId: doc['studentId'],
-          where: doc['where']));
+          where: doc['where'],
+          isWaiting: doc['isWaiting']));
     }
     return homeworkList;
   }

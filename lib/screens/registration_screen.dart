@@ -1,15 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:homework_management_fellow/model/student.dart';
-import 'package:homework_management_fellow/screens/activation_pending_screen.dart';
 import 'package:homework_management_fellow/services/firebaseService.dart';
 import 'package:homework_management_fellow/services/stateService.dart';
 import 'package:provider/provider.dart';
-import 'public_task_screen.dart';
+import 'dart:io' show Platform;
 
 class RegistrationScreen extends StatefulWidget {
-  static const String id = 'RegistrationScreen';
-
   @override
   _RegistrationScreenState createState() => _RegistrationScreenState();
 }
@@ -30,6 +27,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text("Registration"),
+        leading: Icon(Icons.arrow_back_ios_rounded),
       ),
       body: SafeArea(
         child: Padding(
@@ -60,7 +58,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     children: [
                       Text(
                         "Are you in CET Discord server?",
-                        style: TextStyle(fontSize: 19),
+                        style: TextStyle(fontSize: Platform.isAndroid ? 19 : 16),
                       ),
                       Padding(
                         padding: const EdgeInsets.only(left: 15),
@@ -80,7 +78,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                 onChanged: (value) {
                                   setState(() {
                                     isDiscord = value;
-                                    print(isDiscord);
                                   });
                                 }),
                           ),
@@ -88,6 +85,25 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                       ),
                     ],
                   ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: CupertinoSlidingSegmentedControl(
+                    thumbColor: Color(0xFF2196f3),
+                    groupValue: isDiscord,
+                    onValueChanged: (value) {
+                      setState(() {
+                        isDiscord = value;
+                      });
+                    },
+                    children: <bool, Widget>{
+                      true: Text("Yes"),
+                      false: Text("No"),
+                    },
+                  ),
+                ),
+                SizedBox(
+                  height: 15,
                 ),
                 Padding(
                   padding: const EdgeInsets.all(9),
@@ -100,7 +116,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     ),
                     child: Text(
                       "No password required since Gooooooooooooooogle will do the verification",
-                      style: TextStyle(fontSize: 16),
+                      style: Theme.of(context).textTheme.bodyText1,
                     ),
                   ),
                 ),
@@ -113,10 +129,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                       color: Color(0xFF2196f3),
                       child: Text(
                         'Submit',
-                        style: TextStyle(
-                          fontSize: 17,
-                          color: Colors.white,
-                        ),
+                        style: Theme.of(context).textTheme.bodyText1.copyWith(color: Colors.white),
                       ),
                       onPressed: _saveInfoForm,
                     ),
@@ -130,8 +143,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     );
   }
 
-  TextFormField registrationTextFormField(
-      final String hint, TextEditingController textEditingController) {
+  TextFormField registrationTextFormField(final String hint, TextEditingController textEditingController) {
     return TextFormField(
       controller: textEditingController,
       autocorrect: false,
@@ -157,17 +169,13 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       return null;
     }
     Student student = Student(
-        uid: uid,
-        email: email,
-        firstName: _firstcontroller.text.trim(),
-        lastName: _lastcontroller.text.trim(),
-        isDiscord: isDiscord);
+        uid: uid, email: email, firstName: _firstcontroller.text.trim(), lastName: _lastcontroller.text.trim(), isDiscord: isDiscord);
 
     // save to provider StateService
     Provider.of<StateService>(context, listen: false).setStudent(student);
 
     // save to firebase
     Provider.of<FirebaseService>(context, listen: false).saveLoginInfo(student);
-    Navigator.pushNamed(context, ActivationPendingScreen.id);
+    Navigator.pushNamed(context, '/ActivationPendingScreen');
   }
 }

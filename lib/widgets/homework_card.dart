@@ -20,23 +20,23 @@ class HomeworkCard extends StatelessWidget {
               children: [
                 Text(
                   'Name: ${homework.name}',
-                  style: TextStyle(fontSize: 16),
+                  style: Theme.of(context).textTheme.bodyText1,
                 ),
                 Text(
                   'Due date ${homework.dueDate}',
-                  style: TextStyle(fontSize: 16),
+                  style: Theme.of(context).textTheme.bodyText1,
                 ),
                 Text(
                   'Subject: ${homework.subject}',
-                  style: TextStyle(fontSize: 16),
+                  style: Theme.of(context).textTheme.bodyText1,
                 ),
                 Text(
                   'Where: ${homework.where}',
-                  style: TextStyle(fontSize: 16),
+                  style: Theme.of(context).textTheme.bodyText1,
                 ),
                 Text(
                   'Note: ${homework.note}',
-                  style: TextStyle(fontSize: 16),
+                  style: Theme.of(context).textTheme.bodyText1,
                 ),
               ],
             ),
