@@ -1,17 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:homework_management_fellow/model/student.dart';
-import 'package:homework_management_fellow/screens/activation_pending_screen.dart';
-import 'package:homework_management_fellow/screens/registration_screen.dart';
-import 'package:homework_management_fellow/screens/main_task_screen.dart';
 import 'package:homework_management_fellow/services/firebaseService.dart';
 import 'package:homework_management_fellow/services/sign_in.dart';
 import 'package:homework_management_fellow/services/stateService.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:provider/provider.dart';
-
-import 'banned_screen.dart';
 
 class WelcomeScreen extends StatefulWidget {
   @override
@@ -35,7 +30,8 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     print("read $email from local SSD");
     print("read $uid from local SSD");
     if (email != null && uid != null) {
-      Student _student = await Provider.of<FirebaseService>(context, listen: false).checkStudent(email: email, uid: uid);
+      Student _student =
+          await Provider.of<FirebaseService>(context, listen: false).checkStudent(email: email, uid: uid);
       Provider.of<StateService>(context, listen: false).setStudent(_student);
       if (_student != null) {
         if (_student.ban) {
@@ -135,7 +131,8 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
       (result) async {
         email = result[0];
         uid = result[1];
-        student = await Provider.of<FirebaseService>(context, listen: false).checkStudent(email: email, uid: uid);
+        student =
+            await Provider.of<FirebaseService>(context, listen: false).checkStudent(email: email, uid: uid);
         Provider.of<StateService>(context, listen: false).setStudent(student);
         setState(() {
           _showSpinner = false;
@@ -144,7 +141,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
           if (student == null) {
             Navigator.pushNamed(context, '/RegistrationScreen', arguments: {'email': email, 'uid': uid});
           } else if (student.ban) {
-            // TODO: create ban info screen
+            Navigator.pushNamed(context, '/BannedScreen');
           } else if (!student.activate) {
             Navigator.pushNamed(context, '/ActivationPendingScreen');
           } else {
