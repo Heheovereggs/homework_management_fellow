@@ -49,6 +49,15 @@ class _PrivateTaskScreenState extends State<PrivateTaskScreen> {
       ),
       child: Consumer<StateService>(
         builder: (_, stateService, child) {
+          if (stateService.isHomeworkListLoaded == false) {
+            return Container();
+          }
+          if (stateService.privateHomeworkList.length == 0) {
+            return Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Text("No task been added atm"),
+            );
+          }
           return CupertinoScrollbar(
             child: ListView.builder(
               itemCount: stateService.privateHomeworkList.length,
@@ -59,12 +68,6 @@ class _PrivateTaskScreenState extends State<PrivateTaskScreen> {
           );
         },
       ),
-      /*child: homeworkList != null
-          ? taskListBuilder()
-          : Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Text("No task been added atm"),
-            ),*/
     );
   }
 }
