@@ -18,6 +18,12 @@ class StateService extends ChangeNotifier {
 
   void setPrivateHomeworkList(List<Homework> homeworkList) {
     privateHomeworkList = homeworkList;
+    isHomeworkListLoaded = true;
+    notifyListeners();
+  }
+
+  void addPrivateHomework(Homework homework) {
+    privateHomeworkList.add(homework);
     notifyListeners();
   }
 }
