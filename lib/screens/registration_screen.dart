@@ -4,7 +4,6 @@ import 'package:homework_management_fellow/model/student.dart';
 import 'package:homework_management_fellow/services/firebaseService.dart';
 import 'package:homework_management_fellow/services/stateService.dart';
 import 'package:provider/provider.dart';
-import 'dart:io' show Platform;
 
 class RegistrationScreen extends StatefulWidget {
   @override
@@ -58,7 +57,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     children: [
                       Text(
                         "Are you in CET Discord server?",
-                        style: TextStyle(fontSize: Platform.isAndroid ? 19 : 16),
+                        style: TextStyle(fontSize: 16),
                       ),
                       Padding(
                         padding: const EdgeInsets.only(left: 15),
@@ -169,7 +168,11 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       return null;
     }
     Student student = Student(
-        uid: uid, email: email, firstName: _firstcontroller.text.trim(), lastName: _lastcontroller.text.trim(), isDiscord: isDiscord);
+        uid: uid,
+        email: email,
+        firstName: _firstcontroller.text.trim(),
+        lastName: _lastcontroller.text.trim(),
+        isDiscord: isDiscord);
 
     // save to provider StateService
     Provider.of<StateService>(context, listen: false).setStudent(student);

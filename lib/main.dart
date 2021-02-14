@@ -35,11 +35,23 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
           textTheme: TextTheme(
         bodyText1: TextStyle(
-            fontSize: 16, color: Colors.black, fontWeight: FontWeight.normal, decoration: TextDecoration.none, fontFamily: 'SF Pro'),
+            fontSize: 16,
+            color: Colors.black,
+            fontWeight: FontWeight.normal,
+            decoration: TextDecoration.none,
+            fontFamily: 'SF Pro'),
         bodyText2: TextStyle(
-            fontSize: 19, color: Colors.black, fontWeight: FontWeight.normal, decoration: TextDecoration.none, fontFamily: 'SF Pro'),
+            fontSize: 19,
+            color: Colors.black,
+            fontWeight: FontWeight.normal,
+            decoration: TextDecoration.none,
+            fontFamily: 'SF Pro'),
         caption: TextStyle(
-            fontSize: 33, fontWeight: FontWeight.bold, color: Colors.black, decoration: TextDecoration.none, fontFamily: 'SF Pro'),
+            fontSize: 33,
+            fontWeight: FontWeight.bold,
+            color: Colors.black,
+            decoration: TextDecoration.none,
+            fontFamily: 'SF Pro'),
       )),
       localizationsDelegates: const <LocalizationsDelegate<dynamic>>[
         DefaultMaterialLocalizations.delegate,

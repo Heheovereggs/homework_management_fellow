@@ -20,53 +20,58 @@ class _TaskCreatePageState extends State<TaskCreatePage> {
   String taskType;
 
   @override
-  Widget build(BuildContext context) {
-    dateTimeShown = dateFormat.format(DateTime.now());
+  void initState() {
     taskType = (isAdmin == true) ? 'public' : 'private';
+    dateTimeShown = dateFormat.format(DateTime.now());
+    super.initState();
+  }
 
-    void _showDatePicker() {
-      showCupertinoModalPopup(
-        context: context,
-        builder: (_) => Container(
-          height: 400,
-          color: Colors.white,
-          child: Column(
-            children: [
-              Container(
-                height: 300,
-                child: CupertinoDatePicker(
-                    minimumDate: DateTime.now(),
-                    initialDateTime: DateTime.now(),
-                    onDateTimeChanged: (val) {
-                      setState(() {
-                        _chosenDateTime = val;
-                        dateTimeShown = dateFormat.format(_chosenDateTime);
-                        print(dateTimeShown);
-                      });
-                    }),
-              ),
+  void _showDatePicker() {
+    showCupertinoModalPopup(
+      context: context,
+      builder: (_) => Container(
+        height: 400,
+        color: Colors.white,
+        child: Column(
+          children: [
+            Container(
+              height: 300,
+              child: CupertinoDatePicker(
+                  minimumDate: DateTime.now(),
+                  initialDateTime: DateTime.now(),
+                  onDateTimeChanged: (val) {
+                    setState(() {
+                      _chosenDateTime = val;
+                      print("back $_chosenDateTime");
+                      dateTimeShown = dateFormat.format(_chosenDateTime);
+                      print("dateTimeShown: $dateTimeShown");
+                    });
+                  }),
+            ),
 
-              // Close the modal
-              Container(
-                width: 300,
-                child: CupertinoButton(
-                  borderRadius: BorderRadius.circular(10.0),
-                  color: Color(0xFF2196f3),
-                  child: Text(
-                    'OK',
-                    style: Theme.of(context).textTheme.bodyText1.copyWith(color: Colors.white),
-                  ),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
+            // Close the modal
+            Container(
+              width: 300,
+              child: CupertinoButton(
+                borderRadius: BorderRadius.circular(10.0),
+                color: Color(0xFF2196f3),
+                child: Text(
+                  'OK',
+                  style: Theme.of(context).textTheme.bodyText1.copyWith(color: Colors.white),
                 ),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
               ),
-            ],
-          ),
+            ),
+          ],
         ),
-      );
-    }
+      ),
+    );
+  }
 
+  @override
+  Widget build(BuildContext context) {
     return CupertinoPageScaffold(
       navigationBar: CupertinoNavigationBar(
         backgroundColor: Color(0xFF2196f3),
@@ -155,8 +160,14 @@ class _TaskCreatePageState extends State<TaskCreatePage> {
                   ),
                 ],
               ),
-              taskTextFormField(hintText: "Where to submit (Léa/Mio/Teams etc.)", textController: _whereController),
-              taskTextFormField(isLast: true, boxHeight: 90, hintText: "Note (optional)", textController: _noteController, maxLine: 3),
+              taskTextFormField(
+                  hintText: "Where to submit (Léa/Mio/Teams etc.)", textController: _whereController),
+              taskTextFormField(
+                  isLast: true,
+                  boxHeight: 90,
+                  hintText: "Note (optional)",
+                  textController: _noteController,
+                  maxLine: 3),
               if (taskType == "public" && isAdmin == false)
                 Padding(
                   padding: const EdgeInsets.all(9),
@@ -231,7 +242,11 @@ class _TaskCreatePageState extends State<TaskCreatePage> {
   }
 
   SizedBox taskTextFormField(
-      {double boxHeight = 60, String hintText, TextEditingController textController, int maxLine = 1, bool isLast = false}) {
+      {double boxHeight = 60,
+      String hintText,
+      TextEditingController textController,
+      int maxLine = 1,
+      bool isLast = false}) {
     return SizedBox(
       height: boxHeight,
       child: Padding(
