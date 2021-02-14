@@ -24,30 +24,20 @@ class _TaskScreenState extends State<TaskScreen> {
   void loadHomeworkList() async {
     final prefs = await SharedPreferences.getInstance();
     String uid = prefs.getString('uid');
-    List<Homework> _homeworkList = await Provider.of<FirebaseService>(context, listen: false).getPublicHomeWorkList(uid);
+    List<Homework> _homeworkList =
+        await Provider.of<FirebaseService>(context, listen: false).getPublicHomeWorkList(uid);
     setState(() {
       homeworkList = _homeworkList;
     });
   }
 
   RefreshController _refreshController = RefreshController(initialRefresh: false);
-  List<String> items = ["1", "2", "3", "4", "5", "6", "7", "8"];
   void _onRefresh() async {
-    //TODO: change this function
-    // monitor network fetch
-    await Future.delayed(Duration(milliseconds: 1000));
-    // if failed,use refreshFailed()
+    final prefs = await SharedPreferences.getInstance();
+    String uid = prefs.getString('uid');
+    homeworkList = await Provider.of<FirebaseService>(context, listen: false).getPublicHomeWorkList(uid);
+    setState(() {});
     _refreshController.refreshCompleted();
-  }
-
-  void _onLoading() async {
-    //TODO: change this function
-    // monitor network fetch
-    await Future.delayed(Duration(milliseconds: 1000));
-    // if failed,use loadFailed(),if no data return,use LoadNodata()
-    items.add((items.length + 1).toString());
-    if (mounted) setState(() {});
-    _refreshController.loadComplete();
   }
 
   @override
@@ -100,7 +90,6 @@ class _TaskScreenState extends State<TaskScreen> {
       child: SmartRefresher(
         controller: _refreshController,
         onRefresh: _onRefresh,
-        onLoading: _onLoading,
         enablePullUp: false,
         enablePullDown: true,
         header: ClassicHeader(
