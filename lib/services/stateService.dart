@@ -5,7 +5,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class StateService extends ChangeNotifier {
   Student student;
-  List<Homework> publicHomeworkList = [];
+  List<Homework> privateHomeworkList = [];
+  bool isHomeworkListLoaded = false;
 
   Future<void> setStudent(Student student) async {
     final prefs = await SharedPreferences.getInstance();
@@ -15,8 +16,8 @@ class StateService extends ChangeNotifier {
     this.student = student;
   }
 
-  void setPublicHomeworkList(List<Homework> homeworkList) {
-    publicHomeworkList = homeworkList;
+  void setPrivateHomeworkList(List<Homework> homeworkList) {
+    privateHomeworkList = homeworkList;
     notifyListeners();
   }
 }

@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:homework_management_fellow/model/homework.dart';
 import 'package:homework_management_fellow/services/firebaseService.dart';
+import 'package:homework_management_fellow/services/stateService.dart';
 import 'package:homework_management_fellow/widgets/homework_card.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -12,7 +13,6 @@ class PrivateTaskScreen extends StatefulWidget {
 }
 
 class _PrivateTaskScreenState extends State<PrivateTaskScreen> {
-  List<Homework> homeworkList = [];
   @override
   void initState() {
     loadHomeworkList();
@@ -22,11 +22,11 @@ class _PrivateTaskScreenState extends State<PrivateTaskScreen> {
   void loadHomeworkList() async {
     final prefs = await SharedPreferences.getInstance();
     String uid = prefs.getString('uid');
-    List<Homework> _homeworkList = await Provider.of<FirebaseService>(context, listen: false).getPrivateHomeWorkList(uid);
-    // Provider.of<StateService>(context, listen: false).setPublicHomeworkList(homeworkList);
-    setState(() {
-      homeworkList = _homeworkList;
-    });
+    if (!Provider.of<StateService>(context, listen: false).isHomeworkListLoaded) {
+      List<Homework> _homeworkList =
+          await Provider.of<FirebaseService>(context, listen: false).getPrivateHomeWorkList(uid);
+      Provider.of<StateService>(context, listen: false).setPrivateHomeworkList(_homeworkList);
+    }
   }
 
   @override
@@ -47,23 +47,24 @@ class _PrivateTaskScreenState extends State<PrivateTaskScreen> {
           color: Colors.white,
         ),
       ),
-      child: homeworkList != null
+      child: Consumer<StateService>(
+        builder: (_, stateService, child) {
+          return CupertinoScrollbar(
+            child: ListView.builder(
+              itemCount: stateService.privateHomeworkList.length,
+              itemBuilder: (BuildContext context, int index) {
+                return HomeworkCard(stateService.privateHomeworkList[index]);
+              },
+            ),
+          );
+        },
+      ),
+      /*child: homeworkList != null
           ? taskListBuilder()
           : Padding(
               padding: const EdgeInsets.all(16.0),
               child: Text("No task been added atm"),
-            ),
-    );
-  }
-
-  CupertinoScrollbar taskListBuilder() {
-    return CupertinoScrollbar(
-      child: ListView.builder(
-        itemCount: homeworkList.length,
-        itemBuilder: (BuildContext context, int index) {
-          return HomeworkCard(homeworkList[index]);
-        },
-      ),
+            ),*/
     );
   }
 }
