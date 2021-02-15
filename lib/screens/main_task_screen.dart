@@ -73,7 +73,7 @@ class _TaskScreenState extends State<TaskScreen> {
                 ? taskListBuilder()
                 : Padding(
                     padding: const EdgeInsets.all(16.0),
-                    child: Text("No task been added atm"),
+                    child: Text("No task has been added at the moment."),
                   ),
           );
         } else if (index == 1) {

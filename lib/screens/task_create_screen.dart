@@ -110,7 +110,7 @@ class _TaskCreatePageState extends State<TaskCreatePage> {
               Padding(
                 padding: const EdgeInsets.all(9),
                 child: Text(
-                  "Choose the way you wanna add:",
+                  "Choose the way you want to add:",
                   style: Theme.of(context).textTheme.bodyText2,
                 ),
               ),
@@ -161,7 +161,7 @@ class _TaskCreatePageState extends State<TaskCreatePage> {
                 ],
               ),
               taskTextFormField(
-                  hintText: "Where to submit (Léa/Mio/Teams etc.)", textController: _whereController),
+                  hintText: "Where to submit (Léa/Mio/Teams, etc.)", textController: _whereController),
               taskTextFormField(
                   isLast: true,
                   boxHeight: 90,

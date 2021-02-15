@@ -55,7 +55,7 @@ class _PrivateTaskScreenState extends State<PrivateTaskScreen> {
           if (stateService.privateHomeworkList.length == 0) {
             return Padding(
               padding: const EdgeInsets.all(16.0),
-              child: Text("No task been added atm"),
+              child: Text("No task has been added at the moment."),
             );
           }
           return CupertinoScrollbar(
