@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:homework_management_fellow/model/student.dart';
 import 'package:homework_management_fellow/services/firebaseService.dart';
 import 'package:homework_management_fellow/services/sign_in.dart';
-import 'package:homework_management_fellow/services/stateService.dart';
+import 'package:homework_management_fellow/services/dataService.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:provider/provider.dart';
@@ -32,7 +32,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     if (email != null && uid != null) {
       Student _student =
           await Provider.of<FirebaseService>(context, listen: false).checkStudent(email: email, uid: uid);
-      Provider.of<StateService>(context, listen: false).setStudent(_student);
+      Provider.of<DataService>(context, listen: false).setStudent(_student);
       if (_student != null) {
         if (_student.ban) {
           Navigator.pushNamed(context, '/BannedScreen');
@@ -133,7 +133,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
         uid = result[1];
         student =
             await Provider.of<FirebaseService>(context, listen: false).checkStudent(email: email, uid: uid);
-        Provider.of<StateService>(context, listen: false).setStudent(student);
+        Provider.of<DataService>(context, listen: false).setStudent(student);
         setState(() {
           _showSpinner = false;
         });

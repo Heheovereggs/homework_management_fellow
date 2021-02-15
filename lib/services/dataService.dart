@@ -3,7 +3,7 @@ import 'package:homework_management_fellow/model/homework.dart';
 import 'package:homework_management_fellow/model/student.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class StateService extends ChangeNotifier {
+class DataService extends ChangeNotifier {
   Student student;
   List<Homework> privateHomeworkList = [];
   bool isHomeworkListLoaded = false;

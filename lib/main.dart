@@ -5,7 +5,7 @@ import 'package:homework_management_fellow/screens/task_create_screen.dart';
 import 'screens/activation_pending_screen.dart';
 import 'screens/banned_screen.dart';
 import 'package:homework_management_fellow/services/firebaseService.dart';
-import 'package:homework_management_fellow/services/stateService.dart';
+import 'package:homework_management_fellow/services/dataService.dart';
 import 'package:provider/provider.dart';
 import 'screens/setting_screen.dart';
 import 'screens/main_task_screen.dart';
@@ -20,7 +20,7 @@ void main() async {
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => StateService()),
+        ChangeNotifierProvider(create: (_) => DataService()),
         Provider(create: (_) => FirebaseService()),
       ],
       child: MyApp(),

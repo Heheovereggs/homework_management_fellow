@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:homework_management_fellow/model/student.dart';
 import 'package:homework_management_fellow/services/firebaseService.dart';
-import 'package:homework_management_fellow/services/stateService.dart';
+import 'package:homework_management_fellow/services/dataService.dart';
 import 'package:provider/provider.dart';
 
 class RegistrationScreen extends StatefulWidget {
@@ -175,7 +175,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         isDiscord: isDiscord);
 
     // save to provider StateService
-    Provider.of<StateService>(context, listen: false).setStudent(student);
+    Provider.of<DataService>(context, listen: false).setStudent(student);
 
     // save to firebase
     Provider.of<FirebaseService>(context, listen: false).saveLoginInfo(student);
