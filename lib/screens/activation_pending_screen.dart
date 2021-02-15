@@ -63,7 +63,7 @@ class _ActivationPendingScreenState extends State<ActivationPendingScreen> {
                   height: 50,
                 ),
                 Text(
-                  "PLease check later or press the button to refresh status",
+                  "Please check later or press the button to refresh status",
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 24,

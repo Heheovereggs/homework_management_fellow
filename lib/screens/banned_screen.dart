@@ -23,7 +23,7 @@ class BannedScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              "You has be banned",
+              "You have be banned",
               style: TextStyle(
                 fontSize: 30,
                 fontWeight: FontWeight.bold,

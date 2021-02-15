@@ -27,8 +27,8 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     final prefs = await SharedPreferences.getInstance();
     String email = prefs.getString('email');
     String uid = prefs.getString('uid');
-    print("read $email from local SSD");
-    print("read $uid from local SSD");
+    print("read $email from local storage");
+    print("read $uid from local storage");
     if (email != null && uid != null) {
       Student _student =
           await Provider.of<FirebaseService>(context, listen: false).checkStudent(email: email, uid: uid);
