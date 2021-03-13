@@ -16,6 +16,18 @@ class DataService extends ChangeNotifier {
     this.student = student;
   }
 
+  List setSubjects(Map sectionMap) {
+    List sectionIds;
+    //convert subjectId:sectionNumber map to sectionId list
+    return sectionIds;
+  }
+
+  Future<void> saveSubjects(List sectionIds) async {
+    final prefs = await SharedPreferences.getInstance();
+    this.student.sectionIds = sectionIds;
+    prefs.setStringList('sectionIds', student.sectionIds);
+  }
+
   void setPrivateHomeworkList(List<Homework> homeworkList) {
     privateHomeworkList = homeworkList;
     isHomeworkListLoaded = true;

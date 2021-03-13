@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:homework_management_fellow/screens/section_select_screen.dart';
 import 'package:homework_management_fellow/screens/task_create_screen.dart';
 import 'screens/activation_pending_screen.dart';
 import 'screens/banned_screen.dart';
@@ -66,6 +67,7 @@ class MyApp extends StatelessWidget {
         '/SettingScreen': (context) => SettingScreen(),
         '/BannedScreen': (context) => BannedScreen(),
         '/TaskCreatePage': (context) => TaskCreatePage(),
+        '/SectionSelectScreen': (context) => SectionSelectScreen(),
       },
     );
   }

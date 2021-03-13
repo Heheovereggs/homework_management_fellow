@@ -15,7 +15,8 @@ class FirebaseService {
       'admin': false,
       'ban': false,
       'theme': null,
-      'isDiscord': student.isDiscord
+      'isDiscord': student.isDiscord,
+      'sectionIds': student.sectionIds
     });
   }
 
@@ -44,11 +45,8 @@ class FirebaseService {
   Future<List<Homework>> getPublicHomeWorkList(String uid) async {
     List<Homework> homeworkList = [];
     print('pull from firebase');
-    QuerySnapshot qn = await _firestore
-        .collection('homework')
-        .where('studentId', isEqualTo: '')
-        .orderBy('dueDate')
-        .get();
+    QuerySnapshot qn =
+        await _firestore.collection('homework').where('studentId', isEqualTo: '').orderBy('dueDate').get();
     for (DocumentSnapshot doc in qn.docs) {
       homeworkList.add(Homework(
           dueDate: doc['dueDate'].toDate(),
@@ -65,11 +63,8 @@ class FirebaseService {
   Future<List<Homework>> getPrivateHomeWorkList(String uid) async {
     List<Homework> homeworkList = [];
     print('pull private tasks from firebase');
-    QuerySnapshot qn = await _firestore
-        .collection('homework')
-        .where('studentId', isEqualTo: uid)
-        .orderBy('dueDate')
-        .get();
+    QuerySnapshot qn =
+        await _firestore.collection('homework').where('studentId', isEqualTo: uid).orderBy('dueDate').get();
     for (DocumentSnapshot doc in qn.docs) {
       homeworkList.add(Homework(
           dueDate: doc['dueDate'].toDate(),
@@ -81,5 +76,15 @@ class FirebaseService {
           isWaiting: doc['isWaiting']));
     }
     return homeworkList;
+  }
+
+  Future<Map> getSubjectMap() async {
+    Map<String, String> subjectMap;
+    var subjects = await _firestore.collection("subject").get();
+    for (var subject in subjects.docs) {
+      subjectMap[subject.id] = subject["name"];
+    }
+    print(subjectMap);
+    return subjectMap;
   }
 }

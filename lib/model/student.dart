@@ -9,6 +9,7 @@ class Student {
   DateTime dateOfJoin;
   String theme;
   bool isDiscord;
+  List sectionIds;
 
   Student(
       {this.email,
@@ -20,5 +21,6 @@ class Student {
       this.activate,
       this.ban,
       this.dateOfJoin,
-      this.theme});
+      this.theme,
+      this.sectionIds});
 }

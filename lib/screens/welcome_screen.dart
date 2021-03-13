@@ -36,6 +36,8 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
       if (_student != null) {
         if (_student.ban) {
           Navigator.pushNamed(context, '/BannedScreen');
+        } else if (_student.sectionIds.isEmpty) {
+          Navigator.pushNamed(context, '/SectionSelectScreen', arguments: {'email': email, 'uid': uid});
         } else if (!_student.activate) {
           Navigator.pushNamed(context, '/ActivationPendingScreen');
         } else {
@@ -155,7 +157,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
               title: Text("Login failed"),
               content: Text("Please try again"),
               actions: [
-                FlatButton(
+                TextButton(
                     onPressed: () {
                       Navigator.of(context).pop();
                     },

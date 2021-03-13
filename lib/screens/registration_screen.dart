@@ -114,7 +114,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                       border: Border.all(),
                     ),
                     child: Text(
-                      "No password required since Gooooooooooooooogle will do the verification",
+                      "No password required since Goooooooooooogle will do the verification",
                       style: Theme.of(context).textTheme.bodyText1,
                     ),
                   ),
@@ -127,7 +127,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                       borderRadius: BorderRadius.circular(10.0),
                       color: Color(0xFF2196f3),
                       child: Text(
-                        'Submit',
+                        'Next',
                         style: Theme.of(context).textTheme.bodyText1.copyWith(color: Colors.white),
                       ),
                       onPressed: _saveInfoForm,
@@ -150,10 +150,13 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       decoration: InputDecoration(
         border: OutlineInputBorder(),
         hintText: hint,
+        errorBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.red)),
+        errorStyle: Theme.of(context).textTheme.bodyText1.copyWith(color: Colors.red),
       ),
       validator: (String value) {
+        value = textEditingController.text.trim();
         if (value.isEmpty) {
-          return '$hint is required';
+          return "$hint is required";
         }
         final validCharacters = RegExp(r'^[a-z\-àâçéèêëîïôûùüÿñæœ\s]+$', caseSensitive: false);
         return validCharacters.hasMatch(value) ? null : 'Please only enter letter and "-"';
@@ -179,6 +182,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
     // save to firebase
     Provider.of<FirebaseService>(context, listen: false).saveLoginInfo(student);
-    Navigator.pushNamed(context, '/ActivationPendingScreen');
+
+    Navigator.pushNamed(context, '/SectionSelectScreen', arguments: {'email': email, 'uid': uid});
   }
 }
