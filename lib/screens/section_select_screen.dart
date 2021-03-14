@@ -25,8 +25,8 @@ class _SectionSelectScreen extends State<SectionSelectScreen> {
   Future getSubjectMap() async {
     subjectNameMap = await Provider.of<FirebaseService>(context, listen: false).getSubjectMap();
     subjectIdsMap = subjectNameMap;
-    for (var i in subjectIdsMap.values) {
-      i = 0;
+    for (var key in subjectIdsMap.keys) {
+      subjectIdsMap[key] = 0;
     }
   }
 
@@ -56,8 +56,7 @@ class _SectionSelectScreen extends State<SectionSelectScreen> {
                 itemCount: subjectNameMap.length,
                 itemBuilder: (BuildContext context, int index) {
                   String key = subjectNameMap.keys.elementAt(index);
-                  return sectionSelector(
-                      subjectName: subjectNameMap[key], subjectId: key, sectionNumber: );
+                  return sectionSelector(subjectName: subjectNameMap[key], subjectId: key, sectionNumber: 1);
                 },
               ),
               SizedBox(
@@ -110,7 +109,7 @@ class _SectionSelectScreen extends State<SectionSelectScreen> {
                       DropdownMenuItem(child: Text("-"), value: 0),
                       DropdownMenuItem(child: Text("1"), value: 1),
                       DropdownMenuItem(child: Text("2"), value: 2),
-                      DropdownMenuItem(child: Text("2"), value: 3),
+                      DropdownMenuItem(child: Text("3"), value: 3),
                     ],
                     onChanged: (value) {
                       setState(() {

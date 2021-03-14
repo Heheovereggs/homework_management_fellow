@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 import 'package:homework_management_fellow/model/homework.dart';
 import 'package:homework_management_fellow/model/student.dart';
 
@@ -37,8 +38,10 @@ class FirebaseService {
           admin: studentInfo["admin"],
           ban: studentInfo["ban"],
           theme: studentInfo["theme"],
-          isDiscord: studentInfo["isDiscord"]);
+          isDiscord: studentInfo["isDiscord"],
+          sectionIds: studentInfo["sectionIds"]);
     }
+
     return student;
   }
 

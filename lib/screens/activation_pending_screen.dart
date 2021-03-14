@@ -36,7 +36,8 @@ class _ActivationPendingScreenState extends State<ActivationPendingScreen> {
       print(email);
       String uid = prefs.getString('uid');
       print(uid);
-      Student student = await Provider.of<FirebaseService>(context, listen: false).checkStudent(email: email, uid: uid);
+      Student student =
+          await Provider.of<FirebaseService>(context, listen: false).checkStudent(email: email, uid: uid);
       return student.activate;
     }
 
@@ -78,12 +79,7 @@ class _ActivationPendingScreenState extends State<ActivationPendingScreen> {
                   padding: const EdgeInsets.all(19),
                   child: SizedBox(
                     width: 180,
-                    child: FlatButton(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30.0),
-                        ),
-                        color: Color(0xFF2196f3),
-                        textColor: Colors.white,
+                    child: TextButton(
                         child: Padding(
                           padding: const EdgeInsets.all(16.0),
                           child: Text(
@@ -128,7 +124,8 @@ class _ActivationPendingScreenState extends State<ActivationPendingScreen> {
                   child: Container(
                     width: 175,
                     height: 45,
-                    decoration: BoxDecoration(color: Color(0xCC000000), borderRadius: BorderRadius.circular(10.0)),
+                    decoration:
+                        BoxDecoration(color: Color(0xCC000000), borderRadius: BorderRadius.circular(10.0)),
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Center(
