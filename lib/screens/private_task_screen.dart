@@ -31,43 +31,26 @@ class _PrivateTaskScreenState extends State<PrivateTaskScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return CupertinoPageScaffold(
-      navigationBar: CupertinoNavigationBar(
-        backgroundColor: Color(0xFF2196f3),
-        leading: Icon(
-          Icons.filter_alt,
-          color: Colors.white,
-        ),
-        middle: Text(
-          "HMF",
-          style: TextStyle(color: Colors.white),
-        ),
-        trailing: Icon(
-          Icons.settings,
-          color: Colors.white,
-        ),
-      ),
-      child: Consumer<DataService>(
-        builder: (_, stateService, child) {
-          if (stateService.isHomeworkListLoaded == false) {
-            return Container();
-          }
-          if (stateService.privateHomeworkList.length == 0) {
-            return Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Text("No task has been added at the moment."),
-            );
-          }
-          return CupertinoScrollbar(
-            child: ListView.builder(
-              itemCount: stateService.privateHomeworkList.length,
-              itemBuilder: (BuildContext context, int index) {
-                return HomeworkCard(stateService.privateHomeworkList[index]);
-              },
-            ),
+    return Consumer<DataService>(
+      builder: (_, stateService, child) {
+        if (stateService.isHomeworkListLoaded == false) {
+          return Container();
+        }
+        if (stateService.privateHomeworkList.length == 0) {
+          return Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Text("No task has been added at the moment."),
           );
-        },
-      ),
+        }
+        return CupertinoScrollbar(
+          child: ListView.builder(
+            itemCount: stateService.privateHomeworkList.length,
+            itemBuilder: (BuildContext context, int index) {
+              return HomeworkCard(stateService.privateHomeworkList[index]);
+            },
+          ),
+        );
+      },
     );
   }
 }

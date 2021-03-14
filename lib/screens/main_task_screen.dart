@@ -52,37 +52,41 @@ class _TaskScreenState extends State<TaskScreen> {
       ),
       backgroundColor: Colors.white,
       tabBuilder: (context, index) {
-        if (index == 0) {
-          return CupertinoPageScaffold(
-            navigationBar: CupertinoNavigationBar(
-              backgroundColor: Color(0xFF2196f3),
-              leading: Icon(
-                Icons.filter_alt,
-                color: Colors.white,
-              ),
-              middle: Text(
-                "HMF",
-                style: TextStyle(color: Colors.white),
-              ),
-              trailing: Icon(
-                Icons.settings,
-                color: Colors.white,
-              ),
+        return CupertinoPageScaffold(
+          navigationBar: CupertinoNavigationBar(
+            backgroundColor: Color(0xFF2196f3),
+            leading: Icon(
+              Icons.filter_alt,
+              color: Colors.white,
             ),
-            child: homeworkList != null
-                ? taskListBuilder()
-                : Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Text("No task has been added at the moment."),
-                  ),
-          );
-        } else if (index == 1) {
-          return TaskCreatePage();
-        } else {
-          return PrivateTaskScreen();
-        }
+            middle: Text(
+              "HMF",
+              style: TextStyle(color: Colors.white),
+            ),
+            trailing: Icon(
+              Icons.settings,
+              color: Colors.white,
+            ),
+          ),
+          child: screenChoice(index),
+        );
       },
     );
+  }
+
+  Widget screenChoice(int index) {
+    if (index == 0) {
+      return homeworkList != null
+          ? taskListBuilder()
+          : Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Text("No task has been added at the moment."),
+            );
+    } else if (index == 1) {
+      return TaskCreatePage();
+    } else {
+      return PrivateTaskScreen();
+    }
   }
 
   CupertinoScrollbar taskListBuilder() {
