@@ -56,7 +56,8 @@ class _SectionSelectScreen extends State<SectionSelectScreen> {
                 itemCount: subjectNameMap.length,
                 itemBuilder: (BuildContext context, int index) {
                   String key = subjectNameMap.keys.elementAt(index);
-                  return sectionSelector(subjectName: subjectNameMap[key], subjectId: key, sectionNumber: 1);
+                  return sectionSelector(
+                      subjectName: subjectNameMap[key], subjectId: key, sectionNumber: subjectIdsMap[key]);
                 },
               ),
               SizedBox(

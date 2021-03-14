@@ -36,7 +36,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
       if (_student != null) {
         if (_student.ban) {
           Navigator.pushNamed(context, '/BannedScreen');
-        } else if (_student.sectionIds.isEmpty) {
+        } else if (_student.sectionIds == null || _student.sectionIds.isEmpty) {
           Navigator.pushNamed(context, '/SectionSelectScreen', arguments: {'email': email, 'uid': uid});
         } else if (!_student.activate) {
           Navigator.pushNamed(context, '/ActivationPendingScreen');

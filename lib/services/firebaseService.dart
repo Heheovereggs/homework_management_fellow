@@ -41,7 +41,6 @@ class FirebaseService {
           isDiscord: studentInfo["isDiscord"],
           sectionIds: studentInfo["sectionIds"]);
     }
-
     return student;
   }
 
@@ -82,11 +81,13 @@ class FirebaseService {
   }
 
   Future<Map> getSubjectMap() async {
+    print("==================~~~>");
     Map<String, String> subjectMap;
     var subjects = await _firestore.collection("subject").get();
     for (var subject in subjects.docs) {
       subjectMap[subject.id] = subject["name"];
     }
+    print("==================~~~>");
     print(subjectMap);
     return subjectMap;
   }

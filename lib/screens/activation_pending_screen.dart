@@ -80,6 +80,12 @@ class _ActivationPendingScreenState extends State<ActivationPendingScreen> {
                   child: SizedBox(
                     width: 180,
                     child: TextButton(
+                        style: ButtonStyle(),
+                        // shape: RoundedRectangleBorder(
+                        //   borderRadius: BorderRadius.circular(30.0),
+                        // ),
+                        // color: Color(0xFF2196f3),
+                        // textColor: Colors.white,
                         child: Padding(
                           padding: const EdgeInsets.all(16.0),
                           child: Text(
@@ -131,7 +137,7 @@ class _ActivationPendingScreenState extends State<ActivationPendingScreen> {
                       child: Center(
                           child: Text(
                         "Hasn't activated yet...",
-                        style: TextStyle(color: Colors.white),
+                        style: TextStyle(color: Colors.white, fontSize: 10),
                       )),
                     ),
                   ),
