@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:homework_management_fellow/model/homework.dart';
 import 'package:homework_management_fellow/model/student.dart';
+import 'package:homework_management_fellow/model/subject.dart';
 
 class FirebaseService {
   final _firestore = FirebaseFirestore.instance;
@@ -80,15 +81,12 @@ class FirebaseService {
     return homeworkList;
   }
 
-  Future<Map> getSubjectMap() async {
-    print("==================~~~>");
-    Map<String, String> subjectMap;
-    var subjects = await _firestore.collection("subject").get();
-    for (var subject in subjects.docs) {
-      subjectMap[subject.id] = subject["name"];
+  Future<List<Subject>> getSubjectMap() async {
+    List<Subject> subjects = [];
+    var qn = await _firestore.collection("subject").get();
+    for (var subject in qn.docs) {
+      subjects.add(Subject(id: subject.id, name: subject["name"]));
     }
-    print("==================~~~>");
-    print(subjectMap);
-    return subjectMap;
+    return subjects;
   }
 }

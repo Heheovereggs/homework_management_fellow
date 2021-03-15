@@ -55,17 +55,27 @@ class _TaskScreenState extends State<TaskScreen> {
         return CupertinoPageScaffold(
           navigationBar: CupertinoNavigationBar(
             backgroundColor: Color(0xFF2196f3),
-            leading: Icon(
-              Icons.filter_alt,
-              color: Colors.white,
+            leading: GestureDetector(
+              child: Icon(
+                Icons.filter_alt,
+                color: Colors.white,
+              ),
+              onTap: () {
+                Navigator.pushNamed(context, '/TaskScreen');
+              },
             ),
             middle: Text(
               "HMF",
               style: TextStyle(color: Colors.white),
             ),
-            trailing: Icon(
-              Icons.settings,
-              color: Colors.white,
+            trailing: GestureDetector(
+              child: Icon(
+                Icons.settings,
+                color: Colors.white,
+              ),
+              onTap: () {
+                Navigator.pushNamed(context, '/SectionSelectScreen');
+              },
             ),
           ),
           child: screenChoice(index),

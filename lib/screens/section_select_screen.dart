@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:provider/provider.dart';
 import 'package:homework_management_fellow/model/student.dart';
+import 'package:homework_management_fellow/model/subject.dart';
 import 'package:homework_management_fellow/services/firebaseService.dart';
 import 'package:homework_management_fellow/services/dataService.dart';
-import 'package:provider/provider.dart';
 
 class SectionSelectScreen extends StatefulWidget {
   @override
@@ -13,7 +14,7 @@ class SectionSelectScreen extends StatefulWidget {
 class _SectionSelectScreen extends State<SectionSelectScreen> {
   String uid;
   String email;
-  Map subjectNameMap;
+  List<Subject> subjects = [];
   Map subjectIdsMap;
 
   @override
@@ -23,18 +24,13 @@ class _SectionSelectScreen extends State<SectionSelectScreen> {
   }
 
   Future getSubjectMap() async {
-    subjectNameMap = await Provider.of<FirebaseService>(context, listen: false).getSubjectMap();
-    subjectIdsMap = subjectNameMap;
-    for (var key in subjectIdsMap.keys) {
-      subjectIdsMap[key] = 0;
-    }
+    subjects = await Provider.of<FirebaseService>(context, listen: false).getSubjectMap();
   }
 
   @override
   Widget build(BuildContext context) {
-    final Map arguments = ModalRoute.of(context).settings.arguments as Map;
-    email = arguments['email'];
-    uid = arguments['uid'];
+    email = Provider.of<DataService>(context, listen: false).student.email;
+
     return Scaffold(
       appBar: AppBar(
         title: Text("Registration"),
@@ -43,22 +39,16 @@ class _SectionSelectScreen extends State<SectionSelectScreen> {
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(8.0),
-          child: ListView(
+          child: Column(
             children: [
-              Padding(
-                padding: const EdgeInsets.all(9.0),
-                child: Text(
-                  "Your email: $email",
-                  style: TextStyle(fontSize: 24, height: 1.3),
+              Expanded(
+                child: ListView.builder(
+                  itemCount: subjects.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return sectionSelector(
+                        subjectName: subjects[index].name, subjectId: subjects[index].id, sectionNumber: 1);
+                  },
                 ),
-              ),
-              ListView.builder(
-                itemCount: subjectNameMap.length,
-                itemBuilder: (BuildContext context, int index) {
-                  String key = subjectNameMap.keys.elementAt(index);
-                  return sectionSelector(
-                      subjectName: subjectNameMap[key], subjectId: key, sectionNumber: subjectIdsMap[key]);
-                },
               ),
               SizedBox(
                 height: 15,
