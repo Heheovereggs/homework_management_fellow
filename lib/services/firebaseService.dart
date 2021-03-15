@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:homework_management_fellow/model/homework.dart';
+import 'package:homework_management_fellow/model/section.dart';
 import 'package:homework_management_fellow/model/student.dart';
 import 'package:homework_management_fellow/model/subject.dart';
 
@@ -82,11 +83,29 @@ class FirebaseService {
   }
 
   Future<List<Subject>> getSubjectMap() async {
+    List<SubjectSection> sections = await getSections();
     List<Subject> subjects = [];
     var qn = await _firestore.collection("subject").get();
     for (var subject in qn.docs) {
-      subjects.add(Subject(id: subject.id, name: subject["name"]));
+      List<SubjectSection> thisSections =
+          sections.where((element) => element.subjectId == subject.id).toList();
+      thisSections.insert(0, SubjectSection(id: "-", section: "-", subjectId: "-"));
+      subjects.add(Subject(
+        id: subject.id,
+        name: subject["name"],
+        sections: thisSections,
+      ));
     }
     return subjects;
+  }
+
+  Future<List<SubjectSection>> getSections() async {
+    List<SubjectSection> sections = [];
+    var qn = await _firestore.collection("section").get();
+    for (var section in qn.docs) {
+      sections
+          .add(SubjectSection(id: section.id, section: section["section"], subjectId: section["subjectId"]));
+    }
+    return sections;
   }
 }

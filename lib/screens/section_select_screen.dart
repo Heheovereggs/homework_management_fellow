@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:homework_management_fellow/model/section.dart';
 import 'package:provider/provider.dart';
 import 'package:homework_management_fellow/model/student.dart';
 import 'package:homework_management_fellow/model/subject.dart';
@@ -15,7 +16,6 @@ class _SectionSelectScreen extends State<SectionSelectScreen> {
   String uid;
   String email;
   List<Subject> subjects = [];
-  Map subjectIdsMap;
 
   @override
   void initState() {
@@ -25,6 +25,7 @@ class _SectionSelectScreen extends State<SectionSelectScreen> {
 
   Future getSubjectMap() async {
     subjects = await Provider.of<FirebaseService>(context, listen: false).getSubjectMap();
+    setState(() {});
   }
 
   @override
@@ -45,8 +46,7 @@ class _SectionSelectScreen extends State<SectionSelectScreen> {
                 child: ListView.builder(
                   itemCount: subjects.length,
                   itemBuilder: (BuildContext context, int index) {
-                    return sectionSelector(
-                        subjectName: subjects[index].name, subjectId: subjects[index].id, sectionNumber: 1);
+                    return sectionSelector(subject: subjects[index]);
                   },
                 ),
               ),
@@ -75,14 +75,21 @@ class _SectionSelectScreen extends State<SectionSelectScreen> {
     );
   }
 
-  Padding sectionSelector({String subjectId, int sectionNumber, String subjectName}) {
+  Padding sectionSelector({Subject subject}) {
+    List<DropdownMenuItem> listDropdown = subject.sections
+        .map((e) => DropdownMenuItem(
+              child: Text(e.section),
+              value: e.section,
+            ))
+        .toList();
+
     return Padding(
       padding: const EdgeInsets.all(9),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
-            "$subjectName",
+            "${subject.name}",
             style: TextStyle(fontSize: 16),
           ),
           Padding(
@@ -95,17 +102,10 @@ class _SectionSelectScreen extends State<SectionSelectScreen> {
               ),
               child: DropdownButtonHideUnderline(
                 child: DropdownButton(
-                    value: sectionNumber,
-                    items: [
-                      DropdownMenuItem(child: Text("-"), value: 0),
-                      DropdownMenuItem(child: Text("1"), value: 1),
-                      DropdownMenuItem(child: Text("2"), value: 2),
-                      DropdownMenuItem(child: Text("3"), value: 3),
-                    ],
+                    value: "-",
+                    items: listDropdown,
                     onChanged: (value) {
-                      setState(() {
-                        sectionNumber = value;
-                      });
+                      setState(() {});
                     }),
               ),
             ),
