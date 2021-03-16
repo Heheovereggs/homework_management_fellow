@@ -22,12 +22,6 @@ class DataService extends ChangeNotifier {
     sectionSummary = sections;
   }
 
-  List<String> setSections(Map sectionMap) {
-    List<String> sectionIds;
-    //convert subjectId:sectionNumber map to sectionId list
-    return sectionIds;
-  }
-
   Future<void> saveSections(List sectionIds) async {
     final prefs = await SharedPreferences.getInstance();
     this.student.sectionIds = sectionIds;

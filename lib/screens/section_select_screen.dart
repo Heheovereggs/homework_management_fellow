@@ -20,7 +20,8 @@ class _SectionSelectScreen extends State<SectionSelectScreen> {
   String currentYear;
   String season;
   List<Subject> subjects = [];
-  Map<String, String> choiceMap = {};
+  Map<String, String> sectionChoiceMap = {};
+  Map<String, bool> subjectChoiceMap = {};
 
   @override
   void initState() {
@@ -32,8 +33,20 @@ class _SectionSelectScreen extends State<SectionSelectScreen> {
     super.initState();
   }
 
+  void _handleForm() {
+    print(sectionChoiceMap);
+    // List<String> sectionIds = Provider.of<DataService>(context, listen: false).setSections(choiceMap);
+    // Student student = Student(sectionIds: sectionIds);
+    // Provider.of<FirebaseService>(context, listen: false).saveSectionIds(student);
+    // Navigator.pushNamed(context, '/ActivationPendingScreen');
+  }
+
   Future getSubjectName() async {
     subjects = await Provider.of<FirebaseService>(context, listen: false).getSubjectName(context);
+    subjects.forEach((element) {
+      sectionChoiceMap[element.id] = element.sections[0].id;
+      subjectChoiceMap[element.id] = true;
+    });
     setState(() {});
   }
 
@@ -61,7 +74,12 @@ class _SectionSelectScreen extends State<SectionSelectScreen> {
                     if (index + 1 == subjects.length) {
                       isLast = true;
                     }
-                    return sectionSelector(subject: subjects[index], isLast: isLast);
+                    return sectionSelector(
+                      subject: subjects[index],
+                      isLast: isLast,
+                      sectionChoiceMap: sectionChoiceMap,
+                      subjectChoiceMap: subjectChoiceMap,
+                    );
                   },
                 ),
               ),
@@ -79,7 +97,7 @@ class _SectionSelectScreen extends State<SectionSelectScreen> {
                       'Submit',
                       style: Theme.of(context).textTheme.bodyText1.copyWith(color: Colors.white),
                     ),
-                    onPressed: _saveSectionIds,
+                    onPressed: _handleForm,
                   ),
                 ),
               ),
@@ -90,13 +108,13 @@ class _SectionSelectScreen extends State<SectionSelectScreen> {
     );
   }
 
-  Column sectionSelector({Subject subject, bool isLast}) {
-    bool isParticipated = true;
+  Column sectionSelector({Subject subject, bool isLast, Map sectionChoiceMap, Map subjectChoiceMap}) {
+    bool isParticipated = subjectChoiceMap[subject.id];
     String subjectId = subject.id;
-    String choice = "1";
+    String choice = sectionChoiceMap[subject.id];
 
     Map<String, Widget> sliderItems =
-        Map.fromIterable(subject.sections, key: (e) => e.section, value: (e) => Text(e.section));
+        Map.fromIterable(subject.sections, key: (e) => e.id, value: (e) => Text(e.section));
 
     return Column(
       children: [
@@ -125,7 +143,7 @@ class _SectionSelectScreen extends State<SectionSelectScreen> {
                       ],
                       onChanged: (value) {
                         setState(() {
-                          isParticipated = value;
+                          subjectChoiceMap[subject.id] = value;
                         });
                       }),
                 ),
@@ -145,8 +163,7 @@ class _SectionSelectScreen extends State<SectionSelectScreen> {
                       groupValue: choice,
                       onValueChanged: (value) {
                         setState(() {
-                          choice = value;
-                          choiceMap[subjectId] = choice;
+                          sectionChoiceMap[subjectId] = value;
                         });
                       },
                       children: sliderItems,
@@ -158,13 +175,5 @@ class _SectionSelectScreen extends State<SectionSelectScreen> {
         isLast ? Container() : Text("-----------------------------------------"),
       ],
     );
-  }
-
-  void _saveSectionIds() {
-    print(choiceMap);
-    // List<String> sectionIds = Provider.of<DataService>(context, listen: false).setSections(choiceMap);
-    // Student student = Student(sectionIds: sectionIds);
-    // Provider.of<FirebaseService>(context, listen: false).saveSectionIds(student);
-    // Navigator.pushNamed(context, '/ActivationPendingScreen');
   }
 }
