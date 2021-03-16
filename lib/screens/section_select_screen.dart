@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:homework_management_fellow/model/section.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:homework_management_fellow/model/student.dart';
 import 'package:homework_management_fellow/model/subject.dart';
@@ -15,16 +16,24 @@ class SectionSelectScreen extends StatefulWidget {
 class _SectionSelectScreen extends State<SectionSelectScreen> {
   String uid;
   String email;
+  DateFormat dateFormat = DateFormat("yyyy");
+  String currentYear;
+  String season;
   List<Subject> subjects = [];
+  Map<String, String> choiceMap = {};
 
   @override
   void initState() {
-    getSubjectMap();
+    int currentMonth;
+    currentYear = dateFormat.format(DateTime.now());
+    currentMonth = DateTime.now().month;
+    season = currentMonth >= 8 && currentMonth <= 12 ? "Autumn" : "Winter";
+    getSubjectName();
     super.initState();
   }
 
-  Future getSubjectMap() async {
-    subjects = await Provider.of<FirebaseService>(context, listen: false).getSubjectMap();
+  Future getSubjectName() async {
+    subjects = await Provider.of<FirebaseService>(context, listen: false).getSubjectName(context);
     setState(() {});
   }
 
@@ -34,7 +43,7 @@ class _SectionSelectScreen extends State<SectionSelectScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("Registration"),
+        title: Text("Choice sections ($season $currentYear)"),
         leading: Icon(Icons.arrow_back_ios_rounded),
       ),
       body: SafeArea(
@@ -44,9 +53,15 @@ class _SectionSelectScreen extends State<SectionSelectScreen> {
             children: [
               Expanded(
                 child: ListView.builder(
+                  padding: const EdgeInsets.all(4),
+                  physics: NeverScrollableScrollPhysics(),
                   itemCount: subjects.length,
                   itemBuilder: (BuildContext context, int index) {
-                    return sectionSelector(subject: subjects[index]);
+                    bool isLast = false;
+                    if (index + 1 == subjects.length) {
+                      isLast = true;
+                    }
+                    return sectionSelector(subject: subjects[index], isLast: isLast);
                   },
                 ),
               ),
@@ -64,7 +79,7 @@ class _SectionSelectScreen extends State<SectionSelectScreen> {
                       'Submit',
                       style: Theme.of(context).textTheme.bodyText1.copyWith(color: Colors.white),
                     ),
-                    onPressed: _saveSections,
+                    onPressed: _saveSectionIds,
                   ),
                 ),
               ),
@@ -75,54 +90,81 @@ class _SectionSelectScreen extends State<SectionSelectScreen> {
     );
   }
 
-  Padding sectionSelector({Subject subject}) {
-    List<DropdownMenuItem> listDropdown = subject.sections
-        .map((e) => DropdownMenuItem(
-              child: Text(e.section),
-              value: e.section,
-            ))
-        .toList();
+  Column sectionSelector({Subject subject, bool isLast}) {
+    bool isParticipated = true;
+    String subjectId = subject.id;
+    String choice = "1";
 
-    return Padding(
-      padding: const EdgeInsets.all(9),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            "${subject.name}",
-            style: TextStyle(fontSize: 16),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(left: 15),
-            child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 15),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-                border: Border.all(),
-              ),
-              child: DropdownButtonHideUnderline(
-                child: DropdownButton(
-                    value: "-",
-                    items: listDropdown,
-                    onChanged: (value) {
-                      setState(() {});
-                    }),
-              ),
+    Map<String, Widget> sliderItems =
+        Map.fromIterable(subject.sections, key: (e) => e.section, value: (e) => Text(e.section));
+
+    return Column(
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              "Do you have ${subject.name} course?",
+              style: TextStyle(fontSize: 16),
             ),
-          ),
-        ],
-      ),
+            Padding(
+              padding: const EdgeInsets.only(left: 15),
+              child: Container(
+                height: 35,
+                padding: EdgeInsets.symmetric(horizontal: 15),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(),
+                ),
+                child: DropdownButtonHideUnderline(
+                  child: DropdownButton(
+                      value: isParticipated,
+                      items: [
+                        DropdownMenuItem(child: Text("Yes"), value: true),
+                        DropdownMenuItem(child: Text("No"), value: false),
+                      ],
+                      onChanged: (value) {
+                        setState(() {
+                          isParticipated = value;
+                        });
+                      }),
+                ),
+              ),
+            )
+          ],
+        ),
+        isParticipated
+            ? Column(
+                children: [
+                  Text("Your section:"),
+                  SizedBox(height: 8),
+                  Container(
+                    width: 335,
+                    child: CupertinoSlidingSegmentedControl(
+                      thumbColor: Color(0xFF2196f3),
+                      groupValue: choice,
+                      onValueChanged: (value) {
+                        setState(() {
+                          choice = value;
+                          choiceMap[subjectId] = choice;
+                        });
+                      },
+                      children: sliderItems,
+                    ),
+                  ),
+                ],
+              )
+            : Container(),
+        isLast ? Container() : Text("-----------------------------------------"),
+      ],
     );
   }
 
-  void _saveSections() {
-    Student student = Student(sectionIds: []);
-
-    // save to provider StateService
-    Provider.of<DataService>(context, listen: false).setStudent(student);
-
-    // save to firebase
-    Provider.of<FirebaseService>(context, listen: false).saveLoginInfo(student);
-    Navigator.pushNamed(context, '/ActivationPendingScreen');
+  void _saveSectionIds() {
+    print(choiceMap);
+    // List<String> sectionIds = Provider.of<DataService>(context, listen: false).setSections(choiceMap);
+    // Student student = Student(sectionIds: sectionIds);
+    // Provider.of<FirebaseService>(context, listen: false).saveSectionIds(student);
+    // Navigator.pushNamed(context, '/ActivationPendingScreen');
   }
 }

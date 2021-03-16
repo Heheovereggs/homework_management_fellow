@@ -1,10 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:homework_management_fellow/model/homework.dart';
+import 'package:homework_management_fellow/model/section.dart';
 import 'package:homework_management_fellow/model/student.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class DataService extends ChangeNotifier {
   Student student;
+  List<SubjectSection> sectionSummary = [];
   List<Homework> privateHomeworkList = [];
   bool isHomeworkListLoaded = false;
 
@@ -16,13 +18,17 @@ class DataService extends ChangeNotifier {
     this.student = student;
   }
 
-  List setSubjects(Map sectionMap) {
-    List sectionIds;
+  void setSectionSummary(sections) {
+    sectionSummary = sections;
+  }
+
+  List<String> setSections(Map sectionMap) {
+    List<String> sectionIds;
     //convert subjectId:sectionNumber map to sectionId list
     return sectionIds;
   }
 
-  Future<void> saveSubjects(List sectionIds) async {
+  Future<void> saveSections(List sectionIds) async {
     final prefs = await SharedPreferences.getInstance();
     this.student.sectionIds = sectionIds;
     prefs.setStringList('sectionIds', student.sectionIds);

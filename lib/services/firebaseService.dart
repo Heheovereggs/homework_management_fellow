@@ -1,9 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
+import 'dataService.dart';
 import 'package:homework_management_fellow/model/homework.dart';
 import 'package:homework_management_fellow/model/section.dart';
 import 'package:homework_management_fellow/model/student.dart';
 import 'package:homework_management_fellow/model/subject.dart';
+import 'package:provider/provider.dart';
 
 class FirebaseService {
   final _firestore = FirebaseFirestore.instance;
@@ -82,14 +83,13 @@ class FirebaseService {
     return homeworkList;
   }
 
-  Future<List<Subject>> getSubjectMap() async {
-    List<SubjectSection> sections = await getSections();
+  Future<List<Subject>> getSubjectName(context) async {
+    List<SubjectSection> sections = await getSections(context);
     List<Subject> subjects = [];
     var qn = await _firestore.collection("subject").get();
     for (var subject in qn.docs) {
       List<SubjectSection> thisSections =
           sections.where((element) => element.subjectId == subject.id).toList();
-      thisSections.insert(0, SubjectSection(id: "-", section: "-", subjectId: "-"));
       subjects.add(Subject(
         id: subject.id,
         name: subject["name"],
@@ -99,13 +99,18 @@ class FirebaseService {
     return subjects;
   }
 
-  Future<List<SubjectSection>> getSections() async {
+  Future<List<SubjectSection>> getSections(context) async {
     List<SubjectSection> sections = [];
-    var qn = await _firestore.collection("section").get();
+    var qn = await _firestore.collection("section").orderBy("section").get();
     for (var section in qn.docs) {
       sections
           .add(SubjectSection(id: section.id, section: section["section"], subjectId: section["subjectId"]));
     }
+    Provider.of<DataService>(context, listen: false).setSectionSummary(sections);
     return sections;
+  }
+
+  void saveSectionIds(Student student) async {
+    _firestore.collection('student').doc('${student.uid}').set({'sectionIds': student.sectionIds});
   }
 }
