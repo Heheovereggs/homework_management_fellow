@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:homework_management_fellow/model/homework.dart';
 import 'package:homework_management_fellow/screens/private_task_screen.dart';
+import 'package:homework_management_fellow/services/dataService.dart';
 import 'package:homework_management_fellow/services/firebaseService.dart';
 import 'package:homework_management_fellow/widgets/homework_card.dart';
 import 'package:homework_management_fellow/screens/task_create_screen.dart';
@@ -22,10 +23,9 @@ class _TaskScreenState extends State<TaskScreen> {
   }
 
   void loadHomeworkList() async {
-    final prefs = await SharedPreferences.getInstance();
-    String uid = prefs.getString('uid');
+    List studentSectionIds = Provider.of<DataService>(context, listen: false).student.sectionIds;
     List<Homework> _homeworkList =
-        await Provider.of<FirebaseService>(context, listen: false).getPublicHomeWorkList(uid);
+        await Provider.of<FirebaseService>(context, listen: false).getPublicHomeWorkList(studentSectionIds);
     setState(() {
       homeworkList = _homeworkList;
     });
@@ -33,54 +33,54 @@ class _TaskScreenState extends State<TaskScreen> {
 
   RefreshController _refreshController = RefreshController(initialRefresh: false);
   void _onRefresh() async {
-    final prefs = await SharedPreferences.getInstance();
-    String uid = prefs.getString('uid');
-    homeworkList = await Provider.of<FirebaseService>(context, listen: false).getPublicHomeWorkList(uid);
-    setState(() {});
+    loadHomeworkList();
     _refreshController.refreshCompleted();
   }
 
   @override
   Widget build(BuildContext context) {
-    return CupertinoTabScaffold(
-      tabBar: CupertinoTabBar(
-        items: [
-          BottomNavigationBarItem(icon: Icon(Icons.format_list_numbered_rounded), label: "Public task"),
-          BottomNavigationBarItem(icon: Icon(Icons.add), label: "Add task"),
-          BottomNavigationBarItem(icon: Icon(Icons.local_library_rounded), label: "Private task"),
-        ],
+    return WillPopScope(
+      onWillPop: () async => false,
+      child: CupertinoTabScaffold(
+        tabBar: CupertinoTabBar(
+          items: [
+            BottomNavigationBarItem(icon: Icon(Icons.format_list_numbered_rounded), label: "Public task"),
+            BottomNavigationBarItem(icon: Icon(Icons.add), label: "Add task"),
+            BottomNavigationBarItem(icon: Icon(Icons.local_library_rounded), label: "Private task"),
+          ],
+        ),
+        backgroundColor: Colors.white,
+        tabBuilder: (context, index) {
+          return CupertinoPageScaffold(
+            navigationBar: CupertinoNavigationBar(
+              backgroundColor: Color(0xFF2196f3),
+              leading: GestureDetector(
+                child: Icon(
+                  Icons.filter_alt,
+                  color: Colors.white,
+                ),
+                onTap: () {
+                  //TODO: filter page
+                },
+              ),
+              middle: Text(
+                "HMF",
+                style: TextStyle(color: Colors.white),
+              ),
+              trailing: GestureDetector(
+                child: Icon(
+                  Icons.settings,
+                  color: Colors.white,
+                ),
+                onTap: () {
+                  Navigator.pushNamed(context, '/SettingScreen');
+                },
+              ),
+            ),
+            child: screenChoice(index),
+          );
+        },
       ),
-      backgroundColor: Colors.white,
-      tabBuilder: (context, index) {
-        return CupertinoPageScaffold(
-          navigationBar: CupertinoNavigationBar(
-            backgroundColor: Color(0xFF2196f3),
-            leading: GestureDetector(
-              child: Icon(
-                Icons.filter_alt,
-                color: Colors.white,
-              ),
-              onTap: () {
-                Navigator.pushNamed(context, '/TaskScreen');
-              },
-            ),
-            middle: Text(
-              "HMF",
-              style: TextStyle(color: Colors.white),
-            ),
-            trailing: GestureDetector(
-              child: Icon(
-                Icons.settings,
-                color: Colors.white,
-              ),
-              onTap: () {
-                Navigator.pushNamed(context, '/SectionSelectScreen');
-              },
-            ),
-          ),
-          child: screenChoice(index),
-        );
-      },
     );
   }
 

@@ -1,10 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'dataService.dart';
 import 'package:homework_management_fellow/model/homework.dart';
 import 'package:homework_management_fellow/model/section.dart';
 import 'package:homework_management_fellow/model/student.dart';
 import 'package:homework_management_fellow/model/subject.dart';
-import 'package:provider/provider.dart';
 
 class FirebaseService {
   final _firestore = FirebaseFirestore.instance;
@@ -47,20 +45,22 @@ class FirebaseService {
     return student;
   }
 
-  Future<List<Homework>> getPublicHomeWorkList(String uid) async {
+  Future<List<Homework>> getPublicHomeWorkList(List studentSectionIds) async {
     List<Homework> homeworkList = [];
     print('pull from firebase');
     QuerySnapshot qn =
         await _firestore.collection('homework').where('studentId', isEqualTo: '').orderBy('dueDate').get();
     for (DocumentSnapshot doc in qn.docs) {
-      homeworkList.add(Homework(
+      String subjectName = doc['subject'];
+      if (studentSectionIds.contains(doc['sectionId'])) {
+        homeworkList.add(Homework(
           dueDate: doc['dueDate'].toDate(),
           name: doc['name'],
           note: doc['note'],
-          subject: doc['subject'],
-          studentId: doc['studentId'],
+          subject: subjectName,
           where: doc['where'],
-          isWaiting: doc['isWaiting']));
+        ));
+      }
     }
     return homeworkList;
   }
@@ -83,8 +83,8 @@ class FirebaseService {
     return homeworkList;
   }
 
-  Future<List<Subject>> getSubjectName(context) async {
-    List<SubjectSection> sections = await getSections(context);
+  Future<List<Subject>> getSubjectName() async {
+    List<SubjectSection> sections = await getSections();
     List<Subject> subjects = [];
     var qn = await _firestore.collection("subject").get();
     for (var subject in qn.docs) {
@@ -99,18 +99,17 @@ class FirebaseService {
     return subjects;
   }
 
-  Future<List<SubjectSection>> getSections(context) async {
+  Future<List<SubjectSection>> getSections() async {
     List<SubjectSection> sections = [];
     var qn = await _firestore.collection("section").orderBy("section").get();
     for (var section in qn.docs) {
       sections
           .add(SubjectSection(id: section.id, section: section["section"], subjectId: section["subjectId"]));
     }
-    Provider.of<DataService>(context, listen: false).setSectionSummary(sections);
     return sections;
   }
 
   void saveSectionIds(Student student) async {
-    _firestore.collection('student').doc('${student.uid}').set({'sectionIds': student.sectionIds});
+    _firestore.collection('student').doc(student.uid).update({'sectionIds': student.sectionIds});
   }
 }

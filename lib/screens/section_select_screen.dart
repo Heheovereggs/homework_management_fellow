@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:homework_management_fellow/model/section.dart';
+import 'package:homework_management_fellow/widgets/buttons.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:homework_management_fellow/model/student.dart';
@@ -15,7 +16,6 @@ class SectionSelectScreen extends StatefulWidget {
 
 class _SectionSelectScreen extends State<SectionSelectScreen> {
   String uid;
-  String email;
   DateFormat dateFormat = DateFormat("yyyy");
   String currentYear;
   String season;
@@ -25,6 +25,7 @@ class _SectionSelectScreen extends State<SectionSelectScreen> {
 
   @override
   void initState() {
+    uid = Provider.of<DataService>(context, listen: false).student.uid;
     int currentMonth;
     currentYear = dateFormat.format(DateTime.now());
     currentMonth = DateTime.now().month;
@@ -33,31 +34,39 @@ class _SectionSelectScreen extends State<SectionSelectScreen> {
     super.initState();
   }
 
-  void _handleForm() {
-    print(sectionChoiceMap);
-    // List<String> sectionIds = Provider.of<DataService>(context, listen: false).setSections(choiceMap);
-    // Student student = Student(sectionIds: sectionIds);
-    // Provider.of<FirebaseService>(context, listen: false).saveSectionIds(student);
-    // Navigator.pushNamed(context, '/ActivationPendingScreen');
-  }
-
   Future getSubjectName() async {
-    subjects = await Provider.of<FirebaseService>(context, listen: false).getSubjectName(context);
+    subjects = await Provider.of<FirebaseService>(context, listen: false).getSubjectName();
     subjects.forEach((element) {
+      //set each sectionId to the first one in the sections list
       sectionChoiceMap[element.id] = element.sections[0].id;
+
       subjectChoiceMap[element.id] = true;
     });
     setState(() {});
   }
 
+  void _handleForm() {
+    List<String> chosenSectionIds = [];
+    for (String key in subjectChoiceMap.keys) {
+      if (subjectChoiceMap[key] == true) {
+        chosenSectionIds.add(sectionChoiceMap[key]);
+      }
+    }
+    Student student = Student(sectionIds: chosenSectionIds, uid: uid);
+    Provider.of<DataService>(context, listen: false).saveSections(student);
+    Provider.of<FirebaseService>(context, listen: false).saveSectionIds(student);
+    Navigator.pushNamed(context, '/ActivationPendingScreen');
+  }
+
   @override
   Widget build(BuildContext context) {
-    email = Provider.of<DataService>(context, listen: false).student.email;
-
     return Scaffold(
       appBar: AppBar(
-        title: Text("Choice sections ($season $currentYear)"),
-        leading: Icon(Icons.arrow_back_ios_rounded),
+        title: Text("Choose sections ($season $currentYear)"),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back_ios_rounded),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
       ),
       body: SafeArea(
         child: Padding(
@@ -86,21 +95,7 @@ class _SectionSelectScreen extends State<SectionSelectScreen> {
               SizedBox(
                 height: 15,
               ),
-              Padding(
-                padding: const EdgeInsets.all(19),
-                child: SizedBox(
-                  width: 350,
-                  child: CupertinoButton(
-                    borderRadius: BorderRadius.circular(10.0),
-                    color: Color(0xFF2196f3),
-                    child: Text(
-                      'Submit',
-                      style: Theme.of(context).textTheme.bodyText1.copyWith(color: Colors.white),
-                    ),
-                    onPressed: _handleForm,
-                  ),
-                ),
-              ),
+              IOSStyleButton(displayText: "Submit", buttonOnPress: _handleForm),
             ],
           ),
         ),
@@ -110,8 +105,6 @@ class _SectionSelectScreen extends State<SectionSelectScreen> {
 
   Column sectionSelector({Subject subject, bool isLast, Map sectionChoiceMap, Map subjectChoiceMap}) {
     bool isParticipated = subjectChoiceMap[subject.id];
-    String subjectId = subject.id;
-    String choice = sectionChoiceMap[subject.id];
 
     Map<String, Widget> sliderItems =
         Map.fromIterable(subject.sections, key: (e) => e.id, value: (e) => Text(e.section));
@@ -160,10 +153,10 @@ class _SectionSelectScreen extends State<SectionSelectScreen> {
                     width: 335,
                     child: CupertinoSlidingSegmentedControl(
                       thumbColor: Color(0xFF2196f3),
-                      groupValue: choice,
+                      groupValue: sectionChoiceMap[subject.id],
                       onValueChanged: (value) {
                         setState(() {
-                          sectionChoiceMap[subjectId] = value;
+                          sectionChoiceMap[subject.id] = value.toString();
                         });
                       },
                       children: sliderItems,

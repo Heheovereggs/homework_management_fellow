@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:homework_management_fellow/screens/main_task_screen.dart';
+import 'package:homework_management_fellow/screens/task_screen_master.dart';
 import 'package:homework_management_fellow/services/firebaseService.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:provider/provider.dart';
@@ -80,12 +80,13 @@ class _ActivationPendingScreenState extends State<ActivationPendingScreen> {
                   child: SizedBox(
                     width: 180,
                     child: TextButton(
-                        style: ButtonStyle(),
-                        // shape: RoundedRectangleBorder(
-                        //   borderRadius: BorderRadius.circular(30.0),
-                        // ),
-                        // color: Color(0xFF2196f3),
-                        // textColor: Colors.white,
+                        //TODO: fix button style
+                        style: TextButton.styleFrom(
+                            primary: Color(0xFF2196f3),
+                            textStyle: TextStyle(color: Colors.white),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30.0),
+                            )),
                         child: Padding(
                           padding: const EdgeInsets.all(16.0),
                           child: Text(
@@ -137,7 +138,7 @@ class _ActivationPendingScreenState extends State<ActivationPendingScreen> {
                       child: Center(
                           child: Text(
                         "Hasn't activated yet...",
-                        style: TextStyle(color: Colors.white, fontSize: 10),
+                        style: TextStyle(color: Colors.white, fontSize: 15),
                       )),
                     ),
                   ),

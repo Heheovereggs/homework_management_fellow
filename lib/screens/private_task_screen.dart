@@ -15,11 +15,11 @@ class PrivateTaskScreen extends StatefulWidget {
 class _PrivateTaskScreenState extends State<PrivateTaskScreen> {
   @override
   void initState() {
-    loadHomeworkList();
+    loadPrivateHomeworkList();
     super.initState();
   }
 
-  void loadHomeworkList() async {
+  void loadPrivateHomeworkList() async {
     final prefs = await SharedPreferences.getInstance();
     String uid = prefs.getString('uid');
     if (!Provider.of<DataService>(context, listen: false).isHomeworkListLoaded) {

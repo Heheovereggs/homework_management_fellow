@@ -6,7 +6,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class DataService extends ChangeNotifier {
   Student student;
-  List<SubjectSection> sectionSummary = [];
   List<Homework> privateHomeworkList = [];
   bool isHomeworkListLoaded = false;
 
@@ -14,18 +13,11 @@ class DataService extends ChangeNotifier {
     final prefs = await SharedPreferences.getInstance();
     prefs.setString('email', student.email);
     prefs.setString('uid', student.uid);
-    prefs.setBool('activate', student.activate);
     this.student = student;
   }
 
-  void setSectionSummary(sections) {
-    sectionSummary = sections;
-  }
-
-  Future<void> saveSections(List sectionIds) async {
-    final prefs = await SharedPreferences.getInstance();
-    this.student.sectionIds = sectionIds;
-    prefs.setStringList('sectionIds', student.sectionIds);
+  Future<void> saveSections(Student student) async {
+    this.student.sectionIds = student.sectionIds;
   }
 
   void setPrivateHomeworkList(List<Homework> homeworkList) {

@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:homework_management_fellow/model/student.dart';
 import 'package:homework_management_fellow/services/firebaseService.dart';
 import 'package:homework_management_fellow/services/dataService.dart';
+import 'package:homework_management_fellow/widgets/buttons.dart';
 import 'package:provider/provider.dart';
 
 class RegistrationScreen extends StatefulWidget {
@@ -26,7 +27,10 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text("Registration"),
-        leading: Icon(Icons.arrow_back_ios_rounded),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back_ios_rounded),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
       ),
       body: SafeArea(
         child: Padding(
@@ -119,21 +123,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     ),
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.all(19),
-                  child: SizedBox(
-                    width: 350,
-                    child: CupertinoButton(
-                      borderRadius: BorderRadius.circular(10.0),
-                      color: Color(0xFF2196f3),
-                      child: Text(
-                        'Next',
-                        style: Theme.of(context).textTheme.bodyText1.copyWith(color: Colors.white),
-                      ),
-                      onPressed: _saveInfoForm,
-                    ),
-                  ),
-                ),
+                IOSStyleButton(displayText: "Next step", buttonOnPress: _saveInfoForm),
               ],
             ),
           ),
@@ -183,6 +173,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     // save to firebase
     Provider.of<FirebaseService>(context, listen: false).saveLoginInfo(student);
 
-    Navigator.pushNamed(context, '/SectionSelectScreen', arguments: {'email': email, 'uid': uid});
+    Navigator.pushNamed(context, '/SectionSelectScreen');
   }
 }

@@ -4,13 +4,20 @@ import 'package:flutter/material.dart';
 class SettingScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return CupertinoPageScaffold(
-      navigationBar: CupertinoNavigationBar(
-        leading: Icon(Icons.arrow_back_ios_rounded),
-        middle: Text("Setting"),
-        trailing: Icon(Icons.info_outline_rounded),
-      ),
-      child: Text("Setting"),
+    return Scaffold(
+      appBar: AppBar(
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back_ios_rounded),
+            onPressed: () => Navigator.of(context).pop(),
+          ),
+          title: Text("Setting"),
+          actions: <Widget>[
+            IconButton(
+              icon: Icon(Icons.info_outline_rounded),
+              iconSize: 29,
+              onPressed: () {},
+            )
+          ]),
     );
   }
 }
