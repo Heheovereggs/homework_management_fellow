@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:homework_management_fellow/model/section.dart';
 import 'package:homework_management_fellow/widgets/buttons.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -20,7 +19,11 @@ class _SectionSelectScreen extends State<SectionSelectScreen> {
   String currentYear;
   String season;
   List<Subject> subjects = [];
+
+  //<subjectId, sectionId>
   Map<String, String> sectionChoiceMap = {};
+
+  //<subjectId, yes or no registered for this course>
   Map<String, bool> subjectChoiceMap = {};
 
   @override
@@ -35,7 +38,7 @@ class _SectionSelectScreen extends State<SectionSelectScreen> {
   }
 
   Future getSubjectName() async {
-    subjects = await Provider.of<FirebaseService>(context, listen: false).getSubjectName();
+    subjects = await Provider.of<FirebaseService>(context, listen: false).getSubjectList();
     subjects.forEach((element) {
       //set each sectionId to the first one in the sections list
       sectionChoiceMap[element.id] = element.sections[0].id;
@@ -95,7 +98,7 @@ class _SectionSelectScreen extends State<SectionSelectScreen> {
               SizedBox(
                 height: 15,
               ),
-              IOSStyleButton(displayText: "Submit", buttonOnPress: _handleForm),
+              IOSStyleButton(primaryText: "Submit", buttonOnPress: _handleForm),
             ],
           ),
         ),

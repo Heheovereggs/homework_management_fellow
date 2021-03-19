@@ -3,16 +3,20 @@ import 'package:flutter/material.dart';
 
 class IOSStyleButton extends StatelessWidget {
   final Function buttonOnPress;
-  final String displayText;
+  final String primaryText;
+  final String secondaryText;
   final Color buttonColor;
-  final Color textColor;
+  final Color primaryTextColor;
+  final Color secondaryTextColor;
   final EdgeInsets paddingValue;
 
   IOSStyleButton(
       {this.buttonOnPress,
-      this.displayText,
+      this.primaryText,
+      this.secondaryText,
       this.buttonColor = const Color(0xFF2196f3),
-      this.textColor = Colors.black,
+      this.primaryTextColor = Colors.black,
+      this.secondaryTextColor,
       this.paddingValue = const EdgeInsets.fromLTRB(8, 4, 8, 8)});
 
   @override
@@ -25,12 +29,42 @@ class IOSStyleButton extends StatelessWidget {
           padding: EdgeInsets.all(8),
           borderRadius: BorderRadius.circular(10.0),
           color: buttonColor,
-          child: Text(
-            displayText,
-            style: Theme.of(context).textTheme.bodyText1.copyWith(color: textColor),
+          child: RichText(
+            text: TextSpan(
+                text: primaryText,
+                style: Theme.of(context).textTheme.bodyText1.copyWith(color: primaryTextColor),
+                children: <TextSpan>[
+                  TextSpan(
+                    text: secondaryText,
+                    style: Theme.of(context).textTheme.bodyText1.copyWith(color: secondaryTextColor),
+                  )
+                ]),
           ),
           onPressed: buttonOnPress,
         ),
+      ),
+    );
+  }
+}
+
+class ConfirmButton extends StatelessWidget {
+  ConfirmButton({@required this.context, @required this.onPress}) : super();
+
+  final BuildContext context;
+  final Function onPress;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 300,
+      child: CupertinoButton(
+        borderRadius: BorderRadius.circular(10.0),
+        color: Color(0xFF2196f3),
+        child: Text(
+          'OK',
+          style: Theme.of(context).textTheme.bodyText1.copyWith(color: Colors.white),
+        ),
+        onPressed: onPress,
       ),
     );
   }

@@ -37,6 +37,14 @@ class _TaskScreenState extends State<TaskScreen> {
     _refreshController.refreshCompleted();
   }
 
+  void filterIconOnTap() {
+    //TODO: filter page
+  }
+
+  void infoIconOnTap() {
+    //TODO: info pop up page
+  }
+
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -56,12 +64,10 @@ class _TaskScreenState extends State<TaskScreen> {
               backgroundColor: Color(0xFF2196f3),
               leading: GestureDetector(
                 child: Icon(
-                  Icons.filter_alt,
+                  index == 1 ? Icons.info_outline_rounded : Icons.filter_alt,
                   color: Colors.white,
                 ),
-                onTap: () {
-                  //TODO: filter page
-                },
+                onTap: index == 1 ? infoIconOnTap : filterIconOnTap,
               ),
               middle: Text(
                 "HMF",
@@ -86,12 +92,7 @@ class _TaskScreenState extends State<TaskScreen> {
 
   Widget screenChoice(int index) {
     if (index == 0) {
-      return homeworkList != null
-          ? taskListBuilder()
-          : Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Text("No task has been added at the moment."),
-            );
+      return taskPageBuilder();
     } else if (index == 1) {
       return TaskCreatePage();
     } else {
@@ -99,7 +100,7 @@ class _TaskScreenState extends State<TaskScreen> {
     }
   }
 
-  CupertinoScrollbar taskListBuilder() {
+  CupertinoScrollbar taskPageBuilder() {
     return CupertinoScrollbar(
       child: SmartRefresher(
         controller: _refreshController,
@@ -110,12 +111,28 @@ class _TaskScreenState extends State<TaskScreen> {
           textStyle: Theme.of(context).textTheme.bodyText1,
         ),
         enableTwoLevel: false,
-        child: ListView.builder(
-          itemCount: homeworkList.length,
-          itemBuilder: (BuildContext context, int index) {
-            return HomeworkCard(homeworkList[index]);
-          },
-        ),
+        child: homeworkList.isNotEmpty
+            ? ListView.builder(
+                itemCount: homeworkList.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return HomeworkCard(homeworkList[index]);
+                },
+              )
+            : Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 30),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text("🤔🤔🤔", textAlign: TextAlign.center),
+                    Text("Seriously?"),
+                    SizedBox(height: 30),
+                    Text(
+                        "No even a single task has been added by anybody at the moment...\n\n(Pull down to refresh)\n\n(And good luck)",
+                        textAlign: TextAlign.center,
+                        style: Theme.of(context).textTheme.bodyText1.copyWith(fontSize: 20)),
+                  ],
+                ),
+              ),
       ),
     );
   }

@@ -27,17 +27,18 @@ class HomeworkCard extends StatelessWidget {
                   style: Theme.of(context).textTheme.bodyText1,
                 ),
                 Text(
-                  'Subject: ${homework.subject}',
+                  'Subject: ${homework.subjectName}',
                   style: Theme.of(context).textTheme.bodyText1,
                 ),
                 Text(
                   'Where: ${homework.where}',
                   style: Theme.of(context).textTheme.bodyText1,
                 ),
-                Text(
-                  'Note: ${homework.note}',
-                  style: Theme.of(context).textTheme.bodyText1,
-                ),
+                if (homework.note != "")
+                  Text(
+                    'Note: ${homework.note}',
+                    style: Theme.of(context).textTheme.bodyText1,
+                  ),
               ],
             ),
           ),

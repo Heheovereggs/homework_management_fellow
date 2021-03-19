@@ -114,7 +114,7 @@ class _ActivationPendingScreenState extends State<ActivationPendingScreen> {
                               });
                             });
                           } else {
-                            Navigator.pushNamed(context, '/TaskScreen');
+                            Navigator.pushNamed(context, '/TaskScreenMaster');
                           }
                         }),
                   ),

@@ -41,7 +41,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
         } else if (!_student.activate) {
           Navigator.pushNamed(context, '/ActivationPendingScreen');
         } else {
-          Navigator.pushNamed(context, '/TaskScreen');
+          Navigator.pushNamed(context, '/TaskScreenMaster');
         }
       }
     }
@@ -147,7 +147,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
           } else if (!student.activate) {
             Navigator.pushNamed(context, '/ActivationPendingScreen');
           } else {
-            Navigator.pushNamed(context, '/TaskScreen');
+            Navigator.pushNamed(context, '/TaskScreenMaster');
           }
         } else {
           showDialog(

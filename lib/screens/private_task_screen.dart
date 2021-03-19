@@ -37,10 +37,11 @@ class _PrivateTaskScreenState extends State<PrivateTaskScreen> {
           return Container();
         }
         if (stateService.privateHomeworkList.length == 0) {
-          return Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Text("No task has been added at the moment."),
-          );
+          return Center(
+              child: Text(
+                  "No task has been added at the moment.\nClick the ➕ button below to add Private task",
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.bodyText1));
         }
         return CupertinoScrollbar(
           child: ListView.builder(

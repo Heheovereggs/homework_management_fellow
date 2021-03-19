@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:homework_management_fellow/model/student.dart';
 import 'package:homework_management_fellow/services/firebaseService.dart';
 import 'package:homework_management_fellow/services/dataService.dart';
+import 'package:homework_management_fellow/widgets/boxed_text_note.dart';
 import 'package:homework_management_fellow/widgets/buttons.dart';
 import 'package:provider/provider.dart';
 
@@ -108,22 +109,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                 SizedBox(
                   height: 15,
                 ),
-                Padding(
-                  padding: const EdgeInsets.all(9),
-                  child: Container(
-                    height: 60,
-                    padding: EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      border: Border.all(),
-                    ),
-                    child: Text(
-                      "No password required since Goooooooooooogle will do the verification",
-                      style: Theme.of(context).textTheme.bodyText1,
-                    ),
-                  ),
-                ),
-                IOSStyleButton(displayText: "Next step", buttonOnPress: _saveInfoForm),
+                ExplanationText("No password required since Goooooooooooooogle will do the verification"),
+                IOSStyleButton(primaryText: "Next step", buttonOnPress: _saveInfoForm),
               ],
             ),
           ),

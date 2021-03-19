@@ -63,7 +63,7 @@ class MyApp extends StatelessWidget {
         '/ActivationPendingScreen': (context) => ActivationPendingScreen(),
         '/RegistrationScreen': (context) => RegistrationScreen(),
         '/WelcomeScreen': (context) => WelcomeScreen(),
-        '/TaskScreen': (context) => TaskScreen(),
+        '/TaskScreenMaster': (context) => TaskScreen(),
         '/SettingScreen': (context) => SettingScreen(),
         '/BannedScreen': (context) => BannedScreen(),
         '/TaskCreatePage': (context) => TaskCreatePage(),
