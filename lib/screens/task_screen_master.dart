@@ -7,8 +7,8 @@ import 'package:homework_management_fellow/services/firebaseService.dart';
 import 'package:homework_management_fellow/widgets/homework_card.dart';
 import 'package:homework_management_fellow/screens/task_create_screen.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:homework_management_fellow/widgets/boxed_text_note.dart';
 
 class TaskScreen extends StatefulWidget {
   @override
@@ -38,11 +38,14 @@ class _TaskScreenState extends State<TaskScreen> {
   }
 
   void filterIconOnTap() {
-    //TODO: filter page
+    //TODO: pop up page
   }
 
-  void infoIconOnTap() {
-    //TODO: info pop up page
+  void helpIconOnTap() {
+    NoticeDialog(context).showNoticeDialog(
+        title: "Homework type",
+        bodyText:
+            "🟢 Private => only YOURSELF can see this homework\n\n🟢 Public => only student in same SECTION of one specific course can see this homework\n\n🟢 All (a.k.a. announcement) => ALL student in CET is able to see this homework/announcement");
   }
 
   @override
@@ -64,10 +67,10 @@ class _TaskScreenState extends State<TaskScreen> {
               backgroundColor: Color(0xFF2196f3),
               leading: GestureDetector(
                 child: Icon(
-                  index == 1 ? Icons.info_outline_rounded : Icons.filter_alt,
+                  index == 1 ? Icons.help : Icons.filter_alt,
                   color: Colors.white,
                 ),
-                onTap: index == 1 ? infoIconOnTap : filterIconOnTap,
+                onTap: index == 1 ? helpIconOnTap : filterIconOnTap,
               ),
               middle: Text(
                 "HMF",

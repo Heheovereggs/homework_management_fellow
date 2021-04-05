@@ -35,11 +35,13 @@ class _TaskCreatePageState extends State<TaskCreatePage> {
   List<String> subjectNameList = [];
   String sectionId = "";
   String sectionNumber;
+  String errorMessage;
 
   @override
   void initState() {
     taskType = (isAdmin == true) ? 'sectionOnly' : 'singleStudentOnly';
     dateTimeShown = dateFormat.format(DateTime.now());
+    _chosenDateTime = DateTime.now();
     getDataFromDatabase();
     super.initState();
   }
@@ -122,7 +124,9 @@ class _TaskCreatePageState extends State<TaskCreatePage> {
       for (SubjectSection subjectSection in sectionIdsForOneSubject) {
         if (studentSectionIdList.contains(subjectSection.id)) {
           sectionId = subjectSection.id;
-          sectionNumber = subjectSection.section;
+          sectionNumber = (subjectSection.section.length == 1)
+              ? "000${subjectSection.section}"
+              : "00${subjectSection.section}";
           break;
         }
       }
@@ -158,6 +162,7 @@ class _TaskCreatePageState extends State<TaskCreatePage> {
     @required List visualNameList,
     bool isInputSubject = false,
   }) {
+    itemList.insert(0, Center(child: Text("Choose below")));
     itemList.add(Center(child: Text("Other")));
     return showCupertinoModalPopup(
       context: context,
@@ -170,13 +175,14 @@ class _TaskCreatePageState extends State<TaskCreatePage> {
               height: 300,
               child: CupertinoPicker(
                 onSelectedItemChanged: (int value) {
-                  if (value == itemCount) {
+                  if (value == 0) {
+                  } else if (value == itemCount + 1) {
                     additionalTextField = true;
                     if (isInputSubject) {
                       sectionId = "";
                     }
                   } else {
-                    textController.text = visualNameList[value];
+                    textController.text = visualNameList[value - 1];
                     additionalTextField = false;
                     if (isInputSubject) {
                       _getSectionIdsForChosenSubject();
@@ -192,6 +198,9 @@ class _TaskCreatePageState extends State<TaskCreatePage> {
               context: context,
               onPress: () {
                 if (additionalTextField) {
+                  if (isInputSubject) {
+                    sectionId = "";
+                  }
                   textController.clear();
                   _showAdditionalTextField(hintText: additionalPrompt, textController: textController);
                 } else {
@@ -289,6 +298,8 @@ class _TaskCreatePageState extends State<TaskCreatePage> {
                   ),
                 ),
               ),
+              ExplanationText(
+                  "️🔝 Click the help button located on top left ↖️ to get some sort of explanation️s"),
               taskTextFormField(hintText: "Title", textController: _titleController),
               SizedBox(
                 height: 35,
@@ -297,7 +308,7 @@ class _TaskCreatePageState extends State<TaskCreatePage> {
                     buttonOnPress: _generateSubjectPicker,
                     primaryText: (sectionId == "")
                         ? ("Subject: ${_subjectController.text}")
-                        : ("Subject: ${_subjectController.text} sect.000$sectionNumber"),
+                        : "Subject: ${_subjectController.text} sect.$sectionNumber",
                     secondaryText: _subjectController.text == "" ? "\tPress to choose" : null,
                     buttonColor: null,
                     primaryTextColor: Colors.black,
@@ -344,12 +355,12 @@ class _TaskCreatePageState extends State<TaskCreatePage> {
                     "Your Public (students in same section can see) homework post will temporarily save as Private until admin approval"),
               if (taskType == "fullyPublic")
                 ExplanationText(
-                    "⚠️Warning⚠️\nThis homework will be seen by ALL student in CET program, if you only wish to let student in the same section see with you please choose \"Public\" to add homework"),
+                    "⚠️Warning⚠️\nThis homework will be seen by ALL student in CET program, if you only wish to let student in the same section to see please choose \"Public\" to add homework"),
               if (taskType == "fullyPublic" && isAdmin == false)
                 ExplanationText(
                     "And this homework post will temporarily save as Private until admin approval"),
               IOSStyleButton(
-                  buttonOnPress: _addHomework,
+                  buttonOnPress: submitOnPress,
                   primaryText: taskType == "singleStudentOnly" ? "Add" : "Post",
                   primaryTextColor: Colors.white),
               IOSStyleButton(
@@ -362,6 +373,49 @@ class _TaskCreatePageState extends State<TaskCreatePage> {
         ),
       ),
     );
+  }
+
+  void submitOnPress() {
+    _isFormGood()
+        ? _addHomework()
+        : NoticeDialog(context)
+            .showNoticeDialog(title: "Invalid input exist", bodyText: errorMessage, incomplete: true);
+  }
+
+  bool _isFormGood() {
+    int invalidCount = 0;
+    RegExp letter26 = RegExp(r'[a-z]+$', caseSensitive: false);
+    bool isTitleOkay = _titleController.text.contains(letter26);
+    bool isSubjectOkay = _subjectController.text.contains(letter26);
+    bool isPlatformOkay = _whereController.text.contains(letter26);
+    bool isDatetimeAfter = _chosenDateTime.isAfter(DateTime.now());
+    List<bool> completenessList = [isTitleOkay, isSubjectOkay, isPlatformOkay, isDatetimeAfter];
+    for (int i = 0; i <= 3; i++) {
+      if (!completenessList[i]) {
+        invalidCount++;
+        switch (i) {
+          case 0:
+            errorMessage = "Homework title is missing";
+            break;
+          case 1:
+            errorMessage = "Homework subject is missing";
+            break;
+          case 2:
+            errorMessage = "Where to submit is missing";
+            break;
+          case 3:
+            errorMessage = "Homework deadline is outdated";
+            break;
+        }
+      }
+    }
+    bool isFormCompleted = isTitleOkay && isSubjectOkay && isPlatformOkay && isDatetimeAfter;
+    if (!isFormCompleted) {
+      if (invalidCount > 1) {
+        errorMessage = "More than one parameter is missing/wrong";
+      }
+    }
+    return isFormCompleted;
   }
 
   Future _addHomework() async {
@@ -382,51 +436,20 @@ class _TaskCreatePageState extends State<TaskCreatePage> {
       Provider.of<DataService>(context, listen: false).privateHomeworkList.add(homework);
     }
     Provider.of<FirebaseService>(context, listen: false).uploadHomework(homework);
-    _showCupertinoDialog();
+    NoticeDialog(context).showNoticeDialog(
+        title: "This homework has been added", bodyText: "Current status: $taskType\nanimation constructing");
     _cleanAllInputs();
-  }
-
-  void _showCupertinoDialog() {
-    showCupertinoDialog(
-        barrierDismissible: true,
-        context: context,
-        builder: (_) => Container(
-            alignment: Alignment.center,
-            child: Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(15),
-              ),
-              width: 300,
-              height: 150,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  Text("This homework has been added",
-                      style: Theme.of(context).textTheme.bodyText1.copyWith(fontWeight: FontWeight.bold)),
-                  Text("Current status: $taskType", style: Theme.of(context).textTheme.bodyText1),
-                  Text("I am working on a stamp animation to replace this",
-                      textAlign: TextAlign.center, style: Theme.of(context).textTheme.bodyText1),
-                  IOSStyleButton(
-                    primaryText: 'OK',
-                    primaryTextColor: Color(0xFF2196f3),
-                    buttonColor: null,
-                    buttonOnPress: () {
-                      Navigator.of(context).pop();
-                    },
-                  ),
-                ],
-              ),
-            )));
   }
 
   void _cleanAllInputs() {
     setState(() {
+      sectionId = "";
       _titleController.clear();
       _noteController.clear();
       _whereController.clear();
       _subjectController.clear();
       dateTimeShown = dateFormat.format(DateTime.now());
+      _chosenDateTime = DateTime.now();
     });
   }
 
