@@ -3,6 +3,9 @@ import 'package:homework_management_fellow/model/homework.dart';
 import 'package:homework_management_fellow/model/section.dart';
 import 'package:homework_management_fellow/model/student.dart';
 import 'package:homework_management_fellow/model/subject.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:provider/provider.dart';
+import 'dataService.dart';
 
 class FirebaseService {
   final _firestore = FirebaseFirestore.instance;
@@ -18,7 +21,8 @@ class FirebaseService {
       'ban': false,
       'theme': null,
       'isDiscord': student.isDiscord,
-      'sectionIds': student.sectionIds
+      'sectionIds': student.sectionIds,
+      'use24hFormat': student.use24HFormat,
     });
   }
 
@@ -40,7 +44,8 @@ class FirebaseService {
           ban: studentInfo["ban"],
           theme: studentInfo["theme"],
           isDiscord: studentInfo["isDiscord"],
-          sectionIds: studentInfo["sectionIds"]);
+          sectionIds: studentInfo["sectionIds"],
+          use24HFormat: studentInfo["use24hFormat"]);
     }
     return student;
   }
@@ -51,33 +56,37 @@ class FirebaseService {
     print('pull from firebase');
     QuerySnapshot qnSection = await _firestore
         .collection('homework')
-        .where('category', isEqualTo: 'sectionOnly')
+        .where('category', isEqualTo: HomeworkType.sectionOnly)
         .orderBy('dueDate')
         .get();
     for (DocumentSnapshot doc in qnSection.docs) {
       if (studentSectionIds.contains(doc['sectionId'])) {
         homeworkList.add(Homework(
+            docId: doc.id,
+            dueDate: doc['dueDate'].toDate(),
+            name: doc['name'],
+            note: doc['note'],
+            subjectName: doc['subjectName'],
+            where: submitPlatforms[doc['where']],
+            isWaiting: doc['isWaiting'],
+            platformName: doc['platformName']));
+      }
+    }
+    QuerySnapshot qnAll = await _firestore
+        .collection('homework')
+        .where('category', isEqualTo: HomeworkType.fullyPublic)
+        .orderBy('dueDate')
+        .get();
+    for (DocumentSnapshot doc in qnAll.docs) {
+      homeworkList.add(Homework(
+          docId: doc.id,
           dueDate: doc['dueDate'].toDate(),
           name: doc['name'],
           note: doc['note'],
           subjectName: doc['subjectName'],
           where: submitPlatforms[doc['where']],
-        ));
-      }
-    }
-    QuerySnapshot qnAll = await _firestore
-        .collection('homework')
-        .where('category', isEqualTo: 'public')
-        .orderBy('dueDate')
-        .get();
-    for (DocumentSnapshot doc in qnAll.docs) {
-      homeworkList.add(Homework(
-        dueDate: doc['dueDate'].toDate(),
-        name: doc['name'],
-        note: doc['note'],
-        subjectName: doc['subjectName'],
-        where: submitPlatforms[doc['where']],
-      ));
+          isWaiting: doc['isWaiting'],
+          platformName: doc['platformName']));
     }
     homeworkList.sort((a, b) {
       return a.dueDate.compareTo(b.dueDate);
@@ -105,7 +114,22 @@ class FirebaseService {
       "studentId": homework.studentId,
       "subjectName": homework.subjectName,
       "where": homework.where,
+      "platformName": homework.platformName,
     });
+  }
+
+  Future deleteHomework({Homework homework, bool isPrivate = false, context}) async {
+    if (isPrivate) {
+      _firestore.collection('homework').doc(homework.docId).delete();
+    } else {
+      final prefs = await SharedPreferences.getInstance();
+      bool isAdmin = prefs.getBool('isAdmin');
+      if (isAdmin) {
+        _firestore.collection('homework').doc(homework.docId).delete();
+      } else {
+        Provider.of<DataService>(context, listen: false).activateDialogue();
+      }
+    }
   }
 
   Future<List<Homework>> getPrivateHomeWorkList(String uid) async {
@@ -114,15 +138,17 @@ class FirebaseService {
     QuerySnapshot qn =
         await _firestore.collection('homework').where('studentId', isEqualTo: uid).orderBy('dueDate').get();
     for (DocumentSnapshot doc in qn.docs) {
-      if (doc["category"] == "singleStudentOnly") {
+      if (doc["category"] == HomeworkType.singleStudentOnly) {
         homeworkList.add(Homework(
+            docId: doc.id,
             dueDate: doc['dueDate'].toDate(),
             name: doc['name'],
             note: doc['note'],
             subjectName: doc['subjectName'],
             studentId: doc['studentId'],
             where: doc['where'],
-            isWaiting: doc['isWaiting']));
+            isWaiting: doc['isWaiting'],
+            platformName: doc['platformName']));
       }
     }
     return homeworkList;
@@ -159,5 +185,10 @@ class FirebaseService {
 
   void saveSectionIds(Student student) async {
     _firestore.collection('student').doc(student.uid).update({'sectionIds': student.sectionIds});
+  }
+
+  //TODO: to be tested
+  void saveHourFormat(Student student) async {
+    _firestore.collection('student').doc(student.uid).update({'use24hFormat': student.use24HFormat});
   }
 }

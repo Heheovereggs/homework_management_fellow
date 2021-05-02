@@ -10,6 +10,7 @@ class Student {
   String theme;
   bool isDiscord;
   List sectionIds;
+  bool use24HFormat;
 
   Student(
       {this.email,
@@ -22,5 +23,6 @@ class Student {
       this.ban,
       this.dateOfJoin,
       this.theme,
-      this.sectionIds});
+      this.sectionIds,
+      this.use24HFormat = true});
 }

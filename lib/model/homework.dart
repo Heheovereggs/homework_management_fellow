@@ -1,4 +1,7 @@
+import 'package:flutter/material.dart';
+
 class Homework {
+  String docId;
   String category;
   String name;
   String sectionId;
@@ -8,15 +11,24 @@ class Homework {
   String where;
   String studentId;
   bool isWaiting;
+  String platformName;
 
   Homework(
-      {this.category,
-      this.name,
+      {this.docId,
+      this.category,
+      @required this.name,
       this.sectionId,
-      this.dueDate,
-      this.subjectName,
+      @required this.dueDate,
+      @required this.subjectName,
       this.note,
-      this.where,
+      @required this.where,
       this.studentId,
-      this.isWaiting});
+      @required this.isWaiting,
+      this.platformName});
+}
+
+class HomeworkType {
+  static const String singleStudentOnly = "singleStudentOnly";
+  static const String sectionOnly = "sectionOnly";
+  static const String fullyPublic = "fullyPublic";
 }

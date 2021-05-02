@@ -1,7 +1,9 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:homework_management_fellow/screens/useless_calculator.dart';
 import 'package:homework_management_fellow/screens/section_select_screen.dart';
+import 'package:homework_management_fellow/screens/sudo_screen.dart';
 import 'package:homework_management_fellow/screens/task_create_screen.dart';
 import 'screens/activation_pending_screen.dart';
 import 'screens/banned_screen.dart';
@@ -13,6 +15,7 @@ import 'screens/task_screen_master.dart';
 import 'screens/welcome_screen.dart';
 import 'screens/registration_screen.dart';
 import 'package:flutter/services.dart';
+import 'package:homework_management_fellow/model/theme.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -33,27 +36,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      theme: ThemeData(
-          textTheme: TextTheme(
-        bodyText1: TextStyle(
-            fontSize: 16,
-            color: Colors.black,
-            fontWeight: FontWeight.normal,
-            decoration: TextDecoration.none,
-            fontFamily: 'SF Pro'),
-        bodyText2: TextStyle(
-            fontSize: 19,
-            color: Colors.black,
-            fontWeight: FontWeight.normal,
-            decoration: TextDecoration.none,
-            fontFamily: 'SF Pro'),
-        caption: TextStyle(
-            fontSize: 33,
-            fontWeight: FontWeight.bold,
-            color: Colors.black,
-            decoration: TextDecoration.none,
-            fontFamily: 'SF Pro'),
-      )),
+      theme: AppTheme().appTheme,
       localizationsDelegates: const <LocalizationsDelegate<dynamic>>[
         DefaultMaterialLocalizations.delegate,
         DefaultWidgetsLocalizations.delegate,
@@ -68,6 +51,8 @@ class MyApp extends StatelessWidget {
         '/BannedScreen': (context) => BannedScreen(),
         '/TaskCreatePage': (context) => TaskCreatePage(),
         '/SectionSelectScreen': (context) => SectionSelectScreen(),
+        '/SudoScreen': (context) => SudoScreen(),
+        '/UselessCalculator': (context) => UselessCalculator(),
       },
     );
   }

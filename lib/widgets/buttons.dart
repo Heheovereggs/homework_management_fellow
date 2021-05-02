@@ -17,7 +17,7 @@ class IOSStyleButton extends StatelessWidget {
       this.buttonColor = const Color(0xFF2196f3),
       this.primaryTextColor = Colors.black,
       this.secondaryTextColor,
-      this.paddingValue = const EdgeInsets.fromLTRB(8, 4, 8, 8)});
+      this.paddingValue = const EdgeInsets.all(8)});
 
   @override
   Widget build(BuildContext context) {
@@ -26,13 +26,13 @@ class IOSStyleButton extends StatelessWidget {
       child: Padding(
         padding: paddingValue,
         child: CupertinoButton(
-          padding: EdgeInsets.all(8),
+          padding: paddingValue,
           borderRadius: BorderRadius.circular(10.0),
           color: buttonColor,
           child: RichText(
             text: TextSpan(
                 text: primaryText,
-                style: Theme.of(context).textTheme.bodyText1.copyWith(color: primaryTextColor),
+                style: Theme.of(context).textTheme.bodyText2.copyWith(color: primaryTextColor),
                 children: <TextSpan>[
                   TextSpan(
                     text: secondaryText,

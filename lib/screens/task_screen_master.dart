@@ -17,6 +17,7 @@ class TaskScreen extends StatefulWidget {
 
 class _TaskScreenState extends State<TaskScreen> {
   List<Homework> homeworkList = [];
+
   void initState() {
     super.initState();
     loadHomeworkList();
@@ -73,7 +74,7 @@ class _TaskScreenState extends State<TaskScreen> {
                 onTap: index == 1 ? helpIconOnTap : filterIconOnTap,
               ),
               middle: Text(
-                "HMF",
+                "Search bar will be here",
                 style: TextStyle(color: Colors.white),
               ),
               trailing: GestureDetector(
@@ -83,6 +84,10 @@ class _TaskScreenState extends State<TaskScreen> {
                 ),
                 onTap: () {
                   Navigator.pushNamed(context, '/SettingScreen');
+                },
+                onForcePressPeak: (ForcePressDetails forcePressDetails) {
+                  print("3D Touch activated");
+                  Navigator.pushNamed(context, '/SudoScreen');
                 },
               ),
             ),
@@ -105,37 +110,49 @@ class _TaskScreenState extends State<TaskScreen> {
 
   CupertinoScrollbar taskPageBuilder() {
     return CupertinoScrollbar(
-      child: SmartRefresher(
-        controller: _refreshController,
-        onRefresh: _onRefresh,
-        enablePullUp: false,
-        enablePullDown: true,
-        header: ClassicHeader(
-          textStyle: Theme.of(context).textTheme.bodyText1,
-        ),
-        enableTwoLevel: false,
-        child: homeworkList.isNotEmpty
-            ? ListView.builder(
-                itemCount: homeworkList.length,
-                itemBuilder: (BuildContext context, int index) {
-                  return HomeworkCard(homeworkList[index]);
-                },
-              )
-            : Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 30),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text("🤔🤔🤔", textAlign: TextAlign.center),
-                    Text("Seriously?"),
-                    SizedBox(height: 30),
-                    Text(
-                        "No even a single task has been added by anybody at the moment...\n\n(Pull down to refresh)\n\n(And good luck)",
-                        textAlign: TextAlign.center,
-                        style: Theme.of(context).textTheme.bodyText1.copyWith(fontSize: 20)),
-                  ],
+      child: Consumer<DataService>(
+        builder: (_, stateService, child) {
+          return Stack(
+            children: [
+              SmartRefresher(
+                controller: _refreshController,
+                onRefresh: _onRefresh,
+                enablePullUp: false,
+                enablePullDown: true,
+                header: ClassicHeader(
+                  textStyle: Theme.of(context).textTheme.bodyText1,
                 ),
+                enableTwoLevel: false,
+                child: homeworkList.isNotEmpty
+                    ? ListView.builder(
+                        itemCount: homeworkList.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          return HomeworkCard(homeworkList[index]);
+                        },
+                      )
+                    : Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 30),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text("🤔🤔🤔", textAlign: TextAlign.center),
+                            Text("Seriously?"),
+                            SizedBox(height: 30),
+                            Text(
+                                "No even a single task has been added by anybody at the moment...\n\n(Pull down to refresh)\n\n(And good luck)",
+                                textAlign: TextAlign.center,
+                                style: Theme.of(context).textTheme.bodyText1.copyWith(fontSize: 20)),
+                          ],
+                        ),
+                      ),
               ),
+              Consumer<DataService>(builder: (_, interface, child) {
+                return UserSeeOnlyNotification(
+                    visible: interface.isShowAccessDenyDialogue, text: "Access Denied: you are no admin");
+              }),
+            ],
+          );
+        },
       ),
     );
   }

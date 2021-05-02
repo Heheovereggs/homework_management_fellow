@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class SettingScreen extends StatelessWidget {
+class SudoScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -9,14 +9,12 @@ class SettingScreen extends StatelessWidget {
             icon: Icon(Icons.arrow_back_ios_rounded),
             onPressed: () => Navigator.of(context).pop(),
           ),
-          title: Text("Setting"),
+          title: Text("Super user setting"),
           actions: <Widget>[
             IconButton(
-              icon: Icon(Icons.height_rounded),
+              icon: Icon(Icons.transfer_within_a_station_rounded),
               iconSize: 29,
-              onPressed: () {
-                Navigator.pushNamed(context, '/UselessCalculator');
-              },
+              onPressed: () {},
             )
           ]),
     );

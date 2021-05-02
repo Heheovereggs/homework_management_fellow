@@ -17,8 +17,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   String uid;
   String email;
   final _formKey = GlobalKey<FormState>();
-  final _firstcontroller = TextEditingController();
-  final _lastcontroller = TextEditingController();
+  final _firstController = TextEditingController();
+  final _lastController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -49,11 +49,11 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                 ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: registrationTextFormField("First name", _firstcontroller),
+                  child: registrationTextFormField("First name", _firstController),
                 ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: registrationTextFormField("Last name", _lastcontroller),
+                  child: registrationTextFormField("Last name", _lastController),
                 ),
                 Padding(
                   padding: const EdgeInsets.all(9),
@@ -148,11 +148,12 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       return null;
     }
     Student student = Student(
-        uid: uid,
-        email: email,
-        firstName: _firstcontroller.text.trim(),
-        lastName: _lastcontroller.text.trim(),
-        isDiscord: isDiscord);
+      uid: uid,
+      email: email,
+      firstName: _firstController.text.trim(),
+      lastName: _lastController.text.trim(),
+      isDiscord: isDiscord,
+    );
 
     // save to provider StateService
     Provider.of<DataService>(context, listen: false).setStudent(student);

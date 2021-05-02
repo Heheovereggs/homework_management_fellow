@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:homework_management_fellow/screens/task_screen_master.dart';
 import 'package:homework_management_fellow/services/firebaseService.dart';
+import 'package:homework_management_fellow/widgets/boxed_text_note.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -121,30 +122,7 @@ class _ActivationPendingScreenState extends State<ActivationPendingScreen> {
                 ),
               ],
             ),
-            Align(
-              alignment: Alignment.bottomCenter,
-              child: AnimatedOpacity(
-                opacity: _visible ? 1.0 : 0.0,
-                duration: Duration(milliseconds: 300),
-                child: Padding(
-                  padding: EdgeInsets.only(bottom: 80.0),
-                  child: Container(
-                    width: 175,
-                    height: 45,
-                    decoration:
-                        BoxDecoration(color: Color(0xCC000000), borderRadius: BorderRadius.circular(10.0)),
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Center(
-                          child: Text(
-                        "Hasn't activated yet...",
-                        style: TextStyle(color: Colors.white, fontSize: 15),
-                      )),
-                    ),
-                  ),
-                ),
-              ),
-            )
+            UserSeeOnlyNotification(visible: _visible, text: "Hasn't activated yet...")
           ],
         ),
       ),
