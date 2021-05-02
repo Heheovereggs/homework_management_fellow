@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:homework_management_fellow/screens/useless_calculator.dart';
 
 class SettingScreen extends StatelessWidget {
+  static const String id = 'SettingScreen';
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -15,7 +18,7 @@ class SettingScreen extends StatelessWidget {
               icon: Icon(Icons.height_rounded),
               iconSize: 29,
               onPressed: () {
-                Navigator.pushNamed(context, '/UselessCalculator');
+                Navigator.pushNamed(context, UselessCalculator.id);
               },
             )
           ]),

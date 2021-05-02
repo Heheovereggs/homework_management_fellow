@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:homework_management_fellow/model/student.dart';
+import 'package:homework_management_fellow/screens/section_select_screen.dart';
 import 'package:homework_management_fellow/services/firebaseService.dart';
 import 'package:homework_management_fellow/services/dataService.dart';
 import 'package:homework_management_fellow/widgets/boxed_text_note.dart';
@@ -8,6 +9,8 @@ import 'package:homework_management_fellow/widgets/buttons.dart';
 import 'package:provider/provider.dart';
 
 class RegistrationScreen extends StatefulWidget {
+  static const String id = 'RegistrationScreen';
+
   @override
   _RegistrationScreenState createState() => _RegistrationScreenState();
 }
@@ -123,7 +126,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     return TextFormField(
       controller: textEditingController,
       autocorrect: false,
-      autofocus: true,
       decoration: InputDecoration(
         border: OutlineInputBorder(),
         hintText: hint,
@@ -153,6 +155,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       firstName: _firstController.text.trim(),
       lastName: _lastController.text.trim(),
       isDiscord: isDiscord,
+      admin: false,
+      activate: false,
     );
 
     // save to provider StateService
@@ -161,6 +165,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     // save to firebase
     Provider.of<FirebaseService>(context, listen: false).saveLoginInfo(student);
 
-    Navigator.pushNamed(context, '/SectionSelectScreen');
+    Navigator.pushNamed(context, SectionSelectScreen.id);
   }
 }

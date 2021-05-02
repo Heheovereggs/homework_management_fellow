@@ -1,6 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:homework_management_fellow/model/student.dart';
+import 'package:homework_management_fellow/screens/activation_pending_screen.dart';
+import 'package:homework_management_fellow/screens/banned_screen.dart';
+import 'package:homework_management_fellow/screens/registration_screen.dart';
+import 'package:homework_management_fellow/screens/section_select_screen.dart';
+import 'package:homework_management_fellow/screens/task_screen_master.dart';
 import 'package:homework_management_fellow/services/firebaseService.dart';
 import 'package:homework_management_fellow/services/sign_in.dart';
 import 'package:homework_management_fellow/services/dataService.dart';
@@ -9,6 +14,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:provider/provider.dart';
 
 class WelcomeScreen extends StatefulWidget {
+  static const String id = 'WelcomeScreen';
+
   @override
   _WelcomeScreenState createState() => _WelcomeScreenState();
 }
@@ -35,13 +42,13 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
       Provider.of<DataService>(context, listen: false).setStudent(_student);
       if (_student != null) {
         if (_student.ban) {
-          Navigator.pushNamed(context, '/BannedScreen');
+          Navigator.pushNamed(context, BannedScreen.id);
         } else if (_student.sectionIds == null || _student.sectionIds.isEmpty) {
-          Navigator.pushNamed(context, '/SectionSelectScreen', arguments: {'email': email, 'uid': uid});
+          Navigator.pushNamed(context, SectionSelectScreen.id, arguments: {'email': email, 'uid': uid});
         } else if (!_student.activate) {
-          Navigator.pushNamed(context, '/ActivationPendingScreen');
+          Navigator.pushNamed(context, ActivationPendingScreen.id);
         } else {
-          Navigator.pushNamed(context, '/TaskScreenMaster');
+          Navigator.pushNamed(context, TaskScreenMaster.id);
         }
       }
     }
@@ -54,12 +61,6 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     Shader shader = gradient.createShader(Rect.fromLTWH(0, 0, size.width, size.height));
 
     return Scaffold(
-      // floatingActionButton: FloatingActionButton(
-      //   onPressed: () {
-      //     registeredCheck("xxx@xx.com");
-      //   },
-      //   child: Icon(Icons.download_rounded),
-      // ),
       body: ModalProgressHUD(
         progressIndicator: CupertinoActivityIndicator(
           radius: 50,
@@ -141,13 +142,15 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
         });
         if (email != null) {
           if (student == null) {
-            Navigator.pushNamed(context, '/RegistrationScreen', arguments: {'email': email, 'uid': uid});
+            Navigator.pushNamed(context, RegistrationScreen.id, arguments: {'email': email, 'uid': uid});
           } else if (student.ban) {
-            Navigator.pushNamed(context, '/BannedScreen');
+            Navigator.pushNamed(context, BannedScreen.id);
+          } else if (student.sectionIds == null || student.sectionIds.isEmpty) {
+            Navigator.pushNamed(context, SectionSelectScreen.id, arguments: {'email': email, 'uid': uid});
           } else if (!student.activate) {
-            Navigator.pushNamed(context, '/ActivationPendingScreen');
+            Navigator.pushNamed(context, ActivationPendingScreen.id);
           } else {
-            Navigator.pushNamed(context, '/TaskScreenMaster');
+            Navigator.pushNamed(context, TaskScreenMaster.id);
           }
         } else {
           showDialog(

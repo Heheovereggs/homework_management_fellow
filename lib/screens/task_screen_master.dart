@@ -2,6 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:homework_management_fellow/model/homework.dart';
 import 'package:homework_management_fellow/screens/private_task_screen.dart';
+import 'package:homework_management_fellow/screens/setting_screen.dart';
+import 'package:homework_management_fellow/screens/sudo_screen.dart';
 import 'package:homework_management_fellow/services/dataService.dart';
 import 'package:homework_management_fellow/services/firebaseService.dart';
 import 'package:homework_management_fellow/widgets/homework_card.dart';
@@ -10,12 +12,14 @@ import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:homework_management_fellow/widgets/boxed_text_note.dart';
 
-class TaskScreen extends StatefulWidget {
+class TaskScreenMaster extends StatefulWidget {
+  static const String id = 'TaskScreenMaster';
+
   @override
-  _TaskScreenState createState() => _TaskScreenState();
+  _TaskScreenMasterState createState() => _TaskScreenMasterState();
 }
 
-class _TaskScreenState extends State<TaskScreen> {
+class _TaskScreenMasterState extends State<TaskScreenMaster> {
   void initState() {
     super.initState();
     loadPublicHomeworkList();
@@ -40,9 +44,11 @@ class _TaskScreenState extends State<TaskScreen> {
 
   void helpIconOnTap() {
     NoticeDialog(context).showNoticeDialog(
-        title: "Homework type",
-        bodyText:
-            "🟢 Private => only YOURSELF can see this homework\n\n🟢 Public => only student in same SECTION of one specific course can see this homework\n\n🟢 All (a.k.a. announcement) => ALL student in CET is able to see this homework/announcement");
+      title: "Homework type",
+      bodyText:
+          "🟢 Private => only YOURSELF can see this homework\n\n🟢 Public => only student in same SECTION of one specific course can see this homework\n\n🟢 All (a.k.a. announcement) => ALL student in CET is able to see this homework/announcement",
+      windowWidth: 350,
+    );
   }
 
   @override
@@ -70,7 +76,7 @@ class _TaskScreenState extends State<TaskScreen> {
                 onTap: index == 1 ? helpIconOnTap : filterIconOnTap,
               ),
               middle: Text(
-                "Search bar will be here",
+                index == 1 ? "HMF" : "Search bar will be here",
                 style: TextStyle(color: Colors.white),
               ),
               trailing: GestureDetector(
@@ -79,12 +85,12 @@ class _TaskScreenState extends State<TaskScreen> {
                   color: Colors.white,
                 ),
                 onTap: () {
-                  Navigator.pushNamed(context, '/SettingScreen');
+                  Navigator.pushNamed(context, SettingScreen.id);
                 },
                 onForcePressPeak: (ForcePressDetails forcePressDetails) {
                   print("3D Touch activated");
                   if (Provider.of<DataService>(context, listen: false).student.admin) {
-                    Navigator.pushNamed(context, '/SudoScreen');
+                    Navigator.pushNamed(context, SudoScreen.id);
                   } else {
                     NoticeDialog(context).showNoticeDialog(
                         title: "Congratulations",

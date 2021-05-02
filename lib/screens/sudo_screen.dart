@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 class SudoScreen extends StatelessWidget {
+  static const String id = 'SudoScreen';
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

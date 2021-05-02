@@ -8,7 +8,11 @@ import 'package:homework_management_fellow/model/subject.dart';
 import 'package:homework_management_fellow/services/firebaseService.dart';
 import 'package:homework_management_fellow/services/dataService.dart';
 
+import 'activation_pending_screen.dart';
+
 class SectionSelectScreen extends StatefulWidget {
+  static const String id = 'SectionSelectScreen';
+
   @override
   _SectionSelectScreen createState() => _SectionSelectScreen();
 }
@@ -55,10 +59,10 @@ class _SectionSelectScreen extends State<SectionSelectScreen> {
         chosenSectionIds.add(sectionChoiceMap[key]);
       }
     }
-    Student student = Student(sectionIds: chosenSectionIds, uid: uid);
+    Student student = Student(sectionIds: chosenSectionIds, uid: uid, activate: false);
     Provider.of<DataService>(context, listen: false).saveSections(student);
     Provider.of<FirebaseService>(context, listen: false).saveSectionIds(student);
-    Navigator.pushNamed(context, '/ActivationPendingScreen');
+    Navigator.pushNamed(context, ActivationPendingScreen.id);
   }
 
   @override

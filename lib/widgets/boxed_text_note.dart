@@ -38,9 +38,10 @@ class NoticeDialog {
 
   NoticeDialog(this.context);
 
-  void showNoticeDialog({String title, @required String bodyText, bool isVibrate = false}) {
+  void showNoticeDialog(
+      {String title, @required String bodyText, bool isVibrate = false, double windowWidth = 300.0}) {
     if (isVibrate) {
-      Vibration.vibrate(duration: 1000);
+      Vibration.vibrate(pattern: [0, 300, 200, 500]);
     }
     List<Widget> displayWidgetsList = [];
     displayWidgetsList.add(SizedBox(height: 25));
@@ -77,7 +78,7 @@ class NoticeDialog {
               color: Colors.white,
               borderRadius: BorderRadius.circular(15),
             ),
-            width: 300,
+            width: windowWidth,
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 15),
               child: Column(

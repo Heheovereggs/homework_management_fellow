@@ -23,6 +23,7 @@ class IOSStyleButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
       width: 220,
+      height: 64,
       child: Padding(
         padding: paddingValue,
         child: CupertinoButton(
@@ -31,14 +32,15 @@ class IOSStyleButton extends StatelessWidget {
           color: buttonColor,
           child: RichText(
             text: TextSpan(
-                text: primaryText,
-                style: Theme.of(context).textTheme.bodyText2.copyWith(color: primaryTextColor),
-                children: <TextSpan>[
-                  TextSpan(
-                    text: secondaryText,
-                    style: Theme.of(context).textTheme.bodyText1.copyWith(color: secondaryTextColor),
-                  )
-                ]),
+              text: primaryText,
+              style: Theme.of(context).textTheme.bodyText2.copyWith(color: primaryTextColor),
+              children: <TextSpan>[
+                TextSpan(
+                  text: secondaryText,
+                  style: Theme.of(context).textTheme.bodyText1.copyWith(color: secondaryTextColor),
+                )
+              ],
+            ),
           ),
           onPressed: buttonOnPress,
         ),

@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:homework_management_fellow/screens/task_screen_master.dart';
+import 'package:homework_management_fellow/services/dataService.dart';
 import 'package:homework_management_fellow/services/firebaseService.dart';
 import 'package:homework_management_fellow/widgets/boxed_text_note.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
@@ -9,6 +10,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:homework_management_fellow/model/student.dart';
 
 class ActivationPendingScreen extends StatefulWidget {
+  static const String id = 'ActivationPendingScreen';
+
   @override
   _ActivationPendingScreenState createState() => _ActivationPendingScreenState();
 }
@@ -45,7 +48,7 @@ class _ActivationPendingScreenState extends State<ActivationPendingScreen> {
     return Scaffold(
       body: ModalProgressHUD(
         progressIndicator: CupertinoActivityIndicator(
-          radius: 50,
+          radius: 30,
         ),
         inAsyncCall: _showSpinner,
         child: Stack(
@@ -79,22 +82,19 @@ class _ActivationPendingScreenState extends State<ActivationPendingScreen> {
                 Padding(
                   padding: const EdgeInsets.all(19),
                   child: SizedBox(
-                    width: 180,
+                    width: 190,
+                    height: 58,
                     child: TextButton(
-                        //TODO: fix button style
                         style: TextButton.styleFrom(
-                            primary: Color(0xFF2196f3),
-                            textStyle: TextStyle(color: Colors.white),
+                            primary: Colors.white,
+                            backgroundColor: Color(0xFF2196f3),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(30.0),
                             )),
-                        child: Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Text(
-                            'Refresh',
-                            style: TextStyle(
-                              fontSize: 18,
-                            ),
+                        child: Text(
+                          'Refresh',
+                          style: TextStyle(
+                            fontSize: 18,
                           ),
                         ),
                         onPressed: () async {
@@ -115,6 +115,7 @@ class _ActivationPendingScreenState extends State<ActivationPendingScreen> {
                               });
                             });
                           } else {
+                            Provider.of<DataService>(context, listen: false).student.activate = true;
                             Navigator.pushNamed(context, '/TaskScreenMaster');
                           }
                         }),

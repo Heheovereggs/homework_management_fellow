@@ -184,7 +184,10 @@ class FirebaseService {
   }
 
   void saveSectionIds(Student student) async {
-    _firestore.collection('student').doc(student.uid).update({'sectionIds': student.sectionIds});
+    _firestore
+        .collection('student')
+        .doc(student.uid)
+        .update({'sectionIds': student.sectionIds, 'activate': false});
   }
 
   //TODO: to be tested

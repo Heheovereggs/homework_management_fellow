@@ -3,6 +3,8 @@ import 'package:homework_management_fellow/widgets/boxed_text_note.dart';
 import 'package:homework_management_fellow/widgets/buttons.dart';
 
 class UselessCalculator extends StatefulWidget {
+  static const String id = 'UselessCalculator';
+
   @override
   _UselessCalculatorState createState() => _UselessCalculatorState();
 }
@@ -39,6 +41,7 @@ class _UselessCalculatorState extends State<UselessCalculator> {
             Padding(
               padding: const EdgeInsets.all(32.0),
               child: TextFormField(
+                textInputAction: TextInputAction.done,
                 keyboardType: TextInputType.numberWithOptions(decimal: true),
                 controller: _heightController,
                 autocorrect: false,
@@ -55,7 +58,6 @@ class _UselessCalculatorState extends State<UselessCalculator> {
                   }
                   return double.tryParse(value) != null ? null : 'Please only enter numbers';
                 },
-                textInputAction: TextInputAction.done,
               ),
             ),
             Image.asset('images/huaji.jpg'),

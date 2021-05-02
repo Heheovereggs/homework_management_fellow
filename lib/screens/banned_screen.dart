@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class BannedScreen extends StatelessWidget {
+  static const String id = 'BannedScreen';
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -56,7 +58,9 @@ class BannedScreen extends StatelessWidget {
               height: 19,
             ),
             Icon(Icons.arrow_downward, color: Color(0xFFff7660), size: 50),
-            GestureDetector(onTap: _launchURL, child: Image(image: AssetImage("images/discord_blender.png"), height: 100.0)),
+            GestureDetector(
+                onTap: _launchURL,
+                child: Image(image: AssetImage("images/discord_blender.png"), height: 100.0)),
           ],
         ),
       ),

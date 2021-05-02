@@ -10,6 +10,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:homework_management_fellow/widgets/buttons.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'task_screen_master.dart';
 
 class TaskCreatePage extends StatefulWidget {
   @override
@@ -250,7 +251,7 @@ class _TaskCreatePageState extends State<TaskCreatePage> {
                     context: context,
                     onPress: () {
                       if (textController.text.length <= charLimit && textController.text.contains(letter26)) {
-                        Navigator.popUntil(context, ModalRoute.withName('/TaskScreenMaster'));
+                        Navigator.popUntil(context, ModalRoute.withName(TaskScreenMaster.id));
                       } else {
                         NoticeDialog(context).showNoticeDialog(
                             title: "Invalid input",
@@ -498,7 +499,6 @@ class _TaskCreatePageState extends State<TaskCreatePage> {
             border: Border.all(),
           ),
           autocorrect: true,
-          autofocus: true,
           controller: textController,
           textAlignVertical: TextAlignVertical.center,
           textInputAction: isLast ? TextInputAction.done : TextInputAction.next,
