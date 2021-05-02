@@ -17,6 +17,7 @@ class SudoScreen extends StatelessWidget {
               onPressed: () {},
             )
           ]),
+      body: Container(),
     );
   }
 }

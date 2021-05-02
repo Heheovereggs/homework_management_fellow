@@ -22,10 +22,10 @@ class _PrivateTaskScreenState extends State<PrivateTaskScreen> {
   void loadPrivateHomeworkList() async {
     final prefs = await SharedPreferences.getInstance();
     String uid = prefs.getString('uid');
-    if (!Provider.of<DataService>(context, listen: false).isHomeworkListLoaded) {
+    if (!Provider.of<DataService>(context, listen: false).isPrivateHomeworkLoaded) {
       List<Homework> _homeworkList =
           await Provider.of<FirebaseService>(context, listen: false).getPrivateHomeWorkList(uid);
-      Provider.of<DataService>(context, listen: false).setPrivateHomeworkList(_homeworkList);
+      Provider.of<DataService>(context, listen: false).initializePrivateHomeworkList(_homeworkList);
     }
   }
 
@@ -33,7 +33,7 @@ class _PrivateTaskScreenState extends State<PrivateTaskScreen> {
   Widget build(BuildContext context) {
     return Consumer<DataService>(
       builder: (_, stateService, child) {
-        if (stateService.isHomeworkListLoaded == false) {
+        if (stateService.isPrivateHomeworkLoaded == false) {
           return Container();
         }
         if (stateService.privateHomeworkList.length == 0) {

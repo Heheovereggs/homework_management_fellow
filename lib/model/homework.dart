@@ -10,7 +10,7 @@ class Homework {
   String note;
   String where;
   String studentId;
-  bool isWaiting;
+  String targetCategory;
   String platformName;
 
   Homework(
@@ -23,7 +23,7 @@ class Homework {
       this.note,
       @required this.where,
       this.studentId,
-      @required this.isWaiting,
+      this.targetCategory,
       this.platformName});
 }
 

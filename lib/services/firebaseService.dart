@@ -3,7 +3,6 @@ import 'package:homework_management_fellow/model/homework.dart';
 import 'package:homework_management_fellow/model/section.dart';
 import 'package:homework_management_fellow/model/student.dart';
 import 'package:homework_management_fellow/model/subject.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:provider/provider.dart';
 import 'dataService.dart';
 
@@ -68,7 +67,7 @@ class FirebaseService {
             note: doc['note'],
             subjectName: doc['subjectName'],
             where: submitPlatforms[doc['where']],
-            isWaiting: doc['isWaiting'],
+            targetCategory: doc['targetCategory'],
             platformName: doc['platformName']));
       }
     }
@@ -85,7 +84,7 @@ class FirebaseService {
           note: doc['note'],
           subjectName: doc['subjectName'],
           where: submitPlatforms[doc['where']],
-          isWaiting: doc['isWaiting'],
+          targetCategory: doc['targetCategory'],
           platformName: doc['platformName']));
     }
     homeworkList.sort((a, b) {
@@ -108,7 +107,7 @@ class FirebaseService {
       "category": homework.category,
       "name": homework.name,
       "dueDate": homework.dueDate,
-      "isWaiting": homework.isWaiting,
+      "targetCategory": homework.targetCategory,
       "note": homework.note,
       "sectionId": homework.sectionId,
       "studentId": homework.studentId,
@@ -118,14 +117,15 @@ class FirebaseService {
     });
   }
 
-  Future deleteHomework({Homework homework, bool isPrivate = false, context}) async {
-    if (isPrivate) {
-      _firestore.collection('homework').doc(homework.docId).delete();
+  Future deleteHomework(Homework homework, context) async {
+    if (homework.category == HomeworkType.singleStudentOnly) {
+      await _firestore.collection('homework').doc(homework.docId).delete();
+      Provider.of<DataService>(context, listen: false).deletePrivateHomework(homework);
     } else {
-      final prefs = await SharedPreferences.getInstance();
-      bool isAdmin = prefs.getBool('isAdmin');
-      if (isAdmin) {
-        _firestore.collection('homework').doc(homework.docId).delete();
+      bool _isAdmin = Provider.of<DataService>(context, listen: false).student.admin;
+      if (_isAdmin) {
+        await _firestore.collection('homework').doc(homework.docId).delete();
+        Provider.of<DataService>(context, listen: false).deletePublicHomework(homework);
       } else {
         Provider.of<DataService>(context, listen: false).activateDialogue();
       }
@@ -147,7 +147,7 @@ class FirebaseService {
             subjectName: doc['subjectName'],
             studentId: doc['studentId'],
             where: doc['where'],
-            isWaiting: doc['isWaiting'],
+            targetCategory: doc['targetCategory'],
             platformName: doc['platformName']));
       }
     }

@@ -86,13 +86,7 @@ class HomeworkCard extends StatelessWidget {
             color: Colors.red,
             icon: Icons.delete,
             onTap: () {
-              Provider.of<FirebaseService>(context, listen: false).deleteHomework(
-                  homework: homework,
-                  isPrivate: homework.category == HomeworkType.singleStudentOnly ? true : false,
-                  context: context);
-              if (homework.category == HomeworkType.singleStudentOnly) {
-                Provider.of<DataService>(context, listen: false).deletePrivateHomework(homework);
-              }
+              Provider.of<FirebaseService>(context, listen: false).deleteHomework(homework, context);
             },
           ),
         ],

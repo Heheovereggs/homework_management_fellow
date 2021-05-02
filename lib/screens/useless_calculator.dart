@@ -8,7 +8,7 @@ class UselessCalculator extends StatefulWidget {
 }
 
 class _UselessCalculatorState extends State<UselessCalculator> {
-  TextEditingController _heightController;
+  TextEditingController _heightController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
   void _heightOnSubmit() {
@@ -22,6 +22,7 @@ class _UselessCalculatorState extends State<UselessCalculator> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         backgroundColor: Colors.pinkAccent,
         leading: IconButton(
@@ -30,40 +31,44 @@ class _UselessCalculatorState extends State<UselessCalculator> {
         ),
         title: Text("Height calculator"),
       ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(32.0),
-            child: TextFormField(
-              controller: _heightController,
-              autocorrect: false,
-              decoration: InputDecoration(
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(15)),
-                hintText: "Enter your height in cm",
-                errorBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.red)),
-                errorStyle: Theme.of(context).textTheme.bodyText1.copyWith(color: Colors.red),
+      body: Form(
+        key: _formKey,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(32.0),
+              child: TextFormField(
+                keyboardType: TextInputType.numberWithOptions(decimal: true),
+                controller: _heightController,
+                autocorrect: false,
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(15)),
+                  hintText: "Enter your height in cm",
+                  errorBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.red)),
+                  errorStyle: Theme.of(context).textTheme.bodyText1.copyWith(color: Colors.red),
+                ),
+                validator: (String value) {
+                  value = _heightController.text.trim();
+                  if (value.isEmpty) {
+                    return "Your data is required";
+                  }
+                  return double.tryParse(value) != null ? null : 'Please only enter numbers';
+                },
+                textInputAction: TextInputAction.done,
               ),
-              validator: (String value) {
-                value = _heightController.text.trim();
-                if (value.isEmpty) {
-                  return "Your data is required";
-                }
-                return double.tryParse(value) != null ? null : 'Please only enter numbers';
-              },
-              textInputAction: TextInputAction.done,
             ),
-          ),
-          Image.asset('images/huaji.jpg'),
-          Padding(
-            padding: const EdgeInsets.only(bottom: 32),
-            child: IOSStyleButton(
-                buttonOnPress: _heightOnSubmit,
-                buttonColor: Colors.pinkAccent,
-                primaryText: "Calculate",
-                primaryTextColor: Colors.white),
-          ),
-        ],
+            Image.asset('images/huaji.jpg'),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 32),
+              child: IOSStyleButton(
+                  buttonOnPress: _heightOnSubmit,
+                  buttonColor: Colors.pinkAccent,
+                  primaryText: "Calculate",
+                  primaryTextColor: Colors.white),
+            ),
+          ],
+        ),
       ),
     );
   }

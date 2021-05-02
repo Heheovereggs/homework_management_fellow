@@ -6,7 +6,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 class DataService extends ChangeNotifier {
   Student student;
   List<Homework> privateHomeworkList = [];
-  bool isHomeworkListLoaded = false;
+  List<Homework> publicHomeworkList = [];
+  bool isPrivateHomeworkLoaded = false;
+  bool isPublicHomeworkLoaded = false;
   bool isShowAccessDenyDialogue = false;
 
   Future<void> setStudent(Student student) async {
@@ -22,9 +24,25 @@ class DataService extends ChangeNotifier {
     this.student.sectionIds = student.sectionIds;
   }
 
-  void setPrivateHomeworkList(List<Homework> homeworkList) {
+  void initializePrivateHomeworkList(List<Homework> homeworkList) {
     privateHomeworkList = homeworkList;
-    isHomeworkListLoaded = true;
+    isPrivateHomeworkLoaded = true;
+    notifyListeners();
+  }
+
+  void initializePublicHomeworkList(List<Homework> homeworkList) {
+    publicHomeworkList = homeworkList;
+    isPublicHomeworkLoaded = true;
+    notifyListeners();
+  }
+
+  void addPublicHomework(Homework homework) {
+    publicHomeworkList.add(homework);
+    notifyListeners();
+  }
+
+  void deletePublicHomework(Homework homework) {
+    publicHomeworkList.remove(homework);
     notifyListeners();
   }
 

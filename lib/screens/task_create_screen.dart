@@ -45,9 +45,10 @@ class _TaskCreatePageState extends State<TaskCreatePage> {
 
   @override
   void initState() {
+    isAdmin = Provider.of<DataService>(context, listen: false).student.admin;
     use24HFormat = Provider.of<DataService>(context, listen: false).student.use24HFormat;
     dateFormat = use24HFormat ? DateFormat("yyyy-MM-dd HH:mm") : DateFormat("yyyy-MM-dd HH:mm a");
-    taskType = (isAdmin == true) ? 'sectionOnly' : 'singleStudentOnly';
+    taskType = (isAdmin == true) ? HomeworkType.sectionOnly : HomeworkType.singleStudentOnly;
     dateTimeShown = dateFormat.format(DateTime.now());
     _chosenDateTime = DateTime.now();
     getDataFromDatabase();
@@ -143,7 +144,7 @@ class _TaskCreatePageState extends State<TaskCreatePage> {
     }
   }
 
-  void _generateWherePicker() {
+  void _generatePlatformPicker() {
     List<Widget> platformWidgets = [];
     List<String> platformNameList = [];
     int count = 0;
@@ -344,7 +345,7 @@ class _TaskCreatePageState extends State<TaskCreatePage> {
                 height: 35,
                 child: IOSStyleButton(
                     paddingValue: EdgeInsets.all(0),
-                    buttonOnPress: _generateWherePicker,
+                    buttonOnPress: _generatePlatformPicker,
                     primaryText: "Submit platform: ${_whereController.text}",
                     secondaryText: _whereController.text == "" ? "\tPress to choose" : null,
                     buttonColor: null,
@@ -444,10 +445,7 @@ class _TaskCreatePageState extends State<TaskCreatePage> {
     Homework homework = Homework(
       studentId: uid,
       category: isAdmin ? taskType : HomeworkType.singleStudentOnly,
-      isWaiting:
-          ((taskType == HomeworkType.sectionOnly || taskType == HomeworkType.fullyPublic) && isAdmin == false)
-              ? true
-              : false,
+      targetCategory: isAdmin ? null : taskType,
       name: _titleController.text.trim(),
       subjectName: _subjectController.text.trim(),
       platformName: _whereController.text.trim(),
@@ -459,8 +457,11 @@ class _TaskCreatePageState extends State<TaskCreatePage> {
     );
 
     if (homework.category == HomeworkType.singleStudentOnly) {
-      Provider.of<DataService>(context, listen: false).privateHomeworkList.add(homework);
+      Provider.of<DataService>(context, listen: false).addPrivateHomework(homework);
+    } else {
+      Provider.of<DataService>(context, listen: false).addPublicHomework(homework);
     }
+
     Provider.of<FirebaseService>(context, listen: false).uploadHomework(homework);
     NoticeDialog(context).showNoticeDialog(
         title: "This homework has been added", bodyText: "Current status: $taskType\nanimation constructing");

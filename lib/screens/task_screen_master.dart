@@ -16,25 +16,21 @@ class TaskScreen extends StatefulWidget {
 }
 
 class _TaskScreenState extends State<TaskScreen> {
-  List<Homework> homeworkList = [];
-
   void initState() {
     super.initState();
-    loadHomeworkList();
+    loadPublicHomeworkList();
   }
 
-  void loadHomeworkList() async {
+  void loadPublicHomeworkList() async {
     List studentSectionIds = Provider.of<DataService>(context, listen: false).student.sectionIds;
     List<Homework> _homeworkList =
         await Provider.of<FirebaseService>(context, listen: false).getPublicHomeWorkList(studentSectionIds);
-    setState(() {
-      homeworkList = _homeworkList;
-    });
+    Provider.of<DataService>(context, listen: false).initializePublicHomeworkList(_homeworkList);
   }
 
   RefreshController _refreshController = RefreshController(initialRefresh: false);
   void _onRefresh() async {
-    loadHomeworkList();
+    loadPublicHomeworkList();
     _refreshController.refreshCompleted();
   }
 
@@ -87,7 +83,13 @@ class _TaskScreenState extends State<TaskScreen> {
                 },
                 onForcePressPeak: (ForcePressDetails forcePressDetails) {
                   print("3D Touch activated");
-                  Navigator.pushNamed(context, '/SudoScreen');
+                  if (Provider.of<DataService>(context, listen: false).student.admin) {
+                    Navigator.pushNamed(context, '/SudoScreen');
+                  } else {
+                    NoticeDialog(context).showNoticeDialog(
+                        title: "Congratulations",
+                        bodyText: "WoW\nYou find this hidden portal!\nBut access denied");
+                  }
                 },
               ),
             ),
@@ -112,46 +114,48 @@ class _TaskScreenState extends State<TaskScreen> {
     return CupertinoScrollbar(
       child: Consumer<DataService>(
         builder: (_, stateService, child) {
-          return Stack(
-            children: [
-              SmartRefresher(
-                controller: _refreshController,
-                onRefresh: _onRefresh,
-                enablePullUp: false,
-                enablePullDown: true,
-                header: ClassicHeader(
-                  textStyle: Theme.of(context).textTheme.bodyText1,
-                ),
-                enableTwoLevel: false,
-                child: homeworkList.isNotEmpty
-                    ? ListView.builder(
-                        itemCount: homeworkList.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          return HomeworkCard(homeworkList[index]);
-                        },
-                      )
-                    : Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 30),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text("🤔🤔🤔", textAlign: TextAlign.center),
-                            Text("Seriously?"),
-                            SizedBox(height: 30),
-                            Text(
-                                "No even a single task has been added by anybody at the moment...\n\n(Pull down to refresh)\n\n(And good luck)",
-                                textAlign: TextAlign.center,
-                                style: Theme.of(context).textTheme.bodyText1.copyWith(fontSize: 20)),
-                          ],
+          if (stateService.isPublicHomeworkLoaded) {
+            return Stack(
+              children: [
+                SmartRefresher(
+                  controller: _refreshController,
+                  onRefresh: _onRefresh,
+                  enablePullUp: false,
+                  enablePullDown: true,
+                  header: ClassicHeader(
+                    textStyle: Theme.of(context).textTheme.bodyText1,
+                  ),
+                  enableTwoLevel: false,
+                  child: stateService.publicHomeworkList.isNotEmpty
+                      ? ListView.builder(
+                          itemCount: stateService.publicHomeworkList.length,
+                          itemBuilder: (BuildContext context, int index) {
+                            return HomeworkCard(stateService.publicHomeworkList[index]);
+                          },
+                        )
+                      : Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 30),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text("🤔🤔🤔", textAlign: TextAlign.center),
+                              Text("Seriously?"),
+                              SizedBox(height: 30),
+                              Text(
+                                  "No even a single task has been added by anybody at the moment...\n\n(Pull down to refresh)\n\n(And good luck)",
+                                  textAlign: TextAlign.center,
+                                  style: Theme.of(context).textTheme.bodyText1.copyWith(fontSize: 20)),
+                            ],
+                          ),
                         ),
-                      ),
-              ),
-              Consumer<DataService>(builder: (_, interface, child) {
-                return UserSeeOnlyNotification(
-                    visible: interface.isShowAccessDenyDialogue, text: "Access Denied: you are no admin");
-              }),
-            ],
-          );
+                ),
+                UserSeeOnlyNotification(
+                    visible: stateService.isShowAccessDenyDialogue, text: "Access Denied: you are no admin"),
+              ],
+            );
+          } else {
+            return Container();
+          }
         },
       ),
     );
