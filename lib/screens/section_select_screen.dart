@@ -3,7 +3,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:homework_management_fellow/widgets/buttons.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:homework_management_fellow/model/student.dart';
 import 'package:homework_management_fellow/model/subject.dart';
 import 'package:homework_management_fellow/services/firebaseService.dart';
 import 'package:homework_management_fellow/services/dataService.dart';
@@ -18,17 +17,18 @@ class SectionSelectScreen extends StatefulWidget {
 }
 
 class _SectionSelectScreen extends State<SectionSelectScreen> {
-  String uid;
+  FirebaseService firebaseService = FirebaseService();
+  late String uid;
   DateFormat dateFormat = DateFormat("yyyy");
-  String currentYear;
-  String season;
+  String? currentYear;
+  String? season;
   List<Subject> subjects = [];
 
   //<subjectId, sectionId>
-  Map<String, String> sectionChoiceMap = {};
+  Map<String, String?> sectionChoiceMap = {};
 
   //<subjectId, yes or no registered for this course>
-  Map<String, bool> subjectChoiceMap = {};
+  Map<String, bool?> subjectChoiceMap = {};
 
   @override
   void initState() {
@@ -42,7 +42,8 @@ class _SectionSelectScreen extends State<SectionSelectScreen> {
   }
 
   Future getSubjectName() async {
-    subjects = await Provider.of<FirebaseService>(context, listen: false).getSubjectList();
+    firebaseService.loadSubjectList();
+    subjects = firebaseService.getSubjects();
     subjects.forEach((element) {
       //set each sectionId to the first one in the sections list
       sectionChoiceMap[element.id] = element.sections[0].id;
@@ -53,16 +54,15 @@ class _SectionSelectScreen extends State<SectionSelectScreen> {
   }
 
   void _handleForm() {
-    List<String> chosenSectionIds = [];
+    List<String?> chosenSectionIds = [];
     for (String key in subjectChoiceMap.keys) {
       if (subjectChoiceMap[key] == true) {
         chosenSectionIds.add(sectionChoiceMap[key]);
       }
     }
-    Student student = Student(sectionIds: chosenSectionIds, uid: uid, activate: false);
-    Provider.of<DataService>(context, listen: false).saveSections(student);
-    Provider.of<FirebaseService>(context, listen: false).saveSectionIds(student);
-    Navigator.pushNamed(context, ActivationPendingScreen.id);
+    Provider.of<DataService>(context, listen: false).saveSections(chosenSectionIds);
+    firebaseService.saveSectionIds(uid, chosenSectionIds);
+    Navigator.pushReplacementNamed(context, ActivationPendingScreen.id);
   }
 
   @override
@@ -110,11 +110,15 @@ class _SectionSelectScreen extends State<SectionSelectScreen> {
     );
   }
 
-  Column sectionSelector({Subject subject, bool isLast, Map sectionChoiceMap, Map subjectChoiceMap}) {
+  Column sectionSelector(
+      {required Subject subject,
+      required bool isLast,
+      Map? sectionChoiceMap,
+      required Map subjectChoiceMap}) {
     bool isParticipated = subjectChoiceMap[subject.id];
 
-    Map<String, Widget> sliderItems =
-        Map.fromIterable(subject.sections, key: (e) => e.id, value: (e) => Text(e.section));
+    Map<String, Widget> sliderItems = Map.fromIterable(subject.sections,
+        key: ((e) => e.id) as String Function(dynamic)?, value: (e) => Text(e.section));
 
     return Column(
       children: [
@@ -141,7 +145,7 @@ class _SectionSelectScreen extends State<SectionSelectScreen> {
                         DropdownMenuItem(child: Text("Yes"), value: true),
                         DropdownMenuItem(child: Text("No"), value: false),
                       ],
-                      onChanged: (value) {
+                      onChanged: (dynamic value) {
                         setState(() {
                           subjectChoiceMap[subject.id] = value;
                         });
@@ -160,8 +164,8 @@ class _SectionSelectScreen extends State<SectionSelectScreen> {
                     width: 335,
                     child: CupertinoSlidingSegmentedControl(
                       thumbColor: Color(0xFF2196f3),
-                      groupValue: sectionChoiceMap[subject.id],
-                      onValueChanged: (value) {
+                      groupValue: sectionChoiceMap![subject.id],
+                      onValueChanged: (dynamic value) {
                         setState(() {
                           sectionChoiceMap[subject.id] = value.toString();
                         });

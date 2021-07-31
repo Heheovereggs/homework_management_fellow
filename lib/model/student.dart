@@ -7,22 +7,20 @@ class Student {
   bool admin;
   bool ban;
   DateTime dateOfJoin;
-  String theme;
-  bool isDiscord;
-  List sectionIds;
+  String? theme;
+  List? sectionIds;
   bool use24HFormat;
 
   Student(
-      {this.email,
-      this.uid,
-      this.firstName,
-      this.lastName,
-      this.isDiscord,
-      this.admin,
-      this.activate,
-      this.ban,
-      this.dateOfJoin,
-      this.theme,
+      {required this.email,
+      required this.uid,
+      required this.firstName,
+      required this.lastName,
+      required this.admin,
+      required this.activate,
+      required this.ban,
+      required this.dateOfJoin,
+      required this.theme,
       this.sectionIds,
       this.use24HFormat = true});
 }

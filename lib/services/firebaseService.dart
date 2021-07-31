@@ -7,7 +7,21 @@ import 'package:provider/provider.dart';
 import 'dataService.dart';
 
 class FirebaseService {
-  final _firestore = FirebaseFirestore.instance;
+  List<Homework> _homeworkList = [];
+  List<Homework> _outDatedHomeworkList = [];
+  List<SubjectSection> _sections = [];
+  List<Subject> _subjects = [];
+  Map<String, String> _submitPlatform = {};
+  Student? _student;
+
+  Student? getStudent() => _student;
+  List<Homework> getHomeworkList() => _homeworkList;
+  List<Homework> getOutDatedHomeworkList() => _outDatedHomeworkList;
+  List<Subject> getSubjects() => _subjects;
+  List<SubjectSection> getSections() => _sections;
+  Map<String, String> getSubmitPlatform() => _submitPlatform;
+
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   void saveLoginInfo(Student student) async {
     _firestore.collection('student').doc(student.uid).set({
@@ -17,23 +31,22 @@ class FirebaseService {
       'lastName': student.lastName,
       'activate': false,
       'admin': false,
-      'ban': false,
-      'theme': null,
-      'isDiscord': student.isDiscord,
+      'ban': student.ban,
+      'theme': student.theme,
       'sectionIds': student.sectionIds,
       'use24hFormat': student.use24HFormat,
+      'dateOfJoin': Timestamp.fromDate(student.dateOfJoin),
     });
   }
 
-  Future<Student> checkStudent({String email, String uid}) async {
-    Student student;
+  Future<bool> checkStudent({String? email, String? uid}) async {
     print(email);
     print(uid);
 
     var studentInfo = await _firestore.collection("student").doc("$uid").get();
 
     if (studentInfo.exists && studentInfo["email"] == email) {
-      student = Student(
+      _student = Student(
           uid: studentInfo["uid"],
           email: studentInfo["email"],
           firstName: studentInfo["firstName"],
@@ -42,16 +55,19 @@ class FirebaseService {
           admin: studentInfo["admin"],
           ban: studentInfo["ban"],
           theme: studentInfo["theme"],
-          isDiscord: studentInfo["isDiscord"],
           sectionIds: studentInfo["sectionIds"],
-          use24HFormat: studentInfo["use24hFormat"]);
+          use24HFormat: studentInfo["use24hFormat"],
+          dateOfJoin: studentInfo["dateOfJoin"].toDate());
+      if (_student!.activate)
+        return true;
+      else
+        return false;
     }
-    return student;
+    return false;
   }
 
-  Future<List<Homework>> getPublicHomeWorkList(List studentSectionIds) async {
-    Map submitPlatforms = await getSubmitPlatform();
-    List<Homework> homeworkList = [];
+  Future getPublicHomeWorkList(List? studentSectionIds) async {
+    await loadSubmitPlatform();
     print('pull from firebase');
     QuerySnapshot qnSection = await _firestore
         .collection('homework')
@@ -59,16 +75,23 @@ class FirebaseService {
         .orderBy('dueDate')
         .get();
     for (DocumentSnapshot doc in qnSection.docs) {
-      if (studentSectionIds.contains(doc['sectionId'])) {
-        homeworkList.add(Homework(
-            docId: doc.id,
+      if (studentSectionIds!.contains(doc['sectionId'])) {
+        Homework homework = Homework(
             dueDate: doc['dueDate'].toDate(),
             name: doc['name'],
             note: doc['note'],
             subjectName: doc['subjectName'],
-            where: submitPlatforms[doc['where']],
+            where: _submitPlatform[doc['where']],
             targetCategory: doc['targetCategory'],
-            platformName: doc['platformName']));
+            platformName: doc['platformName'],
+            studentId: doc['studentId'],
+            sectionId: doc['sectionId'],
+            category: doc['category']);
+        homework.docId = doc.id;
+        if (homework.dueDate.isAfter(DateTime.now()))
+          _homeworkList.add(homework);
+        else
+          _outDatedHomeworkList.add(homework);
       }
     }
     QuerySnapshot qnAll = await _firestore
@@ -77,29 +100,36 @@ class FirebaseService {
         .orderBy('dueDate')
         .get();
     for (DocumentSnapshot doc in qnAll.docs) {
-      homeworkList.add(Homework(
-          docId: doc.id,
+      Homework homework = Homework(
           dueDate: doc['dueDate'].toDate(),
           name: doc['name'],
           note: doc['note'],
           subjectName: doc['subjectName'],
-          where: submitPlatforms[doc['where']],
+          where: _submitPlatform[doc['where']],
           targetCategory: doc['targetCategory'],
-          platformName: doc['platformName']));
+          platformName: doc['platformName'],
+          studentId: doc['studentId'],
+          sectionId: doc['sectionId'],
+          category: doc['category']);
+      homework.docId = doc.id;
+      if (homework.dueDate.isAfter(DateTime.now()))
+        _homeworkList.add(homework);
+      else
+        _outDatedHomeworkList.add(homework);
     }
-    homeworkList.sort((a, b) {
+    _homeworkList.sort((a, b) {
       return a.dueDate.compareTo(b.dueDate);
     });
-    return homeworkList;
+    _outDatedHomeworkList.sort((a, b) {
+      return a.dueDate.compareTo(b.dueDate);
+    });
   }
 
-  Future<Map> getSubmitPlatform() async {
-    Map submitPlatform = {};
+  Future loadSubmitPlatform() async {
     QuerySnapshot qn = await _firestore.collection('submitPlatform').get();
     for (DocumentSnapshot doc in qn.docs) {
-      submitPlatform[doc.id] = doc["name"];
+      _submitPlatform[doc.id] = doc["name"];
     }
-    return submitPlatform;
   }
 
   Future uploadHomework(Homework homework) async {
@@ -132,62 +162,54 @@ class FirebaseService {
     }
   }
 
-  Future<List<Homework>> getPrivateHomeWorkList(String uid) async {
-    List<Homework> homeworkList = [];
+  Future loadPrivateHomeWorkList(String? uid) async {
     print('pull private tasks from firebase');
     QuerySnapshot qn =
         await _firestore.collection('homework').where('studentId', isEqualTo: uid).orderBy('dueDate').get();
     for (DocumentSnapshot doc in qn.docs) {
       if (doc["category"] == HomeworkType.singleStudentOnly) {
-        homeworkList.add(Homework(
-            docId: doc.id,
+        Homework homework = Homework(
             dueDate: doc['dueDate'].toDate(),
             name: doc['name'],
             note: doc['note'],
             subjectName: doc['subjectName'],
-            studentId: doc['studentId'],
-            where: doc['where'],
             targetCategory: doc['targetCategory'],
-            platformName: doc['platformName']));
+            platformName: doc['platformName'],
+            studentId: doc['studentId'],
+            sectionId: doc['sectionId'],
+            category: doc['category']);
+        homework.docId = doc.id;
+        _homeworkList.add(homework);
       }
     }
-    return homeworkList;
   }
 
-  Future<List<Subject>> getSubjectList() async {
-    List<SubjectSection> sections = await getSections();
-    List<Subject> subjects = [];
+  Future loadSubjectList() async {
+    await loadSections();
     var qn = await _firestore.collection("subject").orderBy("name").get();
     for (var subject in qn.docs) {
       List<SubjectSection> thisSections =
-          sections.where((element) => element.subjectId == subject.id).toList();
-      subjects.add(Subject(
+          _sections.where((element) => element.subjectId == subject.id).toList();
+      _subjects.add(Subject(
         id: subject.id,
         name: subject["name"],
         sections: thisSections,
       ));
     }
-    return subjects;
   }
 
-  Future<List<SubjectSection>> getSections({String subjectId}) async {
-    List<SubjectSection> sections = [];
+  Future loadSections({String? subjectId}) async {
     var qn = (subjectId != null)
         ? await _firestore.collection("section").where("subjectId", isEqualTo: subjectId).get()
         : await _firestore.collection("section").orderBy("section").get();
     for (var section in qn.docs) {
-      sections
+      _sections
           .add(SubjectSection(id: section.id, section: section["section"], subjectId: section["subjectId"]));
     }
-
-    return sections;
   }
 
-  void saveSectionIds(Student student) async {
-    _firestore
-        .collection('student')
-        .doc(student.uid)
-        .update({'sectionIds': student.sectionIds, 'activate': false});
+  void saveSectionIds(String uid, List sectionIds) async {
+    _firestore.collection('student').doc(uid).update({'sectionIds': sectionIds, 'activate': false});
   }
 
   //TODO: to be tested

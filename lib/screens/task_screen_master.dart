@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:homework_management_fellow/model/homework.dart';
+import 'package:homework_management_fellow/model/theme.dart';
 import 'package:homework_management_fellow/screens/private_task_screen.dart';
 import 'package:homework_management_fellow/screens/setting_screen.dart';
 import 'package:homework_management_fellow/screens/sudo_screen.dart';
@@ -11,6 +12,7 @@ import 'package:homework_management_fellow/screens/task_create_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:homework_management_fellow/widgets/boxed_text_note.dart';
+import 'package:flutter/services.dart';
 
 class TaskScreenMaster extends StatefulWidget {
   static const String id = 'TaskScreenMaster';
@@ -26,10 +28,11 @@ class _TaskScreenMasterState extends State<TaskScreenMaster> {
   }
 
   void loadPublicHomeworkList() async {
-    List studentSectionIds = Provider.of<DataService>(context, listen: false).student.sectionIds;
-    List<Homework> _homeworkList =
-        await Provider.of<FirebaseService>(context, listen: false).getPublicHomeWorkList(studentSectionIds);
-    Provider.of<DataService>(context, listen: false).initializePublicHomeworkList(_homeworkList);
+    List? studentSectionIds = Provider.of<DataService>(context, listen: false).student.sectionIds;
+    FirebaseService firebaseService = FirebaseService();
+    await firebaseService.getPublicHomeWorkList(studentSectionIds);
+    Provider.of<DataService>(context, listen: false).initializePublicHomeworkList(
+        firebaseService.getHomeworkList(), firebaseService.getOutDatedHomeworkList());
   }
 
   RefreshController _refreshController = RefreshController(initialRefresh: false);
@@ -67,7 +70,7 @@ class _TaskScreenMasterState extends State<TaskScreenMaster> {
         tabBuilder: (context, index) {
           return CupertinoPageScaffold(
             navigationBar: CupertinoNavigationBar(
-              backgroundColor: Color(0xFF2196f3),
+              backgroundColor: kBlue,
               leading: GestureDetector(
                 child: Icon(
                   index == 1 ? Icons.help : Icons.filter_alt,
@@ -89,6 +92,7 @@ class _TaskScreenMasterState extends State<TaskScreenMaster> {
                 },
                 onForcePressPeak: (ForcePressDetails forcePressDetails) {
                   print("3D Touch activated");
+                  HapticFeedback.heavyImpact();
                   if (Provider.of<DataService>(context, listen: false).student.admin) {
                     Navigator.pushNamed(context, SudoScreen.id);
                   } else {
@@ -129,7 +133,7 @@ class _TaskScreenMasterState extends State<TaskScreenMaster> {
                   enablePullUp: false,
                   enablePullDown: true,
                   header: ClassicHeader(
-                    textStyle: Theme.of(context).textTheme.bodyText1,
+                    textStyle: Theme.of(context).textTheme.bodyText1!,
                   ),
                   enableTwoLevel: false,
                   child: stateService.publicHomeworkList.isNotEmpty
@@ -150,7 +154,7 @@ class _TaskScreenMasterState extends State<TaskScreenMaster> {
                               Text(
                                   "No even a single task has been added by anybody at the moment...\n\n(Pull down to refresh)\n\n(And good luck)",
                                   textAlign: TextAlign.center,
-                                  style: Theme.of(context).textTheme.bodyText1.copyWith(fontSize: 20)),
+                                  style: Theme.of(context).textTheme.bodyText1!.copyWith(fontSize: 20)),
                             ],
                           ),
                         ),

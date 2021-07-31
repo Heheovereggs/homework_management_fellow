@@ -4,7 +4,7 @@ import 'package:homework_management_fellow/model/student.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class DataService extends ChangeNotifier {
-  Student student;
+  late Student student;
   List<Homework> privateHomeworkList = [];
   List<Homework> publicHomeworkList = [];
   bool isPrivateHomeworkLoaded = false;
@@ -20,8 +20,9 @@ class DataService extends ChangeNotifier {
     prefs.setBool('use24hFormat', student.use24HFormat);
   }
 
-  Future<void> saveSections(Student student) async {
-    this.student.sectionIds = student.sectionIds;
+  Future<void> saveSections(sectionIds) async {
+    student.sectionIds = sectionIds;
+    student.activate = false;
   }
 
   void initializePrivateHomeworkList(List<Homework> homeworkList) {
@@ -30,8 +31,13 @@ class DataService extends ChangeNotifier {
     notifyListeners();
   }
 
-  void initializePublicHomeworkList(List<Homework> homeworkList) {
-    publicHomeworkList = homeworkList;
+  void initializePublicHomeworkList(List<Homework> blueHWList, List<Homework> greyHWList) {
+    if (blueHWList.isNotEmpty) {
+      publicHomeworkList = blueHWList;
+      if (greyHWList.isNotEmpty) greyHWList.forEach((h) => publicHomeworkList.add(h));
+    } else {
+      publicHomeworkList = greyHWList;
+    }
     isPublicHomeworkLoaded = true;
     notifyListeners();
   }

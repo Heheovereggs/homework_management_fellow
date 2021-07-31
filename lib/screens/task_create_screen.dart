@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:homework_management_fellow/model/homework.dart';
 import 'package:homework_management_fellow/model/section.dart';
 import 'package:homework_management_fellow/model/subject.dart';
+import 'package:homework_management_fellow/model/theme.dart';
 import 'package:homework_management_fellow/services/dataService.dart';
 import 'package:homework_management_fellow/services/firebaseService.dart';
 import 'package:homework_management_fellow/widgets/boxed_text_note.dart';
@@ -18,26 +19,27 @@ class TaskCreatePage extends StatefulWidget {
 }
 
 class _TaskCreatePageState extends State<TaskCreatePage> {
+  FirebaseService firebaseService = FirebaseService();
   final _titleController = TextEditingController();
   final _subjectController = TextEditingController();
   final _whereController = TextEditingController();
   final _noteController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
-  DateFormat dateFormat;
-  DateTime _chosenDateTime;
-  String dateTimeShown;
+  late DateFormat dateFormat;
+  late DateTime _chosenDateTime;
+  late String dateTimeShown;
   bool isAdmin = false;
-  String taskType;
-  List<Subject> subjects;
-  Map submitPlatforms;
+  late String taskType;
+  late List<Subject> subjects;
+  late Map submitPlatforms;
   bool showSubjectPopup = false;
   bool showWherePopup = false;
-  String uid;
+  String? uid;
   List<String> subjectNameList = [];
-  String sectionId = "";
-  String sectionNumber;
-  String errorMessage;
-  bool use24HFormat;
+  String? sectionId;
+  String? sectionNumber;
+  String? errorMessage;
+  late bool use24HFormat;
   int titleCharLimit = 20;
   int subjectCharLimit = 15;
   int platformCharLimit = 10;
@@ -57,8 +59,10 @@ class _TaskCreatePageState extends State<TaskCreatePage> {
   }
 
   Future getDataFromDatabase() async {
-    subjects = await Provider.of<FirebaseService>(context, listen: false).getSubjectList();
-    submitPlatforms = await Provider.of<FirebaseService>(context, listen: false).getSubmitPlatform();
+    await firebaseService.loadSubjectList();
+    subjects = firebaseService.getSubjects();
+    await firebaseService.loadSubmitPlatform();
+    submitPlatforms = firebaseService.getSubmitPlatform();
     final prefs = await SharedPreferences.getInstance();
     uid = prefs.getString('uid');
     setState(() {});
@@ -121,8 +125,8 @@ class _TaskCreatePageState extends State<TaskCreatePage> {
 
   Future _getSectionIdsForChosenSubject() async {
     List sectionIdsForOneSubject;
-    List studentSectionIdList;
-    String subjectId;
+    List? studentSectionIdList;
+    String? subjectId;
     if (subjectNameList.contains(_subjectController.text)) {
       studentSectionIdList = Provider.of<DataService>(context, listen: false).student.sectionIds;
       for (var subject in subjects) {
@@ -131,12 +135,13 @@ class _TaskCreatePageState extends State<TaskCreatePage> {
           break;
         }
       }
-      sectionIdsForOneSubject =
-          await Provider.of<FirebaseService>(context, listen: false).getSections(subjectId: subjectId);
-      for (SubjectSection subjectSection in sectionIdsForOneSubject) {
-        if (studentSectionIdList.contains(subjectSection.id)) {
+      await firebaseService.loadSections(subjectId: subjectId);
+      sectionIdsForOneSubject = firebaseService.getSections();
+
+      for (SubjectSection subjectSection in sectionIdsForOneSubject as Iterable<SubjectSection>) {
+        if (studentSectionIdList!.contains(subjectSection.id)) {
           sectionId = subjectSection.id;
-          sectionNumber = (subjectSection.section.length == 1)
+          sectionNumber = (subjectSection.section!.length == 1)
               ? "000${subjectSection.section}"
               : "00${subjectSection.section}";
           break;
@@ -149,7 +154,7 @@ class _TaskCreatePageState extends State<TaskCreatePage> {
     List<Widget> platformWidgets = [];
     List<String> platformNameList = [];
     int count = 0;
-    for (String key in submitPlatforms.keys) {
+    for (String? key in submitPlatforms.keys as Iterable<String?>) {
       String name = submitPlatforms[key];
       platformWidgets.add(Center(child: Text(name)));
       platformNameList.add(name);
@@ -167,13 +172,13 @@ class _TaskCreatePageState extends State<TaskCreatePage> {
   }
 
   Future showCupertinoPicker({
-    @required List<Widget> itemList,
-    @required bool additionalTextField,
-    @required String additionalPrompt,
-    @required int itemCount,
-    @required TextEditingController textController,
-    @required List visualNameList,
-    @required int additionalCharLimit,
+    required List<Widget> itemList,
+    required bool additionalTextField,
+    required String additionalPrompt,
+    required int itemCount,
+    required TextEditingController textController,
+    required List visualNameList,
+    required int additionalCharLimit,
     bool isInputSubject = false,
   }) {
     itemList.insert(0, Center(child: Text("Choose below")));
@@ -192,9 +197,7 @@ class _TaskCreatePageState extends State<TaskCreatePage> {
                   if (value == 0) {
                   } else if (value == itemCount + 1) {
                     additionalTextField = true;
-                    if (isInputSubject) {
-                      sectionId = "";
-                    }
+                    if (isInputSubject) sectionId = null;
                   } else {
                     textController.text = visualNameList[value - 1];
                     additionalTextField = false;
@@ -212,9 +215,8 @@ class _TaskCreatePageState extends State<TaskCreatePage> {
               context: context,
               onPress: () {
                 if (additionalTextField) {
-                  if (isInputSubject) {
-                    sectionId = "";
-                  }
+                  if (isInputSubject) sectionId = null;
+
                   textController.clear();
                   _showAdditionalTextField(
                       hintText: additionalPrompt,
@@ -232,7 +234,7 @@ class _TaskCreatePageState extends State<TaskCreatePage> {
   }
 
   Future _showAdditionalTextField(
-      {@required String hintText, @required TextEditingController textController, @required int charLimit}) {
+      {required String hintText, required TextEditingController textController, required int charLimit}) {
     return showCupertinoModalPopup(
         barrierDismissible: false,
         context: context,
@@ -273,130 +275,132 @@ class _TaskCreatePageState extends State<TaskCreatePage> {
         padding: const EdgeInsets.symmetric(horizontal: 5),
         child: Form(
           key: _formKey,
-          child: ListView(
-            children: [
-              SizedBox(
-                height: 10,
-              ),
-              Row(
-                children: [
-                  SizedBox(
-                    width: 10,
-                  ),
-                  Text(
-                    "Add homework",
-                    style: Theme.of(context).textTheme.caption,
-                  ),
-                ],
-              ),
-              Padding(
-                padding: const EdgeInsets.all(9),
-                child: Text(
-                  "Choose the way you want to add:",
-                  style: Theme.of(context).textTheme.bodyText2,
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                SizedBox(
+                  height: 10,
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Container(
-                  width: 335,
-                  child: CupertinoSlidingSegmentedControl(
-                    thumbColor: Color(0xFF2196f3),
-                    groupValue: taskType,
-                    onValueChanged: (value) {
-                      setState(() {
-                        taskType = value;
-                      });
-                    },
-                    children: <String, Widget>{
-                      HomeworkType.sectionOnly: Text(
-                        "Public",
-                        style: Theme.of(context).textTheme.bodyText2,
-                      ),
-                      HomeworkType.singleStudentOnly: Text(
-                        "Private",
-                        style: Theme.of(context).textTheme.bodyText2,
-                      ),
-                      HomeworkType.fullyPublic: Text(
-                        "All ⚠️",
-                        style: Theme.of(context).textTheme.bodyText2,
-                      ),
-                    },
-                  ),
-                ),
-              ),
-              ExplanationText(
-                  "️🔝 Click the help button located on top left ↖️ to get some sort of explanation️s"),
-              taskTextFormField(
-                  hintText: "Title (max $titleCharLimit letters)", textController: _titleController),
-              SizedBox(
-                height: 35,
-                child: IOSStyleButton(
-                    paddingValue: EdgeInsets.all(0),
-                    buttonOnPress: _generateSubjectPicker,
-                    primaryText: (sectionId == "")
-                        ? ("Subject: ${_subjectController.text}")
-                        : "Subject: ${_subjectController.text} sect.$sectionNumber",
-                    secondaryText: _subjectController.text == "" ? "\tPress to choose" : null,
-                    buttonColor: null,
-                    primaryTextColor: Colors.black,
-                    secondaryTextColor: Colors.black45),
-              ),
-              SizedBox(
-                height: 35,
-                child: IOSStyleButton(
-                    paddingValue: EdgeInsets.all(0),
-                    buttonOnPress: _generatePlatformPicker,
-                    primaryText: "Submit platform: ${_whereController.text}",
-                    secondaryText: _whereController.text == "" ? "\tPress to choose" : null,
-                    buttonColor: null,
-                    primaryTextColor: Colors.black,
-                    secondaryTextColor: Colors.black45),
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    "Due date: $dateTimeShown",
-                    style: Theme.of(context).textTheme.bodyText1,
-                  ),
-                  CupertinoButton(
-                    padding: EdgeInsets.only(left: 18),
-                    child: Text(
-                      "Pick",
-                      style: Theme.of(context).textTheme.bodyText1.copyWith(color: Color(0xFF2196f3)),
+                Row(
+                  children: [
+                    SizedBox(
+                      width: 10,
                     ),
-                    onPressed: () {
-                      _showDatePicker();
-                    },
+                    Text(
+                      "Add homework",
+                      style: Theme.of(context).textTheme.caption,
+                    ),
+                  ],
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(9),
+                  child: Text(
+                    "Choose the way you want to add:",
+                    style: Theme.of(context).textTheme.bodyText2,
                   ),
-                ],
-              ),
-              taskTextFormField(
-                  isLast: true,
-                  boxHeight: 90,
-                  hintText: "Note (optional && max $noteCharLimit letters)",
-                  textController: _noteController,
-                  maxLine: 3),
-              if (taskType == HomeworkType.sectionOnly && isAdmin == false)
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Container(
+                    width: MediaQuery.of(context).size.width,
+                    child: CupertinoSlidingSegmentedControl(
+                      thumbColor: kBlue,
+                      groupValue: taskType,
+                      onValueChanged: (dynamic value) {
+                        setState(() {
+                          taskType = value;
+                        });
+                      },
+                      children: <String, Widget>{
+                        HomeworkType.sectionOnly: Text(
+                          "Public",
+                          style: Theme.of(context).textTheme.bodyText2,
+                        ),
+                        HomeworkType.singleStudentOnly: Text(
+                          "Private",
+                          style: Theme.of(context).textTheme.bodyText2,
+                        ),
+                        HomeworkType.fullyPublic: Text(
+                          "All ⚠️",
+                          style: Theme.of(context).textTheme.bodyText2,
+                        ),
+                      },
+                    ),
+                  ),
+                ),
                 ExplanationText(
-                    "Your Public (students in same section can see) homework post will temporarily save as Private until admin approval"),
-              if (taskType == HomeworkType.fullyPublic)
-                ExplanationText(
-                    "⚠️Warning⚠️\nThis homework will be seen by ALL student in CET program, if you only wish to let student in the same section to see please choose \"Public\" to add homework"),
-              if (taskType == HomeworkType.fullyPublic && isAdmin == false)
-                ExplanationText(
-                    "And this homework post will temporarily save as Private until admin approval"),
-              IOSStyleButton(
-                  buttonOnPress: submitOnPress,
-                  primaryText: taskType == HomeworkType.singleStudentOnly ? "Add" : "Post",
-                  primaryTextColor: Colors.white),
-              IOSStyleButton(
-                  buttonOnPress: _cleanAllFields,
-                  primaryText: 'Clean all inputs',
-                  buttonColor: Colors.red,
-                  primaryTextColor: Colors.white),
-            ],
+                    "️🔝 Click the help button located on top left ↖️ to get some sort of explanation️s"),
+                taskTextFormField(
+                    hintText: "Title (max $titleCharLimit letters)", textController: _titleController),
+                SizedBox(
+                  height: 35,
+                  child: IOSStyleButton(
+                      paddingValue: EdgeInsets.all(0),
+                      buttonOnPress: _generateSubjectPicker,
+                      primaryText: (sectionId == null)
+                          ? ("Subject: ${_subjectController.text}")
+                          : "Subject: ${_subjectController.text} sect.$sectionNumber",
+                      secondaryText: _subjectController.text == "" ? "\tPress to choose" : null,
+                      buttonColor: null,
+                      primaryTextColor: Colors.black,
+                      secondaryTextColor: Colors.black45),
+                ),
+                SizedBox(
+                  height: 35,
+                  child: IOSStyleButton(
+                      paddingValue: EdgeInsets.all(0),
+                      buttonOnPress: _generatePlatformPicker,
+                      primaryText: "Submit platform: ${_whereController.text}",
+                      secondaryText: _whereController.text == "" ? "\tPress to choose" : null,
+                      buttonColor: null,
+                      primaryTextColor: Colors.black,
+                      secondaryTextColor: Colors.black45),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      "Due date: $dateTimeShown",
+                      style: Theme.of(context).textTheme.bodyText1,
+                    ),
+                    CupertinoButton(
+                      padding: EdgeInsets.only(left: 18),
+                      child: Text(
+                        "Pick",
+                        style: Theme.of(context).textTheme.bodyText1!.copyWith(color: Color(0xFF2196f3)),
+                      ),
+                      onPressed: () {
+                        _showDatePicker();
+                      },
+                    ),
+                  ],
+                ),
+                taskTextFormField(
+                    isLast: true,
+                    boxHeight: 90,
+                    hintText: "Note (optional && max $noteCharLimit letters)",
+                    textController: _noteController,
+                    maxLine: 3),
+                if (taskType == HomeworkType.sectionOnly && isAdmin == false)
+                  ExplanationText(
+                      "Your Public (students in same section can see) homework post will temporarily save as Private until admin approval"),
+                if (taskType == HomeworkType.fullyPublic)
+                  ExplanationText(
+                      "⚠️Warning⚠️\nThis homework will be seen by ALL student in CET program, if you only wish to let student in the same section to see please choose \"Public\" to add homework"),
+                if (taskType == HomeworkType.fullyPublic && isAdmin == false)
+                  ExplanationText(
+                      "And this homework post will temporarily save as Private until admin approval"),
+                IOSStyleButton(
+                    buttonOnPress: submitOnPress,
+                    primaryText: taskType == HomeworkType.singleStudentOnly ? "Add" : "Post",
+                    primaryTextColor: Colors.white),
+                IOSStyleButton(
+                    buttonOnPress: _cleanAllFields,
+                    primaryText: 'Clean all inputs',
+                    buttonColor: Colors.red,
+                    primaryTextColor: Colors.white),
+              ],
+            ),
           ),
         ),
       ),
@@ -412,8 +416,7 @@ class _TaskCreatePageState extends State<TaskCreatePage> {
 
   bool _isFormGood() {
     int invalidCount = 0;
-    bool isTitleOkay =
-        _titleController.text.contains(letter26) && (_titleController.text.length <= titleCharLimit);
+    bool isTitleOkay = (_titleController.text.length <= titleCharLimit);
     bool isDatetimeAfter = _chosenDateTime.isAfter(DateTime.now());
     bool isNoteOkay = (_noteController.text.length <= noteCharLimit);
     List<bool> completenessList = [isTitleOkay, isDatetimeAfter, isNoteOkay];
@@ -444,7 +447,7 @@ class _TaskCreatePageState extends State<TaskCreatePage> {
 
   Future _addHomework() async {
     Homework homework = Homework(
-      studentId: uid,
+      studentId: uid!,
       category: isAdmin ? taskType : HomeworkType.singleStudentOnly,
       targetCategory: isAdmin ? null : taskType,
       name: _titleController.text.trim(),
@@ -454,7 +457,7 @@ class _TaskCreatePageState extends State<TaskCreatePage> {
           .firstWhere((k) => submitPlatforms[k] == _whereController.text.trim(), orElse: () => null),
       note: _noteController.text.trim(),
       dueDate: _chosenDateTime,
-      sectionId: sectionId,
+      sectionId: sectionId!,
     );
 
     if (homework.category == HomeworkType.singleStudentOnly) {
@@ -463,7 +466,7 @@ class _TaskCreatePageState extends State<TaskCreatePage> {
       Provider.of<DataService>(context, listen: false).addPublicHomework(homework);
     }
 
-    Provider.of<FirebaseService>(context, listen: false).uploadHomework(homework);
+    firebaseService.uploadHomework(homework);
     NoticeDialog(context).showNoticeDialog(
         title: "This homework has been added", bodyText: "Current status: $taskType\nanimation constructing");
     _cleanAllFields();
@@ -483,8 +486,8 @@ class _TaskCreatePageState extends State<TaskCreatePage> {
 
   SizedBox taskTextFormField(
       {double boxHeight = 60,
-      String hintText,
-      TextEditingController textController,
+      String? hintText,
+      TextEditingController? textController,
       int maxLine = 1,
       bool isLast = false}) {
     return SizedBox(

@@ -1,30 +1,27 @@
-import 'package:flutter/material.dart';
-
 class Homework {
-  String docId;
+  late String docId;
   String category;
   String name;
   String sectionId;
   DateTime dueDate;
   String subjectName;
   String note;
-  String where;
+  String? where;
   String studentId;
-  String targetCategory;
+  String? targetCategory;
   String platformName;
 
   Homework(
-      {this.docId,
-      this.category,
-      @required this.name,
-      this.sectionId,
-      @required this.dueDate,
-      @required this.subjectName,
-      this.note,
-      @required this.where,
-      this.studentId,
+      {required this.category,
+      required this.name,
+      required this.sectionId,
+      required this.dueDate,
+      required this.subjectName,
+      required this.note,
+      this.where,
+      required this.studentId,
       this.targetCategory,
-      this.platformName});
+      required this.platformName});
 }
 
 class HomeworkType {

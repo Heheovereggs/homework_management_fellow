@@ -5,5 +5,5 @@ class Subject {
   String name;
   List<SubjectSection> sections = [];
 
-  Subject({this.id, this.name, this.sections});
+  Subject({required this.id, required this.name, required this.sections});
 }

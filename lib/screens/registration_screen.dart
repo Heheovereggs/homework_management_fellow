@@ -16,105 +16,78 @@ class RegistrationScreen extends StatefulWidget {
 }
 
 class _RegistrationScreenState extends State<RegistrationScreen> {
-  bool isDiscord = false;
-  String uid;
-  String email;
+  late String uid;
+  late String email;
   final _formKey = GlobalKey<FormState>();
   final _firstController = TextEditingController();
   final _lastController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-    final Map arguments = ModalRoute.of(context).settings.arguments as Map;
+    final Map arguments = ModalRoute.of(context)!.settings.arguments as Map;
     email = arguments['email'];
     uid = arguments['uid'];
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Registration"),
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios_rounded),
-          onPressed: () => Navigator.of(context).pop(),
+    return GestureDetector(
+      onTap: () {
+        FocusScopeNode currentFocus = FocusScope.of(context);
+
+        if (!currentFocus.hasPrimaryFocus) {
+          currentFocus.unfocus();
+        }
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text("Registration"),
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back_ios_rounded),
+            onPressed: () => Navigator.of(context).pop(),
+          ),
         ),
-      ),
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Form(
-            key: _formKey,
-            child: ListView(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(9.0),
-                  child: Text(
-                    "Your email: $email",
-                    style: TextStyle(fontSize: 24, height: 1.3),
+        body: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Form(
+              key: _formKey,
+              child: ListView(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(9.0),
+                    child: Text(
+                      "Your email: $email",
+                      style: TextStyle(fontSize: 24, height: 1.3),
+                    ),
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: registrationTextFormField("First name", _firstController),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: registrationTextFormField("Last name", _lastController),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(9),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        "Are you in CET Discord server?",
-                        style: TextStyle(fontSize: 16),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 15),
-                        child: Container(
-                          padding: EdgeInsets.symmetric(horizontal: 15),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            border: Border.all(),
-                          ),
-                          child: DropdownButtonHideUnderline(
-                            child: DropdownButton(
-                                value: isDiscord,
-                                items: [
-                                  DropdownMenuItem(child: Text("Yes"), value: true),
-                                  DropdownMenuItem(child: Text("No"), value: false),
-                                ],
-                                onChanged: (value) {
-                                  setState(() {
-                                    isDiscord = value;
-                                  });
-                                }),
-                          ),
-                        ),
-                      ),
-                    ],
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: registrationTextFormField("First name", _firstController),
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: CupertinoSlidingSegmentedControl(
-                    thumbColor: Color(0xFF2196f3),
-                    groupValue: isDiscord,
-                    onValueChanged: (value) {
-                      setState(() {
-                        isDiscord = value;
-                      });
-                    },
-                    children: <bool, Widget>{
-                      true: Text("Yes"),
-                      false: Text("No"),
-                    },
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: registrationTextFormField("Last name", _lastController),
                   ),
-                ),
-                SizedBox(
-                  height: 15,
-                ),
-                ExplanationText("No password required since Goooooooooooooogle will do the verification"),
-                IOSStyleButton(primaryText: "Next step", buttonOnPress: _saveInfoForm),
-              ],
+                  // Padding(
+                  //   padding: const EdgeInsets.all(8.0),
+                  //   child: CupertinoSlidingSegmentedControl(
+                  //     thumbColor: Color(0xFF2196f3),
+                  //     groupValue: isDiscord,
+                  //     onValueChanged: (dynamic value) {
+                  //       setState(() {
+                  //         isDiscord = value;
+                  //       });
+                  //     },
+                  //     children: <bool, Widget>{
+                  //       true: Text("Yes"),
+                  //       false: Text("No"),
+                  //     },
+                  //   ),
+                  // ),
+                  SizedBox(
+                    height: 15,
+                  ),
+                  ExplanationText("No password required since Goooooooooooooogle will do the verification"),
+                  IOSStyleButton(primaryText: "Next step", buttonOnPress: _saveInfoForm),
+                ],
+              ),
             ),
           ),
         ),
@@ -127,12 +100,12 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       controller: textEditingController,
       autocorrect: false,
       decoration: InputDecoration(
-        border: OutlineInputBorder(),
+        border: OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(12))),
         hintText: hint,
         errorBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.red)),
-        errorStyle: Theme.of(context).textTheme.bodyText1.copyWith(color: Colors.red),
+        errorStyle: Theme.of(context).textTheme.bodyText1!.copyWith(color: Colors.red),
       ),
-      validator: (String value) {
+      validator: (String? value) {
         value = textEditingController.text.trim();
         if (value.isEmpty) {
           return "$hint is required";
@@ -146,7 +119,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   }
 
   void _saveInfoForm() {
-    if (!_formKey.currentState.validate()) {
+    if (!_formKey.currentState!.validate()) {
       return null;
     }
     Student student = Student(
@@ -154,17 +127,20 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       email: email,
       firstName: _firstController.text.trim(),
       lastName: _lastController.text.trim(),
-      isDiscord: isDiscord,
       admin: false,
       activate: false,
+      dateOfJoin: DateTime.now(),
+      theme: null,
+      ban: false,
     );
 
     // save to provider StateService
     Provider.of<DataService>(context, listen: false).setStudent(student);
 
     // save to firebase
-    Provider.of<FirebaseService>(context, listen: false).saveLoginInfo(student);
+    FirebaseService firebaseService = FirebaseService();
+    firebaseService.saveLoginInfo(student);
 
-    Navigator.pushNamed(context, SectionSelectScreen.id);
+    Navigator.pushReplacementNamed(context, SectionSelectScreen.id);
   }
 }

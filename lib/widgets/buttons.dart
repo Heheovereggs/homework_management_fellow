@@ -2,17 +2,17 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class IOSStyleButton extends StatelessWidget {
-  final Function buttonOnPress;
+  final VoidCallback buttonOnPress;
   final String primaryText;
-  final String secondaryText;
-  final Color buttonColor;
+  final String? secondaryText;
+  final Color? buttonColor;
   final Color primaryTextColor;
-  final Color secondaryTextColor;
+  final Color? secondaryTextColor;
   final EdgeInsets paddingValue;
 
   IOSStyleButton(
-      {this.buttonOnPress,
-      this.primaryText,
+      {required this.buttonOnPress,
+      required this.primaryText,
       this.secondaryText,
       this.buttonColor = const Color(0xFF2196f3),
       this.primaryTextColor = Colors.black,
@@ -21,8 +21,8 @@ class IOSStyleButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: 220,
+    return Container(
+      width: MediaQuery.of(context).size.width,
       height: 64,
       child: Padding(
         padding: paddingValue,
@@ -33,11 +33,11 @@ class IOSStyleButton extends StatelessWidget {
           child: RichText(
             text: TextSpan(
               text: primaryText,
-              style: Theme.of(context).textTheme.bodyText2.copyWith(color: primaryTextColor),
+              style: Theme.of(context).textTheme.bodyText2!.copyWith(color: primaryTextColor),
               children: <TextSpan>[
                 TextSpan(
                   text: secondaryText,
-                  style: Theme.of(context).textTheme.bodyText1.copyWith(color: secondaryTextColor),
+                  style: Theme.of(context).textTheme.bodyText1!.copyWith(color: secondaryTextColor),
                 )
               ],
             ),
@@ -50,10 +50,10 @@ class IOSStyleButton extends StatelessWidget {
 }
 
 class ConfirmButton extends StatelessWidget {
-  ConfirmButton({@required this.context, @required this.onPress}) : super();
+  ConfirmButton({required this.context, required this.onPress}) : super();
 
   final BuildContext context;
-  final Function onPress;
+  final VoidCallback onPress;
 
   @override
   Widget build(BuildContext context) {
@@ -64,7 +64,7 @@ class ConfirmButton extends StatelessWidget {
         color: Color(0xFF2196f3),
         child: Text(
           'OK',
-          style: Theme.of(context).textTheme.bodyText1.copyWith(color: Colors.white),
+          style: Theme.of(context).textTheme.bodyText1!.copyWith(color: Colors.white),
         ),
         onPressed: onPress,
       ),

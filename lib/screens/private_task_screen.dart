@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:homework_management_fellow/model/homework.dart';
 import 'package:homework_management_fellow/services/firebaseService.dart';
 import 'package:homework_management_fellow/services/dataService.dart';
 import 'package:homework_management_fellow/widgets/homework_card.dart';
@@ -21,11 +20,12 @@ class _PrivateTaskScreenState extends State<PrivateTaskScreen> {
 
   void loadPrivateHomeworkList() async {
     final prefs = await SharedPreferences.getInstance();
-    String uid = prefs.getString('uid');
+    String? uid = prefs.getString('uid');
     if (!Provider.of<DataService>(context, listen: false).isPrivateHomeworkLoaded) {
-      List<Homework> _homeworkList =
-          await Provider.of<FirebaseService>(context, listen: false).getPrivateHomeWorkList(uid);
-      Provider.of<DataService>(context, listen: false).initializePrivateHomeworkList(_homeworkList);
+      FirebaseService firebaseService = FirebaseService();
+      await firebaseService.loadPrivateHomeWorkList(uid);
+      Provider.of<DataService>(context, listen: false)
+          .initializePrivateHomeworkList(firebaseService.getHomeworkList());
     }
   }
 

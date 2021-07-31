@@ -13,61 +13,54 @@ class HomeworkCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool use24HFormat = Provider.of<DataService>(context, listen: false).student.use24HFormat;
+    bool? use24HFormat = Provider.of<DataService>(context, listen: false).student.use24HFormat;
     return Padding(
-      padding: EdgeInsets.fromLTRB(9, 10, 9, 0),
+      padding: EdgeInsets.fromLTRB(8, 8, 8, 0),
       child: Slidable(
         actionPane: SlidableBehindActionPane(),
-        child: Row(
-          children: [
-            Expanded(
-              child: Container(
-                child: Material(
-                  borderRadius: BorderRadius.circular(15),
-                  color: homework.dueDate.isAfter(DateTime.now()) ? Colors.lightBlueAccent : Colors.grey,
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(vertical: 7, horizontal: 10),
-                    child: Stack(
-                      clipBehavior: Clip.antiAlias,
-                      children: <Widget>[
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              homework.name,
-                              style: Theme.of(context).textTheme.caption,
-                            ),
-                            Text(
-                              use24HFormat
-                                  ? 'Due date: ${DateFormat.MMMMEEEEd().add_Hm().format(homework.dueDate)}'
-                                  : 'Due date: ${DateFormat.MMMMEEEEd().add_jm().format(homework.dueDate)}',
-                              style: Theme.of(context).textTheme.bodyText2,
-                            ),
-                            Text(
-                              'Subject: ${homework.subjectName}',
-                              style: Theme.of(context).textTheme.bodyText2,
-                            ),
-                            if (homework.note != "")
-                              Text(
-                                'Note: ${homework.note}',
-                                style: Theme.of(context).textTheme.bodyText2,
-                              ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                Text(homework.platformName),
-                              ],
-                            ),
-                          ],
-                        ),
-                        //TODO: add triangle
+        child: Card(
+          elevation: 5,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
+          color: homework.dueDate.isAfter(DateTime.now()) ? Colors.lightBlueAccent : Colors.grey.shade400,
+          child: Padding(
+            padding: EdgeInsets.symmetric(vertical: 7, horizontal: 10),
+            child: Stack(
+              clipBehavior: Clip.antiAlias,
+              children: <Widget>[
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      homework.name,
+                      style: Theme.of(context).textTheme.caption,
+                    ),
+                    Text(
+                      use24HFormat
+                          ? 'Due date: ${DateFormat.MMMMEEEEd().add_Hm().format(homework.dueDate)}'
+                          : 'Due date: ${DateFormat.MMMMEEEEd().add_jm().format(homework.dueDate)}',
+                      style: Theme.of(context).textTheme.bodyText2,
+                    ),
+                    Text(
+                      'Subject: ${homework.subjectName}',
+                      style: Theme.of(context).textTheme.bodyText2,
+                    ),
+                    if (homework.note != "")
+                      Text(
+                        'Note: ${homework.note}',
+                        style: Theme.of(context).textTheme.bodyText2,
+                      ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Text(homework.platformName),
                       ],
                     ),
-                  ),
+                  ],
                 ),
-              ),
+                //TODO: add triangle
+              ],
             ),
-          ],
+          ),
         ),
         actions: <Widget>[
           IconSlideAction(
@@ -86,7 +79,8 @@ class HomeworkCard extends StatelessWidget {
             color: Colors.red,
             icon: Icons.delete,
             onTap: () {
-              Provider.of<FirebaseService>(context, listen: false).deleteHomework(homework, context);
+              FirebaseService firebaseService = FirebaseService();
+              firebaseService.deleteHomework(homework, context);
             },
           ),
         ],

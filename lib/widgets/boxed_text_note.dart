@@ -39,7 +39,7 @@ class NoticeDialog {
   NoticeDialog(this.context);
 
   void showNoticeDialog(
-      {String title, @required String bodyText, bool isVibrate = false, double windowWidth = 300.0}) {
+      {String? title, required String? bodyText, bool isVibrate = false, double windowWidth = 300.0}) {
     if (isVibrate) {
       Vibration.vibrate(pattern: [0, 300, 200, 500]);
     }
@@ -47,13 +47,13 @@ class NoticeDialog {
     displayWidgetsList.add(SizedBox(height: 25));
     if (title != null) {
       displayWidgetsList.add(Text(title,
-          textAlign: TextAlign.center, style: Theme.of(context).textTheme.caption.copyWith(fontSize: 20)));
+          textAlign: TextAlign.center, style: Theme.of(context).textTheme.caption!.copyWith(fontSize: 20)));
       displayWidgetsList.add(SizedBox(height: 15));
     }
     if (bodyText == null) {
     } else {
       displayWidgetsList.add(Text(bodyText,
-          textAlign: TextAlign.center, style: Theme.of(context).textTheme.bodyText2.copyWith(height: 1.25)));
+          textAlign: TextAlign.center, style: Theme.of(context).textTheme.bodyText2!.copyWith(height: 1.25)));
     }
     displayWidgetsList.add(
       IOSStyleButton(
@@ -95,8 +95,8 @@ class NoticeDialog {
 }
 
 class UserSeeOnlyNotification extends StatefulWidget {
-  final bool visible;
-  final String text;
+  final bool? visible;
+  final String? text;
   UserSeeOnlyNotification({this.visible, this.text});
 
   @override
@@ -109,7 +109,7 @@ class _UserSeeOnlyNotificationState extends State<UserSeeOnlyNotification> {
     return Align(
       alignment: Alignment.bottomCenter,
       child: AnimatedOpacity(
-        opacity: widget.visible ? 1.0 : 0.0,
+        opacity: widget.visible! ? 1.0 : 0.0,
         duration: Duration(milliseconds: 300),
         child: Padding(
           padding: EdgeInsets.only(bottom: 80.0),
@@ -124,8 +124,8 @@ class _UserSeeOnlyNotificationState extends State<UserSeeOnlyNotification> {
                   padding: const EdgeInsets.all(8.0),
                   child: Center(
                       child: Text(
-                    widget.text,
-                    style: Theme.of(context).textTheme.bodyText1.copyWith(color: Colors.white),
+                    widget.text!,
+                    style: Theme.of(context).textTheme.bodyText1!.copyWith(color: Colors.white),
                   )),
                 ),
               ),
